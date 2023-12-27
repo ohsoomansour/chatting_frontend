@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useRef, useState } from "react";
 import { Chatting } from "../components/Chatting";
-
+import { io } from "socket.io-client"
 /* #1.React Hook의 이해 
     useEffect(func, [deps]) : 
     - mount 될 때, deps 값이 업데이트 될 때 useEffect는 실행
@@ -40,13 +40,20 @@ import { Chatting } from "../components/Chatting";
    
    *참조: https://itchallenger.tistory.com/581
    Any component props is by design an object, but you are defining it as an array.
+
+   해결2. 소켓 설정
+   > npm i socket.io-client
+   > [package.json]  > 확인 > "socket.io-client": "^4.7.2",
 */
-export default function TestSocket() {
+export default function WsTest() {
+  //웹소켓
   const webSocketUrl = `ws://localhost:8080/chat`
   let [message, changeMessage] = useState("");
   let ws = useRef<WebSocket | null>(null);
-  
+;
+  /*
   useEffect(() =>{
+    
     if (!ws.current) {
       ws.current = new WebSocket(webSocketUrl);
       ws.current.onopen = () => {
@@ -67,7 +74,7 @@ export default function TestSocket() {
       };
     }
   }, [])
- 
+   */
   return (
     //Type '{ children: string; ws: MutableRefObject<WebSocket | null>; }' is not assignable to type 'IntrinsicAttributes & MutableRefObject<WebSocket>'.
     <div>

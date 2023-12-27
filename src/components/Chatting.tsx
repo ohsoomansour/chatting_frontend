@@ -1,30 +1,27 @@
+import React from 'react';
 
-/* 문제해결1.
-   - 원리: ws = {current: 소켓 } > ws prop전달 > Chatting 컴포넌트에서는 파라미터인 wsProp = {wsProp : {current: 소켓}}
-   디스트럭쳐링 할당 
-   
-  #onmessage 메서드 사용법: 
-   - onmessage 이벤트가 발생하면(즉, 웹소켓을 통해 메시지를 수신하면)
+/* #1 TS 타입 문제 발생: 
+   - 원인: "props vs parameter의 타입 비교 필요
+   - 원리: ws = {current: 소켓 } > ws prop전달 > Chatting 컴포넌트에서는 파라미터인 wsProp = {wsProp : {current: 소켓}}   
+   - 해결: 디스트럭쳐링 할당의 이해! {wsProp, message}:{wsProp:React.MutableRefObject<WebSocket | null> ,message:string}
+  
+   #2. 채팅 앱 UI 설계 : 시퀀스 다이어그램
+   https://wikidocs.net/205997
 */
-import React, { MutableRefObject, useEffect, useState } from 'react'
-
-//
 export const Chatting = ({wsProp, message}:{wsProp:React.MutableRefObject<WebSocket | null> ,message:string}) => {
-  console.log(message);
-  /**/
+  
   const handleClickSubmit = () => {
     wsProp.current?.send(JSON.stringify({
       "event": "user2",
       "data": "Hell I'm User2"
     }))
   }
-  //wsProp.current?.onmessage = () => {}
   
-  
+
   return(
     <div>
       <div>user2:{message}</div>
-      <button type="button" onClick={handleClickSubmit}>Send!</button>
+      <button type="button" onClick={handleClickSubmit}>WebSocket message Send!</button>
     </div>
   )
 }
