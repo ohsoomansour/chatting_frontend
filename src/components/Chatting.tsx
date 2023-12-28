@@ -21,7 +21,7 @@ export const Chatting = ({wsProp, message}:{wsProp:React.MutableRefObject<WebSoc
   return(
     <div>
       <div>user2:{message}</div>
-      <button type="button" onClick={handleClickSubmit}>WebSocket message Send!</button>
+      <button type="button" onClick={handleClickSubmit} >WebSocket message Send!</button>
     </div>
   )
 }
