@@ -48,16 +48,17 @@ import { io } from "socket.io-client"
 export default function WsTest() {
   //웹소켓
   const webSocketUrl = `ws://localhost:8080/chat`
+  const webrtcURL = `ws://localhost:8080/webrtc`
   let [message, changeMessage] = useState("");
   let ws = useRef<WebSocket | null>(null);
 ;
-  /*
+
   useEffect(() =>{
     
     if (!ws.current) {
-      ws.current = new WebSocket(webSocketUrl);
+      ws.current = new WebSocket(webrtcURL);
       ws.current.onopen = () => {
-        console.log("connected to " + webSocketUrl);
+        console.log("connected to " + webrtcURL);
       }
       ws.current.onmessage = (event) => {
         console.log(event.data);
@@ -65,16 +66,16 @@ export default function WsTest() {
       }
       
       ws.current.onclose = error => {
-        console.log("disconnect from " + webSocketUrl);
+        console.log("disconnect from " + webrtcURL);
         console.log(error);
       };
       ws.current.onerror = error => {
-        console.log("connection error " + webSocketUrl);
+        console.log("connection error " + webrtcURL);
         console.log(error);
       };
     }
   }, [])
-   */
+ 
   return (
     //Type '{ children: string; ws: MutableRefObject<WebSocket | null>; }' is not assignable to type 'IntrinsicAttributes & MutableRefObject<WebSocket>'.
     <div>
