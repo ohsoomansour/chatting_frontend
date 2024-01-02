@@ -78,11 +78,15 @@ export default function WsTest() {
  
   return (
     //Type '{ children: string; ws: MutableRefObject<WebSocket | null>; }' is not assignable to type 'IntrinsicAttributes & MutableRefObject<WebSocket>'.
-    <div>
-      <Chatting 
+    /*
+    <Chatting 
        wsProp={ws} 
        message={message}
       />
+    */
+    
+    <div>
+      
       
     </div>
   );
