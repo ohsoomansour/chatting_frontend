@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
+import { Socket, io } from 'socket.io-client';
 /* #1 TS 타입 문제 발생: 
    - 원인: "props vs parameter의 타입 비교 필요
    - 원리: ws = {current: 소켓 } > ws prop전달 > Chatting 컴포넌트에서는 파라미터인 wsProp = {wsProp : {current: 소켓}}   
@@ -15,52 +15,64 @@ import { io } from 'socket.io-client';
    에러                                           ✅any[]로 반환                       !=                        ✅never[]반환   "따라서 타입 지정 필요"
      Argument of type '(prevMessages: never[]) => any[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
 */
-interface UserInfo {
-  userName: string
-}
-const socket = io('http://localhost:8080', {transports:['websocket'], path:'/webrtc' });
 
-export const Chatting = () => {
+
+//const socket = io('http://localhost:8080', {transports:['websocket'], path:'/webrtc'});
+
+
+
+export const Chatting = ({sc}:{sc:Socket}) => {
   const [messages, setMessages] = useState<string[]>([]);
   const [inputMessage, setInputMessage] = useState('');
-  const [userName, setUsername] = useState<string>('');
-  console.log(userName);
+  const [userName, setUsername] = useState('');
+  const [joinedUsers, setJoinedUsers] = useState<string[]>(['']);
   useEffect(() => {
-    // 소켓 연결 시 실행되는 부분
-    socket.on('message', (message) => {
+  
+    sc.on('message', (message) => {
 
       setMessages((prevMessages) => [...prevMessages, message]);
     });
    
 
-    socket.on('userJoined', (userInfo:UserInfo) => {
-      console.log("user가 입장:(아래)");
-      console.log(userInfo.userName);
+    sc.on('userJoined', (userInfo) => {
+      console.log(userInfo.userList);
+      setJoinedUsers(userInfo.userList);
+      
     })
 
     // 컴포넌트가 언마운트되면 소켓 연결 해제
+    
     return () => {
-      socket.disconnect();
+      sc.disconnect();
     };
   }, []);
-
+  
   const sendMessage = () => {
     if (inputMessage.trim() !== '') {
       // 서버로 메시지 전송
-      socket.emit('message', inputMessage);
+      sc.emit('message', inputMessage);
 
       // 메시지 입력 칸 비우기
       setInputMessage('');
     }
   };
   const setUName = () => {
-    socket.emit('joinRoom', { userName: userName, roomId: '2'})
+    sc.emit('joinRoom', { userName: userName, roomId: 'room1'})
   }
   return (
     <div>
       <h1>Streaming</h1>
+      <h3>방 참가 유저이름</h3>
       <div>
-        {messages.map((index, message) => (
+      
+        {joinedUsers && joinedUsers!.map((user, index) => (
+          <span key={index}>{user}님 </span>
+        
+        ))} 
+      </div>
+      <h3>대화 내용</h3>
+      <div>
+        { messages.map((message, index) => (
           <p key={index}>{message}</p>
         ))}
       </div>
@@ -71,7 +83,7 @@ export const Chatting = () => {
         value={userName}
         onChange={(e) => setUsername(e.target.value)}
       />
-      <button onClick={setUName}>선택</button>
+      <button onClick={setUName}>참가</button>
       message:
       <input
         type="text"

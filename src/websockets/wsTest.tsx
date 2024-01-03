@@ -51,7 +51,6 @@ export default function WsTest() {
   const webrtcURL = `ws://localhost:8080/webrtc`
   let [message, changeMessage] = useState("");
   let ws = useRef<WebSocket | null>(null);
-;
 
   useEffect(() =>{
     

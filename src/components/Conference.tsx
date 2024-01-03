@@ -1,7 +1,7 @@
 
 import { useEffect, useRef, useState } from 'react';
-import { io } from 'socket.io-client';
-const socket = io('http://localhost:8080', {transports:['websocket'], path:'/webrtc'}) 
+import { Socket, io } from 'socket.io-client';
+const sc = io('http://localhost:8080', {transports:['websocket'], path:'/webrtc'}) 
 
 
 //DOM elements.
@@ -33,6 +33,14 @@ const iceServers = {
 }
 
 export default function Conference() {
+  const [messages, setMessages] = useState<string[]>([]);
+  console.log('useState 메세지 받아오는 (아래):')
+  console.log(messages);
+  const [inputMessage, setInputMessage] = useState('');
+  const [userName, setUsername] = useState('');
+  const [joinedUsers, setJoinedUsers] = useState<string[]>(['']);
+  
+
   //const roomInput = document.getElementById('room-input');
   // 방 참가 버튼: roomInput의 input태그에서 값을 가져와야 된다.
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -43,29 +51,29 @@ export default function Conference() {
 
   useEffect(() => {
     
-    socket.on('room_created', async () => {
+    sc.on('room_created', async () => {
       console.log('Socket event callback: room_created');
       await setLocalStream(mediaConstraints);
       
       isRoomCreator = true; //나 방장
     })
 
-    socket.on('room_joined', async () => {
+    sc.on('room_joined', async () => {
         
       console.log('Socket event callback: room_joined');
       await setLocalStream(mediaConstraints); //미디어 객체 얻어가지고  콜시작하자!
       
-      socket.emit('start_call', roomId); 
+      sc.emit('start_call', roomId); 
     })
     //
-    socket.on('full_room', async () => {
+    sc.on('full_room', async () => {
       console.log('Socket event callback: full_room');
       alert('The room is full, please please try another One!');
     })
 
     // #클라이언트의 media data를 가져오기 위해서 navigator.mediaDevices.getUserMedia 메서드를 호출
     
-    socket.on('start_call', async () => {
+    sc.on('start_call', async () => {
       console.log("start_call 들어옴")
       //✔️현재 이 분기를 안탐 왜냐면 room created가 되어야지 isRoomCreator가 true가 된다. 
       if(isRoomCreator) {
@@ -102,7 +110,7 @@ export default function Conference() {
       }
     })
     
-    socket.on('webrtc_offer', async (webrtc_offer_event) => {
+    sc.on('webrtc_offer', async (webrtc_offer_event) => {
       
       console.log(`Socekt event callback: webrtc_offer ${webrtc_offer_event}`);
       
@@ -124,7 +132,7 @@ export default function Conference() {
       }
     })
      
-    socket.on('webrtc_answer', async (answerSDPEvent) => {
+    sc.on('webrtc_answer', async (answerSDPEvent) => {
       console.log('Socekt event callback: webrtc_answer')
       console.log(answerSDPEvent);
       //Failed to execute 'addTrack' on 'RTCPeerConnection': A sender already exists for the track.
@@ -149,7 +157,7 @@ export default function Conference() {
 
     })
   
-    socket.on('webrtc_ice_candidate', (event) => {
+    sc.on('webrtc_ice_candidate', (event) => {
       console.log('Socket event callback: webrtc_ice_candidate');
 
       var candidate = new RTCIceCandidate({
@@ -177,18 +185,49 @@ export default function Conference() {
 
     })
     
+   //================================================ Chatting ===============================================
+   sc.on('message', (msgArr) => {
+    console.log('메세지 받아오는 이벤트(아래):') //이게 두 번 일어나는 것이 문제!!
+    console.log(msgArr)
+    setMessages([...msgArr]); //#서버에서 받아서 '채팅 구현' 방법
+    
+  });
+ 
 
+  sc.on('userJoined', (userInfo) => {
+    console.log(userInfo.userList);
+    setJoinedUsers(userInfo.userList);
+    
+  })
+
+  
   
   }, [])
-  
+  // ====================================== Chatting function ===================================
+  const sendMessage = () => {
+    if (inputMessage.trim() !== '') {
+      // 서버로 메시지 전송
+      sc.emit('message', inputMessage);
 
-  // ====================================== function ===================================
+      // 메시지 입력 칸 비우기
+      setInputMessage('');
+      //setMessages([inputMessage, ...messages]); //#프런트에서 채팅구현 방법
+    }
+  };
+  const setUName = () => {
+    sc.emit('joinRoom', { userName: userName, roomId: 'room1'})
+  }
+
+
+
+
+  // ====================================== Conference function ===================================
   function joinRoom (room:string) {
     if(room === '') {
       alert('Please type a room ID');
     } else {
       roomId= room;
-      socket.emit('join', roomId);
+      sc.emit('join', roomId);
       showVideoConference();
     }
   }
@@ -209,9 +248,7 @@ export default function Conference() {
   
   
   }
-  useEffect(() => {
-    
-  }, [])
+  
   /*
    * @Date : 2023.12.29
    * @Author : OSOOMAN
@@ -240,7 +277,7 @@ export default function Conference() {
       await rtcPeerConnection.setLocalDescription(sessionDescription);  //offer
       
       //송신자, offer메세지를 localDescription에 등록
-      socket.emit('webrtc_offer', {
+      sc.emit('webrtc_offer', {
         roomId,
         type: 'webtrtc_offer',
         sdp: sessionDescription,
@@ -258,7 +295,7 @@ export default function Conference() {
         
       });
       await rtcPeerConnection.setLocalDescription(sessionDescription);  //answer 
-      socket.emit('webrtc_answer', {
+      sc.emit('webrtc_answer', {
         roomId,
         type: 'wetrtc_answer',
         sdp: sessionDescription,
@@ -275,7 +312,7 @@ export default function Conference() {
   */
   function sendIceCandidate(event:RTCPeerConnectionIceEvent) {
     if (event.candidate) {
-      socket.emit('webrtc_ice_candidate', {
+      sc.emit('webrtc_ice_candidate', {
           roomId,
           label: event.candidate.sdpMLineIndex,
           candidate: event.candidate.candidate
@@ -344,7 +381,14 @@ export default function Conference() {
       rtcPeerConnection.addTrack(track, localStream);
     })
   }
-  
+  // ====================================== Conference function End ===================================
+   
+
+
+
+
+
+
   return (
   <div>
     <div id="room-selection-container" className='centered' >
@@ -360,10 +404,48 @@ export default function Conference() {
       <video id="remote-video" autoPlay loop muted width="100%" height="100%" ref={remoteVideoRef}> </video>
     </div>
     
+    <div>
+      <h1>Streaming</h1>
+      <h3>방 참가 유저이름</h3>
+      <div>
+      
+        {joinedUsers && joinedUsers!.map((user, index) => (
+          <span key={index}>{user}님 </span>
+        
+        ))} 
+      </div>
+      <h3>대화 내용</h3>
+      <div>
+        { messages.map((message, index) => (
+          <p key={index}>{message}</p>
+        ))}
+      </div>
+      <div>
+      닉네임:
+      <input
+        type="text"
+        value={userName}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <button onClick={setUName}>참가</button>
+      message:
+      <input
+        type="text"
+        value={inputMessage}
+        onChange={(e) => setInputMessage(e.target.value)}
+      />
+        <button onClick={sendMessage}>Send</button>
+      </div>
+    </div>
+    
+
   </div>
   
   )
 } 
+
+
+
 
 
 
