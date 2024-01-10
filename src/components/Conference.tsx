@@ -1,9 +1,12 @@
 
 import { useEffect, useRef, useState } from 'react';
-import { Socket, io } from 'socket.io-client';
+import { io } from 'socket.io-client';
+import { useForm } from "react-hook-form";
 const sc = io('http://localhost:8080', {transports:['websocket'], path:'/webrtc'}) 
 
-
+interface IFormProps {
+  file: FileList
+}
 //DOM elements.
 //var srcObject: any;
 const roomSelectionContainer = document.getElementById('room-selection-container');
@@ -20,7 +23,7 @@ let remoteStream : MediaStream;
 let isRoomCreator: boolean; 
 let rtcPeerConnection: RTCPeerConnection;
 
-let roomId: string;
+var roomId: string;
 
 const iceServers = {
   iceServers: [
@@ -38,10 +41,11 @@ export default function Conference() {
   console.log(messages);
   const [inputMessage, setInputMessage] = useState('');
   const [userName, setUsername] = useState('');
-  const [joinedUsers, setJoinedUsers] = useState<string[]>(['']);
+  const [joinedUserList, setJoinedUserList] = useState<string[]>(['']);
+  const [particapants, setParticapants] = useState<string[]>([''])
+  const [uploading, setUploading] = useState(false)
+  const [ImageUrl, setImageUrl] = useState("")
   
-
-  //const roomInput = document.getElementById('room-input');
   // 방 참가 버튼: roomInput의 input태그에서 값을 가져와야 된다.
   const videoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
@@ -196,8 +200,11 @@ export default function Conference() {
 
   sc.on('userJoined', (userInfo) => {
     console.log(userInfo.userList);
-    setJoinedUsers(userInfo.userList);
+    setJoinedUserList(userInfo.userList);
     
+  })
+  sc.on('participants', (p) => {
+    setParticapants(p.participant);
   })
 
   
@@ -206,8 +213,8 @@ export default function Conference() {
   // ====================================== Chatting function ===================================
   const sendMessage = () => {
     if (inputMessage.trim() !== '') {
-      // 서버로 메시지 전송
-      sc.emit('message', inputMessage);
+      // 서버로 메시지 전송   
+      sc.emit('message', `${userName}:`+ inputMessage);
 
       // 메시지 입력 칸 비우기
       setInputMessage('');
@@ -215,10 +222,36 @@ export default function Conference() {
     }
   };
   const setUName = () => {
-    sc.emit('joinRoom', { userName: userName, roomId: 'room1'})
+    console.log(roomId);
+    //sc.send(JSON.stringify({ userName: userName, roomId: null}) )
+    sc.emit('joinRoom', { userName: userName, roomId: roomId })
   }
+  
+  const {handleSubmit, getValues, register} = useForm<IFormProps>({
+    mode:"onChange"
+  })
 
-
+  const onSubmit = async () => {
+    try {
+      setUploading(true)
+      const { file  } = getValues();
+      const actualFile = file[0]
+      const formBody = new FormData();
+      formBody.append('file', actualFile)
+    
+      const { url: coverImage } = await ( 
+        await fetch("http://localhost:3000/upload/", {
+          method: 'POST',
+          //headers:{ 'Content-Type': 'multipart/form-data' },
+          body: formBody,
+        })
+         ).json()
+      setImageUrl(coverImage);
+      
+    } catch (e) {}
+     
+  }
+  
 
 
   // ====================================== Conference function ===================================
@@ -388,7 +421,7 @@ export default function Conference() {
 
 
 
-
+  
   return (
   <div>
     <div id="room-selection-container" className='centered' >
@@ -406,13 +439,18 @@ export default function Conference() {
     
     <div>
       <h1>Streaming</h1>
-      <h3>방 참가 유저이름</h3>
+      <h3>방에 참가되어 있는 유저이름</h3>
       <div>
-      
-        {joinedUsers && joinedUsers!.map((user, index) => (
-          <span key={index}>{user}님 </span>
+        {joinedUserList && joinedUserList!.map((user, index) => (
+          <div key={index}>{user}님 </div>
         
-        ))} 
+        ))}
+
+      <h3></h3>  
+        {joinedUserList && particapants!.map((userName, index) => (
+          <div key={index}>{userName}</div>
+        ))}
+
       </div>
       <h3>대화 내용</h3>
       <div>
@@ -434,8 +472,18 @@ export default function Conference() {
         value={inputMessage}
         onChange={(e) => setInputMessage(e.target.value)}
       />
-        <button onClick={sendMessage}>Send</button>
+      <button onClick={sendMessage}>Send</button>
       </div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <input
+          {...register("file", { required: true })}
+          type="file"
+          accept="image/*"
+        />  
+        <button>이미지 올리기</button>
+      </form>
     </div>
     
 
