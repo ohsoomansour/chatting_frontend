@@ -1,5 +1,6 @@
 
-import Conference from './components/Conference';
+import Conference from './components/Streaming';
+import { LoggedInRouter } from './router/logged-in-router';
 export default function App() {
   
   
@@ -13,7 +14,7 @@ export default function App() {
   */ 
   return (
     <div className="App">
-      <Conference  />
+      <LoggedInRouter />
     </div>
   );
 }

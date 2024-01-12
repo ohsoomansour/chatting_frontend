@@ -20,7 +20,7 @@ import { Socket, io } from 'socket.io-client';
 //const socket = io('http://localhost:8080', {transports:['websocket'], path:'/webrtc'});
 
 
-
+/*
 export const Chatting = ({sc}:{sc:Socket}) => {
   const [messages, setMessages] = useState<string[]>([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -95,7 +95,7 @@ export const Chatting = ({sc}:{sc:Socket}) => {
     </div>
   );
 }
-
+*/
 
 /*
 export const Chatting = ({wsProp, message}:{wsProp:React.MutableRefObject<WebSocket | null> ,message:string}) => {

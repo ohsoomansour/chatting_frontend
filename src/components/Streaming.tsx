@@ -34,25 +34,30 @@ const iceServers = {
     { urls: 'stun:stun4.l.google.com:19302'},
   ]
 }
+interface IProps {
+  msg:string;
+  img:string;
+}
 
-export default function Conference() {
-  const [messages, setMessages] = useState<string[]>([]);
-  console.log('useState 메세지 받아오는 (아래):')
-  console.log(messages);
+export default function Streaming() {
+  const [messages, setMessages] = useState<IProps[]>([{msg:'', img: ''}]);
+  console.log("messages현재 값:")
+  console.log(messages)
   const [inputMessage, setInputMessage] = useState('');
   const [userName, setUsername] = useState('');
   const [joinedUserList, setJoinedUserList] = useState<string[]>(['']);
   const [particapants, setParticapants] = useState<string[]>([''])
   const [uploading, setUploading] = useState(false)
-  const [ImageUrl, setImageUrl] = useState("")
-  
+  const [ImageUrl, setImageUrl] = useState<string>("")
+  const [recImgURL, setRecImgURL] = useState<string[]>([""]);
+  console.log("ImageUrl:")
+  console.log(ImageUrl);
+  console.log("recImgURL:")
+  console.log(recImgURL);
   // 방 참가 버튼: roomInput의 input태그에서 값을 가져와야 된다.
   const videoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const roomInputRef = useRef<HTMLInputElement>(null);
-  const [event, setEvent] = useState<MediaStream>();
-  
-
   useEffect(() => {
     
     sc.on('room_created', async () => {
@@ -94,16 +99,12 @@ export default function Conference() {
         '상대방의 track 데이터에 대한 이벤트'가 발생
          
         */
-
         rtcPeerConnection.ontrack = (ev) => {
           if (remoteVideoRef.current) {
             
-            remoteVideoRef.current.srcObject = ev.streams[0];
-            
-            
+            remoteVideoRef.current.srcObject = ev.streams[0];     
           }
         }
-        
         //setRemoteStream;
 
 
@@ -190,11 +191,16 @@ export default function Conference() {
     })
     
    //================================================ Chatting ===============================================
-   sc.on('message', (msgArr) => {
+   sc.on('message', (msgObj) => {
     console.log('메세지 받아오는 이벤트(아래):') //이게 두 번 일어나는 것이 문제!!
-    console.log(msgArr)
-    setMessages([...msgArr]); //#서버에서 받아서 '채팅 구현' 방법
+    console.log(msgObj)
+    /* #setState((prevState) => prevState + 1); 활용 + 두 번 msgObj가 들어온다!    
+      > 문제: msgObj가 두 번 들어옴 
+      > 원인: 소켓이 두 개  (x) -> 서버: 한 번 받아진다 그런데! 프론트: 들어올 때가 두 번!
     
+    */
+    setMessages((prev) => [...prev, msgObj]); 
+
   });
  
 
@@ -212,18 +218,30 @@ export default function Conference() {
   }, [])
   // ====================================== Chatting function ===================================
   const sendMessage = () => {
+    //경우1. 메세지가 없는 경우는 당연히 보내고 
     if (inputMessage.trim() !== '') {
-      // 서버로 메시지 전송   
-      sc.emit('message', `${userName}:`+ inputMessage);
-
-      // 메시지 입력 칸 비우기
+      if(userName === ''){
+        console.log(userName);
+        alert('참가 닉네임을 설정하세요!')
+        return new Error('닉네임 없음');
+      } else {
+        // 서버로 메시지 전송: 메세지 + 이미지를 같이 보낸다.
+      sc.emit('message', [`${userName}:`+ inputMessage, ImageUrl]); 
       setInputMessage('');
-      //setMessages([inputMessage, ...messages]); //#프런트에서 채팅구현 방법
+      setImageUrl('');
+      }
+      
+    } else if(inputMessage.trim() === '') {
+      if(userName === ''){
+        alert('참가 닉네임을 설정하세요!')
+        return new Error('닉네임 없음');
+      } else if (ImageUrl !== ''){
+        sc.emit('message', [`${userName}:`+ inputMessage, ImageUrl]); 
+        setImageUrl('');
+      }
     }
   };
   const setUName = () => {
-    console.log(roomId);
-    //sc.send(JSON.stringify({ userName: userName, roomId: null}) )
     sc.emit('joinRoom', { userName: userName, roomId: roomId })
   }
   
@@ -247,6 +265,10 @@ export default function Conference() {
         })
          ).json()
       setImageUrl(coverImage);
+      /*1.11 이 이미지 URL를 어떻게 표출할 것인가 
+       > S3에 저장되어 있음(DB에 저장 할 필요는 없음)
+       > 서버의 'message' Subscribe에 보내서 message랑 함께 결합해서 나올 수 있게 한다.
+      */
       
     } catch (e) {}
      
@@ -416,12 +438,6 @@ export default function Conference() {
   }
   // ====================================== Conference function End ===================================
    
-
-
-
-
-
-  
   return (
   <div>
     <div id="room-selection-container" className='centered' >
@@ -446,7 +462,7 @@ export default function Conference() {
         
         ))}
 
-      <h3></h3>  
+      <h3>안내</h3>  
         {joinedUserList && particapants!.map((userName, index) => (
           <div key={index}>{userName}</div>
         ))}
@@ -454,10 +470,20 @@ export default function Conference() {
       </div>
       <h3>대화 내용</h3>
       <div>
-        { messages.map((message, index) => (
-          <p key={index}>{message}</p>
+        {messages && messages.map((message, index ) => (
+          <div>
+            <p key={index}>{message.msg}</p>
+            <img alt='' src={message.img} style={{ width: "200px"}}/>
+          </div>
+        ))}
+        
+        { recImgURL && recImgURL.map((img, index) => (
+          <div> 
+            <img key={index} alt='' src={img} style={{ width: "200px"}}/>
+          </div>
         ))}
       </div>
+
       <div>
       닉네임:
       <input
