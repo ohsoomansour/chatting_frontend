@@ -6,27 +6,41 @@
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Streaming from "../components/Streaming";
 import { Login } from "../pages/logIn";
-import { CreateAccount } from "../pages/createAccount";
+import React from "react";
+import { SignUpForMember } from "../pages/signUpForMember";
+
 
 
 
 const commonRoutes = [
   {path: "/login", component: <Login />},
+  {path:"/create-account", component: <SignUpForMember /> },
+  
+]
+
+const accountRoutes = [
   {path: "/streaming", component: <Streaming />},
-  {path: "/create-account", comonent: <CreateAccount /> }
 ]
 
 export const LoggedInRouter = () => {
 
   return (
     <BrowserRouter>
+    <React.StrictMode>
       <Switch>
       {commonRoutes.map((route, index) => (
-          <Route key={route.path} exact path={route.path}>
+          <Route key={index} exact path={route.path}>
             {route.component}
           </Route>
       ))}  
+      {accountRoutes.map((route, index) => (
+          <Route key={index} exact path={route.path}>
+            {route.component}
+          </Route>
+      ))}  
+      
       </Switch>
+    </React.StrictMode>  
     </BrowserRouter>
   )
 }

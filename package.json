@@ -1,5 +1,5 @@
 {
-  "name": "nuber-eats-frontend",
+  "name": "Streaming",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -47,7 +47,7 @@
     "test:coverage": "npm test -- --coverage --watchAll=false",
     "eject": "react-scripts eject",
     "generate": "graphql-codegen"
-  },
+  },  
   "eslintConfig": {
     "extends": [
       "react-app",

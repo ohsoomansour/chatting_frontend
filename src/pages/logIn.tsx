@@ -28,8 +28,9 @@ npx tailwindcss init
 
 */
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Button } from "../components/Button";
+import { Helmet } from "react-helmet";
 
 interface ILoginForm {
   email: string;
@@ -39,14 +40,44 @@ interface ILoginForm {
 export const Login = () => {
 //Validation is triggered on the changeevent for each input, leading to multiple re-renders. Warning: this often comes with a significant impact on performance.
   const { register, formState:{ errors },handleSubmit, formState, getValues } = useForm<ILoginForm>({mode: "onChange"});
+  const history = useHistory();
+  /* #react-hook-form의 handleSubmit(onValid) 사용법 
+    > This function will receive the form data if form validation is successful.
+    > handleSubmit(async (data) => await fetchAPI(data))
+  
+  */
+  const onValid = async (data:any) => {
+    try {
+      const {email, password} = getValues();
+      const response = await fetch('http://localhost:3000/member/login', {
+        headers : {"Content-Type":"application/json; charset=utf-8"},
+        method: 'POST',
+        body: JSON.stringify({
+          userId: email, // or data.email
+          password: password, // or data.password
+        })
+      })
+    
+      if(response.redirected){
+        history.push('/')
+      }
+    } catch (e) {}
+     
+  }
+  
+  
   return (
-    <div>
+    <div className="m-5">
+      <Helmet>
+        <title>Login | GGL Entertainment </title>
+      </Helmet>
       <h4 className="w-full font-medium text-left text-3xl mb-5">
-        Welcom to The Streaming
+        Welcom to GGL Entertainment
       </h4>
       <form
-        className="grid gap-2 mt-5 w-full mb-3 " 
-        //onSubmit={handleSubmit(onValid)}
+        //className="grid gap-2 mt-5 w-full mb-3 " 
+        className="grid gap-2 w-full " 
+        onSubmit={handleSubmit(onValid)}
       >
         <input
             {...register("email", {
@@ -66,11 +97,12 @@ export const Login = () => {
         />
         <Button 
           canClick={formState.isValid}
+          actionText={"Log In"}
         />
       </form>
       <div>
         New to Streaming?{""}      
-        <Link to="/create-account" className="text-blue-600 hover:underline "> Create an Account</Link>
+        <Link to="/create-account" className=" text-red-300 font-bold hover:underline "> Sign up for membership</Link>
       </div>
     </div>
   )
