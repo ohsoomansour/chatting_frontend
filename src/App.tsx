@@ -8,12 +8,14 @@ export default function App() {
 
     [문제]
     react component life-cycle 
-    
-  */ 
-  return (
+
     <div className="App">
       <LoggedInRouter />
     </div>
+    
+  */ 
+  return (
+    <LoggedInRouter />
   );
 }
 

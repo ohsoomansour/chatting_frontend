@@ -30,17 +30,22 @@ npx tailwindcss init
 import { useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
 import { Button } from "../components/Button";
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async";
+import { TokenSelector, tokenState } from "../recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useEffect } from "react";
 
 interface ILoginForm {
   email: string;
   password: string;
   resultError:string;
 }   
-export const Login = () => {
+const Login:React.FC = () => {
 //Validation is triggered on the changeevent for each input, leading to multiple re-renders. Warning: this often comes with a significant impact on performance.
   const { register, formState:{ errors },handleSubmit, formState, getValues } = useForm<ILoginForm>({mode: "onChange"});
   const history = useHistory();
+  const [token, setToken] = useRecoilState(tokenState)
+  //sessionStorage.setItem('token', token);
   /* #react-hook-form의 handleSubmit(onValid) 사용법 
     > This function will receive the form data if form validation is successful.
     > handleSubmit(async (data) => await fetchAPI(data))
@@ -49,7 +54,8 @@ export const Login = () => {
   const onValid = async (data:any) => {
     try {
       const {email, password} = getValues();
-      const response = await fetch('http://localhost:3000/member/login', {
+      const response =  await (
+        await fetch('http://localhost:3000/member/login', {
         headers : {"Content-Type":"application/json; charset=utf-8"},
         method: 'POST',
         body: JSON.stringify({
@@ -57,8 +63,12 @@ export const Login = () => {
           password: password, // or data.password
         })
       })
-    
-      if(response.redirected){
+      ).json()
+      setToken(response.token)
+      
+      console.log(response); 
+      
+      if(response.token !== ''){
         history.push('/')
       }
     } catch (e) {}
@@ -68,9 +78,11 @@ export const Login = () => {
   
   return (
     <div className="m-5">
+    <HelmetProvider>
       <Helmet>
         <title>Login | GGL Entertainment </title>
       </Helmet>
+    </HelmetProvider>
       <h4 className="w-full font-medium text-left text-3xl mb-5">
         Welcom to GGL Entertainment
       </h4>
@@ -107,3 +119,5 @@ export const Login = () => {
     </div>
   )
 }
+
+export default Login

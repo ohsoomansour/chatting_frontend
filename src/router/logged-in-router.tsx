@@ -5,22 +5,24 @@
 */
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Streaming from "../components/Streaming";
-import { Login } from "../pages/logIn";
+import Login from "../pages/logIn";
 import React from "react";
 import { SignUpForMember } from "../pages/signUpForMember";
-
-
-
+import {ManageMembers} from "../pages/manageMembers";
 
 const commonRoutes = [
   {path: "/login", component: <Login />},
   {path:"/create-account", component: <SignUpForMember /> },
   
 ]
-
 const accountRoutes = [
   {path: "/streaming", component: <Streaming />},
 ]
+const adminRoutes = [
+  {path: "/login", component: <Login />},
+  {path: "/admin", component: <ManageMembers />}
+]
+
 
 export const LoggedInRouter = () => {
 
@@ -38,7 +40,11 @@ export const LoggedInRouter = () => {
             {route.component}
           </Route>
       ))}  
-      
+      {adminRoutes.map((route, index) => (
+          <Route key={index} exact path={route.path} >
+            {route.component}
+          </Route>
+      ))}
       </Switch>
     </React.StrictMode>  
     </BrowserRouter>

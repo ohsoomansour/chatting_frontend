@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import { Controller, useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
 import { Button } from "../components/Button";
@@ -40,9 +40,11 @@ export const SignUpForMember = () => {
   
   return (//rem: 16px 배수 > 2.5rem = 40px     text-lime-600 hover:underline
   <div className="h-screen flex items-center flex-col mt-10 lg:mt-28"> 
+   <HelmetProvider>
     <Helmet>
       <title>Sign Up For Member | GGL Entertainment</title>
     </Helmet>
+   </HelmetProvider>
     <div className=" w-full max-w-screen-sm flex flex-col px-5 items-center">
       <h4 className="w-full font-medium text-left text-3xl mb-5">
         Let's get started 
