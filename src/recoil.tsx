@@ -6,10 +6,13 @@ import { recoilPersist } from "recoil-persist";
   > manageMember.tsx, re-rendering 후 tokenState의 token값은 '' 되어 로그인에서 반환한 token값을 못 받아온다.
   > 해결: recoilPersist를 사용, localStorage에 넣어주고 받아온다. 
     (sessionStorage도 가능하나 브라우저를 닫거나 변경하면 없어진다. )
+    storage: localStorage,
 */
+const sessionStorage = 
+      typeof window !== 'undefined' ? window.sessionStorage : undefined
 export const { persistAtom } = recoilPersist({
   key: "tk",
-  storage: localStorage,
+  storage: sessionStorage,
 });
 
 export const tokenState = atom({

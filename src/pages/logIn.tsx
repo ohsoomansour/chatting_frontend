@@ -31,9 +31,10 @@ import { useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
 import { Button } from "../components/Button";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { TokenSelector, tokenState } from "../recoil";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useEffect } from "react";
+import {  tokenState } from "../recoil";
+import { useRecoilState} from 'recoil';
+import { FormError } from "../components/form-error";
+import { error } from "console";
 
 interface ILoginForm {
   email: string;
@@ -65,12 +66,13 @@ const Login:React.FC = () => {
       })
       ).json()
       setToken(response.token)
-      
-      console.log(response); 
-      
+      console.log('token:')
+      console.log(response.token); 
+      /**/
       if(response.token !== ''){
         history.push('/')
       }
+      
     } catch (e) {}
      
   }
@@ -101,12 +103,24 @@ const Login:React.FC = () => {
             type="email"
 
           />
+        {errors.email?.message && (
+            <FormError errorMessage={errors.email.message} />
+        )}
+        {errors.email?.type === "pattern" && (
+          <FormError errorMessage="Please enter a valid email" />
+        )}
        <input
-          {...register("password", {required: "Password is required"})} 
+          {...register("password", {required: "Password is required", minLength:10})} 
           type="password"
           placeholder="Password" 
           className="input"
         />
+        {errors.password?.message && (
+          <FormError errorMessage={errors.password.message}/>
+        )}
+        {errors.password?.type === "minLength" && (
+          <FormError errorMessage="Password must be more than 10"/>
+        )}
         <Button 
           canClick={formState.isValid}
           actionText={"Log In"}
