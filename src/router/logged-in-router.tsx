@@ -9,6 +9,7 @@ import Login from "../pages/logIn";
 import React from "react";
 import { SignUpForMember } from "../pages/signUpForMember";
 import {ManageMembers} from "../pages/manageMembers";
+import { EditUserInfo } from "../pages/editUserInfo";
 
 const commonRoutes = [
   {path: "/login", component: <Login />},
@@ -19,8 +20,10 @@ const accountRoutes = [
   {path: "/streaming", component: <Streaming />},
 ]
 const adminRoutes = [
-  {path: "/login", component: <Login />},
   {path: "/admin", component: <ManageMembers />}
+]
+const userRoutes = [
+  {path: "/member/privateInfo", component: <EditUserInfo />}
 ]
 
 
@@ -44,6 +47,11 @@ export const LoggedInRouter = () => {
           <Route key={index} exact path={route.path} >
             {route.component}
           </Route>
+      ))}
+      {userRoutes.map((route, index) => (
+        <Route key={index} exact path={route.path}>
+          {route.component}
+        </Route>
       ))}
       </Switch>
     </React.StrictMode>  

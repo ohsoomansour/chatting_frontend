@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "./Button";
 import { useRecoilValue } from "recoil";
-import { tokenState } from "../recoil";
+import { tokenState } from "../recoil_token";
 
 interface Imember {
   id:number;
@@ -62,6 +62,7 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
       //변경된 회원
     
     ).json();
+    alert(`Address:${member.address} MemberRole:${member.memberRole} are updated!`)
     console.log('업데이트된 member');
     console.log(member);
   }
@@ -113,9 +114,7 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
       <div className="min-h-screen flex items-center justify-center">
         {isPopupOpen! && (
           <div className="fixed top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black bg-opacity-50">
-          <form
-            onClick={handleSubmit(onModify)}
-          > 
+          <form> 
             <div className="flex flex-col bg-slate-400 max-w-md p-8 rounded shadow-lg ">
               <h1 className=" text-lg text-center font-bold mb-4">Edit</h1>
               <h4 className="text-lg text-center font-bold mb-2">Address</h4>
@@ -129,7 +128,9 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
                 <option value="client">client</option>
                 <option value="admin">admin</option>
               </select>
-            <button className="text-white font-semibold py-3 px-4 mt-5 border rounded hover:bg-slate-600">Submit</button>
+            <button
+             onClick={onModify}
+             className="text-white font-semibold py-3 px-4 mt-5 border rounded hover:bg-slate-600">Submit</button>
             </div>
           </form> 
             <button

@@ -31,10 +31,10 @@ import { useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
 import { Button } from "../components/Button";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import {  tokenState } from "../recoil";
+import {  tokenState } from "../recoil_token";
 import { useRecoilState} from 'recoil';
 import { FormError } from "../components/form-error";
-import { error } from "console";
+import { userIdState } from "../recoil_user";
 
 interface ILoginForm {
   email: string;
@@ -46,15 +46,17 @@ const Login:React.FC = () => {
   const { register, formState:{ errors },handleSubmit, formState, getValues } = useForm<ILoginForm>({mode: "onChange"});
   const history = useHistory();
   const [token, setToken] = useRecoilState(tokenState)
+  const [user, setUserId] = useRecoilState(userIdState)
   //sessionStorage.setItem('token', token);
   /* #react-hook-form의 handleSubmit(onValid) 사용법 
     > This function will receive the form data if form validation is successful.
     > handleSubmit(async (data) => await fetchAPI(data))
   
   */
-  const onValid = async (data:any) => {
+  const onValid = async (e:any) => {
     try {
       const {email, password} = getValues();
+      
       const response =  await (
         await fetch('http://localhost:3000/member/login', {
         headers : {"Content-Type":"application/json; charset=utf-8"},
@@ -66,12 +68,13 @@ const Login:React.FC = () => {
       })
       ).json()
       setToken(response.token)
-      console.log('token:')
-      console.log(response.token); 
-      /**/
+      setUserId(email);
       if(response.token !== ''){
         history.push('/')
-      }
+      }     
+      console.log('token:')
+      console.log(response.token); 
+      
       
     } catch (e) {}
      
@@ -91,7 +94,7 @@ const Login:React.FC = () => {
       <form
         //className="grid gap-2 mt-5 w-full mb-3 " 
         className="grid gap-2 w-full " 
-        onSubmit={handleSubmit(onValid)}
+        onSubmit={handleSubmit((e) => onValid(e))}
       >
         <input
             {...register("email", {

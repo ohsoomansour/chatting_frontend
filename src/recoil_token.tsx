@@ -13,6 +13,7 @@ const sessionStorage =
 export const { persistAtom } = recoilPersist({
   key: "tk",
   storage: sessionStorage,
+
 });
 
 export const tokenState = atom({
@@ -20,6 +21,7 @@ export const tokenState = atom({
   default: '11',
   effects_UNSTABLE: [persistAtom],
 });
+
 
 /*@explain: 현재 이 app에서 사용하고 있지 않고 필요 예상되어 '학습'*/
 export const TokenSelector = selector({

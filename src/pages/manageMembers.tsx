@@ -19,7 +19,7 @@
 */
 import { useState } from "react";
 import MemberTable from "../components/MembersTable";
-import { tokenState } from "../recoil";
+import { tokenState } from "../recoil_token";
 import { useRecoilValue} from 'recoil';
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
