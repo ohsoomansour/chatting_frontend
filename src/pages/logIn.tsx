@@ -26,6 +26,10 @@ npx tailwindcss init
   > npx browserslist@latest --update-db
   > npm i update-browserslist-db
 
+ #react-hook-form의 handleSubmit(onValid) 사용법 
+  > This function will receive the form data if form validation is successful.
+  > handleSubmit(async (data) => await fetchAPI(data))
+
 */
 import { useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
@@ -35,6 +39,7 @@ import {  tokenState } from "../recoil_token";
 import { useRecoilState} from 'recoil';
 import { FormError } from "../components/form-error";
 import { userIdState } from "../recoil_user";
+import { IuserInfo } from "./editUserInfo";
 
 interface ILoginForm {
   email: string;
@@ -47,12 +52,7 @@ const Login:React.FC = () => {
   const history = useHistory();
   const [token, setToken] = useRecoilState(tokenState)
   const [user, setUserId] = useRecoilState(userIdState)
-  //sessionStorage.setItem('token', token);
-  /* #react-hook-form의 handleSubmit(onValid) 사용법 
-    > This function will receive the form data if form validation is successful.
-    > handleSubmit(async (data) => await fetchAPI(data))
-  
-  */
+
   const onValid = async (e:any) => {
     try {
       const {email, password} = getValues();
@@ -70,7 +70,25 @@ const Login:React.FC = () => {
       setToken(response.token)
       setUserId(email);
       if(response.token !== ''){
-        history.push('/')
+      //@Explain: 로그인된 유저의 isDormant가 true의 경우, 활성퐈 페이지 vs false의 경우 홈으로 이동
+        const user:IuserInfo = await (
+          await fetch('http://localhost:3000/member/getuser', {
+            headers: {
+              'Content-Type':'application/json; charset=utf-8',
+              'x-jwt': `${token}`,
+            },
+            method: 'POST',
+            body: JSON.stringify({
+              userId: email,
+            })
+          })
+        ).json();
+        if(user.isDormant === true ){
+          history.push('/member/activate');
+        } else {
+          history.push('/');
+        }
+      
       }     
       console.log('token:')
       console.log(response.token); 

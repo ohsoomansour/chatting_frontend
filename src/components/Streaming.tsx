@@ -1,9 +1,12 @@
 
 import { useEffect, useRef, useState } from 'react';
-import { io } from 'socket.io-client';
+import { Socket, io } from 'socket.io-client';
 import { useForm } from "react-hook-form";
-const sc = io('http://localhost:8080', {transports:['websocket'], path:'/webrtc'}) 
 
+interface ImsgObj{
+  msg:string;
+  img:string;
+}
 interface IFormProps {
   file: FileList
 }
@@ -58,8 +61,11 @@ export default function Streaming() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const roomInputRef = useRef<HTMLInputElement>(null);
+  const [sc, setSocket] = useState<Socket>();
+
   useEffect(() => {
-    
+    let sc = io('http://localhost:8080', {transports:['websocket'], path:'/webrtc'}) 
+    setSocket(sc)
     sc.on('room_created', async () => {
       console.log('Socket event callback: room_created');
       await setLocalStream(mediaConstraints);
@@ -191,34 +197,53 @@ export default function Streaming() {
     })
     
    //================================================ Chatting ===============================================
-   sc.on('message', (msgObj) => {
+   sc.on('message', (msgObj:ImsgObj) => {
+    
+     /* #setState((prevState) => prevState + 1); 활용 + 두 번 msgObj가 들어온다!    
+      > 문제: 처음 roomId입력 -> 참가자 입력 후 -> 메세지가 2번 랜더링 되는 현상 
+      > 추정1: React re-rendering조건 중 setMessages() 실행 후 -> re-rendering: 'state 변경이 있을 때'
+        - 리액트는 코드를 끝까지 읽은 후 setState함수들(임시 저장소)을 한 번에 업데이트 
+          그리고 나서 re-renderings 하지만 변경된 값만 다시 그려짐 버튼 태그를 다시 repainting하지 않는다.
+            setMessages([msgObj]); 이렇게 했을 때 리랜더링 때문에가 아닌 걸 알 수 있음
+     
+      > 추정2. setMessages((prev) => [...prev, msgObj]); 
+          */
+   const msg = msgObj;
+   setMessages((prev) => [...prev, msgObj]); 
+    //
     console.log('메세지 받아오는 이벤트(아래):') //이게 두 번 일어나는 것이 문제!!
     console.log(msgObj)
-    /* #setState((prevState) => prevState + 1); 활용 + 두 번 msgObj가 들어온다!    
-      > 문제: msgObj가 두 번 들어옴 
-      > 원인: 소켓이 두 개  (x) -> 서버: 한 번 받아진다 그런데! 프론트: 들어올 때가 두 번!
-    
-    */
-    setMessages((prev) => [...prev, msgObj]); 
-
-  });
+   
+      
+    });
  
 
-  sc.on('userJoined', (userInfo) => {
-    console.log(userInfo.userList);
-    setJoinedUserList(userInfo.userList);
-    
-  })
-  sc.on('participants', (p) => {
-    setParticapants(p.participant);
-  })
+    sc.on('userJoined', (userInfo) => {
+      console.log(userInfo.userList);
+      setJoinedUserList(userInfo.userList);
+      
+    })
+    sc.on('participants', (p) => {
+      setParticapants(p.participant);
+    })
 
-  
+    /*#컴포넌트가 언마운트될 때 웹 소켓연결을 닫음
+    1.dependency가 바뀌어서 effect가 달라져야 할 때 (이전 effect 청소)
+    2.해당 component가 unmount 될 때
+    */
+    return () => {
+      sc.disconnect();
+    };
   
   }, [])
   // ====================================== Chatting function ===================================
+  
   const sendMessage = () => {
-    //경우1. 메세지가 없는 경우는 당연히 보내고 
+    /*경우1.() 메세지가 없는 경우는 당연히 보내고 
+      Q.button태그가 re-rendering되어 메세지를 한 번 더 보낸다. ? 
+      A. 컴포넌트가 리랜더링 된다 그러나 변경된 부분만 변경 
+         여기서 소켓 on.('message')에서 다시 그 값을 받아오기 때문에 메세지가 두 번 
+    */ 
     if (inputMessage.trim() !== '') {
       if(userName === ''){
         console.log(userName);
@@ -226,7 +251,7 @@ export default function Streaming() {
         return new Error('닉네임 없음');
       } else {
         // 서버로 메시지 전송: 메세지 + 이미지를 같이 보낸다.
-      sc.emit('message', [`${userName}:`+ inputMessage, ImageUrl]); 
+      sc!.emit('message', [`${userName}:`+ inputMessage, ImageUrl]); 
       setInputMessage('');
       setImageUrl('');
       }
@@ -236,20 +261,21 @@ export default function Streaming() {
         alert('참가 닉네임을 설정하세요!')
         return new Error('닉네임 없음');
       } else if (ImageUrl !== ''){
-        sc.emit('message', [`${userName}:`+ inputMessage, ImageUrl]); 
+        sc!.emit('message', [`${userName}:`+ inputMessage, ImageUrl]); 
         setImageUrl('');
       }
     }
   };
   const setUName = () => {
-    sc.emit('joinRoom', { userName: userName, roomId: roomId })
+    sc!.emit('joinRoom', { userName: userName, roomId: roomId })
   }
   
   const {handleSubmit, getValues, register} = useForm<IFormProps>({
     mode:"onChange"
   })
 
-  const onSubmit = async () => {
+  const onSubmit = async (e:any) => {
+    e.preventDefault();
     try {
       setUploading(true)
       const { file  } = getValues();
@@ -282,7 +308,7 @@ export default function Streaming() {
       alert('Please type a room ID');
     } else {
       roomId= room;
-      sc.emit('join', roomId);
+      sc!.emit('join', roomId);
       showVideoConference();
     }
   }
@@ -332,7 +358,7 @@ export default function Streaming() {
       await rtcPeerConnection.setLocalDescription(sessionDescription);  //offer
       
       //송신자, offer메세지를 localDescription에 등록
-      sc.emit('webrtc_offer', {
+      sc!.emit('webrtc_offer', {
         roomId,
         type: 'webtrtc_offer',
         sdp: sessionDescription,
@@ -350,7 +376,7 @@ export default function Streaming() {
         
       });
       await rtcPeerConnection.setLocalDescription(sessionDescription);  //answer 
-      sc.emit('webrtc_answer', {
+      sc!.emit('webrtc_answer', {
         roomId,
         type: 'wetrtc_answer',
         sdp: sessionDescription,
@@ -367,7 +393,7 @@ export default function Streaming() {
   */
   function sendIceCandidate(event:RTCPeerConnectionIceEvent) {
     if (event.candidate) {
-      sc.emit('webrtc_ice_candidate', {
+      sc!.emit('webrtc_ice_candidate', {
           roomId,
           label: event.candidate.sdpMLineIndex,
           candidate: event.candidate.candidate
@@ -454,21 +480,21 @@ export default function Streaming() {
     </div>
     
     <div>
-      <h1>Streaming</h1>
-      <h3>방에 참가되어 있는 유저이름</h3>
+      <h1 className='text-lg font-bold'>Streaming</h1>
+      <h3 className='text-lg font-bold'>방에 참가되어 있는 유저이름</h3>
       <div>
         {joinedUserList && joinedUserList!.map((user, index) => (
           <div key={index}>{user}님 </div>
         
         ))}
 
-      <h3>안내</h3>  
+      <h3 className='text-lg font-bold'>안내</h3>  
         {joinedUserList && particapants!.map((userName, index) => (
           <div key={index}>{userName}</div>
         ))}
 
       </div>
-      <h3>대화 내용</h3>
+      <h3 className='text-lg font-bold'>대화 내용</h3>
       <div>
         {messages && messages.map((message, index ) => (
           <div>
@@ -487,6 +513,7 @@ export default function Streaming() {
       <div>
       닉네임:
       <input
+        className='input'
         type="text"
         value={userName}
         onChange={(e) => setUsername(e.target.value)}
@@ -494,14 +521,15 @@ export default function Streaming() {
       <button onClick={setUName}>참가</button>
       message:
       <input
+        className='input'
         type="text"
         value={inputMessage}
         onChange={(e) => setInputMessage(e.target.value)}
       />
-      <button onClick={sendMessage}>Send</button>
+      <button onClick={() => sendMessage()}>Send</button>
       </div>
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit((e) => onSubmit(e))}
       >
         <input
           {...register("file", { required: true })}

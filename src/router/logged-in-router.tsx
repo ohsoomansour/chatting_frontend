@@ -10,8 +10,11 @@ import React from "react";
 import { SignUpForMember } from "../pages/signUpForMember";
 import {ManageMembers} from "../pages/manageMembers";
 import { EditUserInfo } from "../pages/editUserInfo";
+import { ActiveAccount } from "../components/activeAccount";
+import { Home } from "../components/home";
 
 const commonRoutes = [
+  {path: "/", component: <Home />},
   {path: "/login", component: <Login />},
   {path:"/create-account", component: <SignUpForMember /> },
   
@@ -23,7 +26,8 @@ const adminRoutes = [
   {path: "/admin", component: <ManageMembers />}
 ]
 const userRoutes = [
-  {path: "/member/privateInfo", component: <EditUserInfo />}
+  {path: "/member/privateInfo", component: <EditUserInfo />},
+  {path: "/member/activate", component: <ActiveAccount /> }
 ]
 
 

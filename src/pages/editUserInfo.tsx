@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form"
 import { FormError } from "../components/form-error";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { tokenState } from "../recoil_token";
 import { useState } from "react";
 import { userIdState } from "../recoil_user";
@@ -10,13 +10,24 @@ interface IeditUserInfo{
   password:string;
   address:string;
 }
+
+export interface IuserInfo{
+  id:number;
+  userId:string;
+  password:string;
+  name:string;
+  address: string;
+  memberRole:string;
+  lastActivityAt: Date;
+  isDormant: boolean;
+}
 export const EditUserInfo  = () => {
-  
-  const {register, getValues, formState:{errors}, handleSubmit} = useForm<IeditUserInfo>({"mode": "onChange"})
+  const {register, getValues, formState:{errors} } = useForm<IeditUserInfo>({"mode": "onChange"})
   const token = useRecoilValue(tokenState);
-  const userId = useRecoilValue<string>(userIdState);
+  const [userId, setUserId] = useRecoilState<string>(userIdState);
+  console.log('sessionStorage의 현재 userId:')
   console.log(userId);
-  const [id, setId] = useState<number>();
+
   const headers = new Headers({
     'Content-Type':'application/json; charset=utf-8',
     'x-jwt': `${token}`,
@@ -25,10 +36,10 @@ export const EditUserInfo  = () => {
     e.preventDefault(); //새로고침 방지
     //#기존의 id와 member를 불러와야 됨
     const {email, password, address } = getValues() //이건 변경된 email 
-    console.log(email, password, address) //
+    console.log(email, password, address) 
    // #구분을 id로 지정
-    const id:number = await (
-      await fetch('http://localhost:3000/member/getid', {
+    const user:IuserInfo = await (
+      await fetch('http://localhost:3000/member/getuser', {
         headers: headers,
         method: 'POST',
         body: JSON.stringify({
@@ -36,12 +47,12 @@ export const EditUserInfo  = () => {
         })
       })
     ).json();
-      
+    setUserId(email);  
     //setId(result);
     console.log('prevUserId_id:');
-    console.log(id);
-    const member = await (
-      await fetch(`http://localhost:3000/member/update/${id}`, {
+    console.log(user);
+    const upDatedmember = await (
+      await fetch(`http://localhost:3000/member/update/${user.id}`, {
         headers: headers,
         method: 'PATCH',
         body: JSON.stringify({
@@ -53,7 +64,7 @@ export const EditUserInfo  = () => {
     ).json(); 
       
     console.log('Client가 editProfile 실행한 결과:')
-    console.log(member);
+    console.log(upDatedmember);
   }
 
   return (

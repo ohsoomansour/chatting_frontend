@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button } from "./Button";
 import { useRecoilValue } from "recoil";
 import { tokenState } from "../recoil_token";
 
@@ -22,16 +21,14 @@ interface IschUser{
   isDormant:boolean | null;
   memberRole:string;
 }
-interface IclosePopup{
-  closePopup: () => void;
-}
+
 //로직: props로 members는 전체 회원, searchedMember
 // 파라미터{prop1, prop2}:{prop1:Imember[], prop2:}
 const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUser, isAll:boolean}) => {
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [id, setId] = useState(0);
   const token = useRecoilValue(tokenState)
-  const {getValues, register,handleSubmit, formState} = useForm()
+  const {getValues, register} = useForm()
   const openPopup = () => {
     setPopupOpen(true);
   };
@@ -129,8 +126,8 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
                 <option value="admin">admin</option>
               </select>
             <button
-             onClick={onModify}
-             className="text-white font-semibold py-3 px-4 mt-5 border rounded hover:bg-slate-600">Submit</button>
+              onClick={onModify}
+              className="text-white font-semibold py-3 px-4 mt-5 border rounded hover:bg-slate-600">Submit</button>
             </div>
           </form> 
             <button

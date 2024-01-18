@@ -126,7 +126,6 @@ export const ManageMembers:React.FC = () => {
           <button onClick={() => searchAmember()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline-blue">검색</button>
           
         </div >
-        
         <button onClick={() => getMembers()} className="bg-blue-500 text-white font-bold transition-colors  hover:bg-blue-700  py-2 px-4 mr-2 rounded focus:outline-none focus:shadow-outline-blue">회원 전체 조회</button>
         <button onClick={inactivateAccount} className=" bg-green-400 text-white font-bold transition-colors hover:bg-slate-600  py-2 px-4 rounded focus:outline-none focus:shadow-outline-black">회원 계정 비활성화</button>
       </div>
