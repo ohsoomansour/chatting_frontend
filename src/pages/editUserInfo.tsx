@@ -51,7 +51,7 @@ export const EditUserInfo  = () => {
     //setId(result);
     console.log('prevUserId_id:');
     console.log(user);
-    const upDatedmember = await (
+    const result = await (
       await fetch(`http://localhost:3000/member/update/${user.id}`, {
         headers: headers,
         method: 'PATCH',
@@ -64,7 +64,7 @@ export const EditUserInfo  = () => {
     ).json(); 
       
     console.log('Client가 editProfile 실행한 결과:')
-    console.log(upDatedmember);
+    console.log(result);
   }
 
   return (

@@ -70,7 +70,7 @@ const Login:React.FC = () => {
       setToken(response.token)
       setUserId(email);
       if(response.token !== ''){
-      //@Explain: 로그인된 유저의 isDormant가 true의 경우, 활성퐈 페이지 vs false의 경우 홈으로 이동
+      //@Explain: 로그인된 유저의 isDormant가 true의 경우, 활성화 페이지 vs false의 경우 홈으로 이동
         const user:IuserInfo = await (
           await fetch('http://localhost:3000/member/getuser', {
             headers: {
