@@ -219,6 +219,7 @@ export default function Streaming() {
  
 
     sc.on('userJoined', (userInfo) => {
+      console.log('userJoin 이벤트의 userInfo.userList:')
       console.log(userInfo.userList);
       setJoinedUserList(userInfo.userList);
       
@@ -479,23 +480,28 @@ export default function Streaming() {
       <video id="remote-video" autoPlay loop muted width="100%" height="100%" ref={remoteVideoRef}> </video>
     </div>
     
-    <div>
-      <h1 className='text-lg font-bold'>Streaming</h1>
-      <h3 className='text-lg font-bold'>방에 참가되어 있는 유저이름</h3>
-      <div>
-        {joinedUserList && joinedUserList!.map((user, index) => (
-          <div key={index}>{user}님 </div>
-        
-        ))}
-
-      <h3 className='text-lg font-bold'>안내</h3>  
-        {joinedUserList && particapants!.map((userName, index) => (
-          <div key={index}>{userName}</div>
-        ))}
-
+    <div className='flex-1 flex flex-col items-center justify-center'>
+    
+      <div className="w-2/4 bg-slate-400 text-white p-4">
+        <h1 className="text-2xl font-semibold mb-4">Users in this room</h1>
+        <ul>
+          {joinedUserList && joinedUserList!.map((user, index) => (
+            <li key={index} className="mb-2">{user}님 </li>
+          ))}
+        </ul>
       </div>
+
+      <div className="w-2/4 bg-slate-400 text-white p-4 " >
+        <h1 className="text-2xl text-center font-semibold mb-4">📢안내</h1>
+        <ul>
+        {joinedUserList && particapants!.map((userName, index) => (
+            <li key={index}>{userName}</li>
+          ))}
+        </ul>
+      </div>
+     
       <h3 className='text-lg font-bold'>대화 내용</h3>
-      <div>
+      <div className='custom-scrollbar w-2/4 h-64 overflow-y-scroll overflow-x-scroll'>
         {messages && messages.map((message, index ) => (
           <div>
             <p key={index}>{message.msg}</p>
@@ -513,7 +519,7 @@ export default function Streaming() {
       <div>
       닉네임:
       <input
-        className='input'
+        className='flex-1 mr-2 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300'
         type="text"
         value={userName}
         onChange={(e) => setUsername(e.target.value)}
@@ -521,7 +527,7 @@ export default function Streaming() {
       <button onClick={setUName}>참가</button>
       message:
       <input
-        className='input'
+        className='flex-1 mr-2 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300'
         type="text"
         value={inputMessage}
         onChange={(e) => setInputMessage(e.target.value)}
