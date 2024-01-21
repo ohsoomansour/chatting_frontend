@@ -1,5 +1,5 @@
 
-import { useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
 import { useForm } from "react-hook-form";
 
@@ -43,6 +43,10 @@ interface IProps {
 }
 
 export default function Streaming() {
+  const [sc, setSocket] = useState<Socket>();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const roomInputRef = useRef<HTMLInputElement>(null);
   const [messages, setMessages] = useState<IProps[]>([{msg:'', img: ''}]);
   console.log("messages현재 값:")
   console.log(messages)
@@ -57,12 +61,7 @@ export default function Streaming() {
   console.log(ImageUrl);
   console.log("recImgURL:")
   console.log(recImgURL);
-  // 방 참가 버튼: roomInput의 input태그에서 값을 가져와야 된다.
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const roomInputRef = useRef<HTMLInputElement>(null);
-  const [sc, setSocket] = useState<Socket>();
-
+  const [isChecked, setChecked] = useState(false);
   useEffect(() => {
     let sc = io('http://localhost:8080', {transports:['websocket'], path:'/webrtc'}) 
     setSocket(sc)
@@ -465,6 +464,16 @@ export default function Streaming() {
   }
   // ====================================== Conference function End ===================================
    
+  //============================================ Toggle ==============================================
+  
+  const handleOnCheck = (event:ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.target.checked;
+    //event.target.checked 속성을 사용하여 checkbox의 체크 여부를 확인
+    setChecked(isChecked);
+    console.log('isChecked:')
+    console.log(isChecked);
+  } 
+
   return (
   <div>
     <div id="room-selection-container" className='centered' >
@@ -479,6 +488,18 @@ export default function Streaming() {
       <video id="local-video" autoPlay loop muted width="100%" height="100%" ref={videoRef} ></video>
       <video id="remote-video" autoPlay loop muted width="100%" height="100%" ref={remoteVideoRef}> </video>
     </div>
+    
+    <label className="relative flex justify-between items-center group p-2 text-xl">
+      <input 
+        type="checkbox" 
+        className="tpggle absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md" 
+        checked={isChecked}
+        onChange={handleOnCheck}
+        />
+        
+      <span className="w-16 h-10 flex items-center flex-shrink-0 ml-4 p-1 bg-gray-300 rounded-full duration-300 ease-in-out peer-checked:bg-green-400 after:w-8 after:h-8 after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-6 group-hover:after:translate-x-1"></span>
+    </label>
+
     
     <div className='flex-1 flex flex-col items-center justify-center'>
     
