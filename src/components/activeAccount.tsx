@@ -1,7 +1,7 @@
 import { useRecoilValue } from "recoil";
 import { IuserInfo } from "../pages/editUserInfo";
-import { tokenState } from "../recoil_token";
-import { userIdState } from "../recoil_user";
+import { tokenState } from "../recoil/atom_token";
+import { userIdState } from "../recoil/atom_user";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 

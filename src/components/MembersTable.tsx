@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRecoilValue } from "recoil";
-import { tokenState } from "../recoil_token";
+import { tokenState } from "../recoil/atom_token";
 
 interface Imember {
   id:number;

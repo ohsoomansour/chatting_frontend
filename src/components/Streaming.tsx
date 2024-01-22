@@ -1,14 +1,26 @@
-
+/**/
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
 import { useForm } from "react-hook-form";
-
+import styled from 'styled-components';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { isDarkAtom } from '../recoil/atom_Theme';
+//배경: 진한 그레이 -> 채팅창: 형광
+const StreamingWrapper  = styled.div`
+`
+const ChatWrapper = styled.div<{accentColor: string}>`
+  
+`
 interface ImsgObj{
   msg:string;
   img:string;
 }
 interface IFormProps {
   file: FileList
+}
+interface IProps {
+  msg:string;
+  img:string;
 }
 //DOM elements.
 //var srcObject: any;
@@ -37,16 +49,14 @@ const iceServers = {
     { urls: 'stun:stun4.l.google.com:19302'},
   ]
 }
-interface IProps {
-  msg:string;
-  img:string;
-}
+
 
 export default function Streaming() {
-  const [sc, setSocket] = useState<Socket>();
+  const setDarkAtom = useSetRecoilState(isDarkAtom);
   const videoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const roomInputRef = useRef<HTMLInputElement>(null);
+  const [sc, setSocket] = useState<Socket>();
   const [messages, setMessages] = useState<IProps[]>([{msg:'', img: ''}]);
   console.log("messages현재 값:")
   console.log(messages)
@@ -467,9 +477,10 @@ export default function Streaming() {
   //============================================ Toggle ==============================================
   
   const handleOnCheck = (event:ChangeEvent<HTMLInputElement>) => {
-    const isChecked = event.target.checked;
     //event.target.checked 속성을 사용하여 checkbox의 체크 여부를 확인
-    setChecked(isChecked);
+    //<input> 태그의 checked 속성은 페이지가 로드될 때 미리 선택될 <input> 요소를 명시
+    const isChecked = event.target.checked;
+    setDarkAtom(isChecked)
     console.log('isChecked:')
     console.log(isChecked);
   } 
@@ -502,7 +513,6 @@ export default function Streaming() {
 
     
     <div className='flex-1 flex flex-col items-center justify-center'>
-    
       <div className="w-2/4 bg-slate-400 text-white p-4">
         <h1 className="text-2xl font-semibold mb-4">Users in this room</h1>
         <ul>

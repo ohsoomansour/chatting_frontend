@@ -35,10 +35,10 @@ import { useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
 import { Button } from "../components/Button";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import {  tokenState } from "../recoil_token";
+import {  tokenState } from "../recoil/atom_token";
 import { useRecoilState} from 'recoil';
 import { FormError } from "../components/form-error";
-import { userIdState } from "../recoil_user";
+import { userIdState } from "../recoil/atom_user";
 import { IuserInfo } from "./editUserInfo";
 
 interface ILoginForm {
