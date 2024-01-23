@@ -7,9 +7,10 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { isDarkAtom } from '../recoil/atom_Theme';
 //배경: 진한 그레이 -> 채팅창: 형광
 const StreamingWrapper  = styled.div`
+  background-color: ${(props) => props.theme.bgColor}
 `
-const ChatWrapper = styled.div<{accentColor: string}>`
-  
+const ChatWrapper = styled.div`
+  border: ${(props) => `2px solid ${props.theme.accentColor}`}
 `
 interface ImsgObj{
   msg:string;
@@ -67,11 +68,7 @@ export default function Streaming() {
   const [uploading, setUploading] = useState(false)
   const [ImageUrl, setImageUrl] = useState<string>("")
   const [recImgURL, setRecImgURL] = useState<string[]>([""]);
-  console.log("ImageUrl:")
-  console.log(ImageUrl);
-  console.log("recImgURL:")
-  console.log(recImgURL);
-  const [isChecked, setChecked] = useState(false);
+
   useEffect(() => {
     let sc = io('http://localhost:8080', {transports:['websocket'], path:'/webrtc'}) 
     setSocket(sc)
@@ -131,15 +128,8 @@ export default function Streaming() {
     })
     
     sc.on('webrtc_offer', async (webrtc_offer_event) => {
-      
       console.log(`Socekt event callback: webrtc_offer ${webrtc_offer_event}`);
-      
-      /*#console.log(webrtc_offer_event)
-        roomId: "5"
-        sdp: {type: 'offer', sdp: 'v=0\r\no=- 7646319231209757540 2 IN IP4 127.0.0.1\r\ns…f90e898684 787b5738-17e8-4765-8397-e8d8d4607986\r\n'}
-        type: "wetrtc_offer"
-      */
-      //test isRoomCreator = false; 
+  
       if(!isRoomCreator) {
         //자신의 Public Address를 알아내고 === 공인 ip와 port를 찾아줌
         rtcPeerConnection = new RTCPeerConnection(iceServers);
@@ -207,7 +197,6 @@ export default function Streaming() {
     
    //================================================ Chatting ===============================================
    sc.on('message', (msgObj:ImsgObj) => {
-    
      /* #setState((prevState) => prevState + 1); 활용 + 두 번 msgObj가 들어온다!    
       > 문제: 처음 roomId입력 -> 참가자 입력 후 -> 메세지가 2번 랜더링 되는 현상 
       > 추정1: React re-rendering조건 중 setMessages() 실행 후 -> re-rendering: 'state 변경이 있을 때'
@@ -217,14 +206,8 @@ export default function Streaming() {
      
       > 추정2. setMessages((prev) => [...prev, msgObj]); 
           */
-   const msg = msgObj;
-   setMessages((prev) => [...prev, msgObj]); 
-    //
-    console.log('메세지 받아오는 이벤트(아래):') //이게 두 번 일어나는 것이 문제!!
-    console.log(msgObj)
-   
-      
-    });
+    setMessages((prev) => [...prev, msgObj]); 
+  });
  
 
     sc.on('userJoined', (userInfo) => {
@@ -476,7 +459,8 @@ export default function Streaming() {
    
   //============================================ Toggle ==============================================
   
-  const handleOnCheck = (event:ChangeEvent<HTMLInputElement>) => {
+  const handleOnCheck = (event:any) => {
+    //:ChangeEvent<HTMLInputElement>
     //event.target.checked 속성을 사용하여 checkbox의 체크 여부를 확인
     //<input> 태그의 checked 속성은 페이지가 로드될 때 미리 선택될 <input> 요소를 명시
     const isChecked = event.target.checked;
@@ -486,7 +470,7 @@ export default function Streaming() {
   } 
 
   return (
-  <div>
+  <StreamingWrapper>
     <div id="room-selection-container" className='centered' >
       <h1>WebRTC video Conference</h1>
       <label>Enter the number of the room you want to connect</label>
@@ -501,18 +485,17 @@ export default function Streaming() {
     </div>
     
     <label className="relative flex justify-between items-center group p-2 text-xl">
-      <input 
+      <input
         type="checkbox" 
-        className="tpggle absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md" 
-        checked={isChecked}
+        className="toggle absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md" 
         onChange={handleOnCheck}
-        />
-        
+      />
       <span className="w-16 h-10 flex items-center flex-shrink-0 ml-4 p-1 bg-gray-300 rounded-full duration-300 ease-in-out peer-checked:bg-green-400 after:w-8 after:h-8 after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-6 group-hover:after:translate-x-1"></span>
     </label>
+    
 
     
-    <div className='flex-1 flex flex-col items-center justify-center'>
+    <ChatWrapper className='flex-1 flex flex-col items-center justify-center'>
       <div className="w-2/4 bg-slate-400 text-white p-4">
         <h1 className="text-2xl font-semibold mb-4">Users in this room</h1>
         <ul>
@@ -575,10 +558,10 @@ export default function Streaming() {
         />  
         <button>이미지 올리기</button>
       </form>
-    </div>
+    </ChatWrapper>
     
 
-  </div>
+  </StreamingWrapper>
   
   )
 } 
