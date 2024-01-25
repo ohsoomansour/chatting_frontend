@@ -6,17 +6,49 @@
  > npx gltfjsx [파일명].jsx
  4. glb 혹은 gltf 파일 valid test site: https://github.khronos.org/glTF-Validator/
  
-*/
+ 멀리서 걸어서? 다가오는 기능으로 적합
+ useFrame((state, delta) => (groupRef.current.position.x += delta))
+  Q.GLB파일에서 애니매이션 데이터 값 불러오는 방법
+  Q. requestAnimationFrame?
+  Q. react-three/fiber에서 requestAnimationFrame 방법
+  Q.로드된 3d모델링을 움직이는 방법
+  A.Object3D의 속성을 조작
+  
+  Q. blender 3D TOOL을 통해 애니메이션 값 까지 가져오는 방법(추론상 적절)
+     keyframe > 3
+     
 
-import React, { useRef } from 'react'
+*/
+//---------------------------------- 테스트 중 -----------------------------------
+import React, { useRef, useEffect } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
+//---------------------------------- -----------------------------------------------------
+import * as THREE from 'three';
+import {  useFrame, useLoader } from '@react-three/fiber'
+
 
 export function DogRobot(props) {
-  const group = useRef()
+  const groupRef = useRef()
+  //---------------------------------- 테스트 중 -----------------------------------
+  
+
+
+
+
+//---------------------------------- -----------------------------------------------------
+
+
+  
   const { nodes, materials, animations } = useGLTF('/models/dogRobot.glb')
-  const { actions } = useAnimations(animations, group)
+  //animation
+  console.log('DogROBOT:')
+  console.log(nodes);
+  //const { actions } = useAnimations(animations, group)
+  //useFrame((state, delta) => (groupRef.current.position.x += delta))
+  
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group ref={groupRef} {...props} dispose={null}>
       <group name="Sketchfab_Scene">
         <group name="Sketchfab_model" rotation={[-Math.PI / 2, 0, 0]}>
           <group name="WALKfbx" rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
@@ -64,11 +96,17 @@ export function DogRobot(props) {
                       </group>
                     </group>
                     <mesh name="SPOT_BODY__0" geometry={nodes.SPOT_BODY__0.geometry} material={materials['Scene_-_Root']} />
+
+
+
+
                   </group>
                   <group name="FRONLT_R_LEG_CONTROL" position={[-41.806, -1.347, 170.71]} rotation={[-2.444, 0, 0]} />
                   <group name="FRONT_L_LEG_CONTROL" position={[42.525, -1.167, 29.773]} rotation={[-2.245, 0, 0]} />
                   <group name="REAR_R_LEG_CONTROL" position={[-44.064, -1.992, -158.474]} rotation={[-2.553, 0, 0]} />
                   <group name="REAR_L_LEG_CONTROL" position={[43.584, -0.817, -19.318]} rotation={[-1.992, 0, 0]} />
+                  
+                
                 </group>
               </group>
             </group>
