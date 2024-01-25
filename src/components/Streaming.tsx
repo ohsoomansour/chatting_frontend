@@ -1,16 +1,17 @@
 /**/
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
 import { useForm } from "react-hook-form";
 import styled from 'styled-components';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import {  useSetRecoilState } from 'recoil';
 import { isDarkAtom } from '../recoil/atom_Theme';
-//배경: 진한 그레이 -> 채팅창: 형광
+
 const StreamingWrapper  = styled.div`
-  background-color: ${(props) => props.theme.bgColor}
+  background-color: ${(props) => props.theme.bgColor};
 `
-const ChatWrapper = styled.div`
-  border: ${(props) => `2px solid ${props.theme.accentColor}`}
+const ChatContent = styled.div`
+  border: ${(props) => `4px solid ${props.theme.accentColor}`};
+  color:${(props) => props.theme.textColor};
 `
 interface ImsgObj{
   msg:string;
@@ -484,28 +485,27 @@ export default function Streaming() {
       <video id="remote-video" autoPlay loop muted width="100%" height="100%" ref={remoteVideoRef}> </video>
     </div>
     
-    <label className="relative flex justify-between items-center group p-2 text-xl">
-      <input
-        type="checkbox" 
-        className="toggle absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md" 
-        onChange={handleOnCheck}
-      />
-      <span className="w-16 h-10 flex items-center flex-shrink-0 ml-4 p-1 bg-gray-300 rounded-full duration-300 ease-in-out peer-checked:bg-green-400 after:w-8 after:h-8 after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-6 group-hover:after:translate-x-1"></span>
-    </label>
+    
     
 
     
-    <ChatWrapper className='flex-1 flex flex-col items-center justify-center'>
-      <div className="w-2/4 bg-slate-400 text-white p-4">
+    <div className='flex-1 flex flex-col items-center justify-center'>
+      <label className="relative flex justify-between items-center group p-2 text-xl">
+        <input
+          type="checkbox" 
+          className="toggle absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md" 
+          onChange={handleOnCheck}
+        />
+        <span className="w-16 h-10 flex items-center flex-shrink-0 ml-4 p-1 bg-gray-300 rounded-full duration-300 ease-in-out peer-checked:bg-green-400 after:w-8 after:h-8 after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-6 group-hover:after:translate-x-1"></span>
+      </label>
+      <div className="rounded-lg w-2/4 bg-slate-400 text-white p-4">
         <h1 className="text-2xl font-semibold mb-4">Users in this room</h1>
         <ul>
           {joinedUserList && joinedUserList!.map((user, index) => (
             <li key={index} className="mb-2">{user}님 </li>
           ))}
         </ul>
-      </div>
 
-      <div className="w-2/4 bg-slate-400 text-white p-4 " >
         <h1 className="text-2xl text-center font-semibold mb-4">📢안내</h1>
         <ul>
         {joinedUserList && particapants!.map((userName, index) => (
@@ -513,40 +513,40 @@ export default function Streaming() {
           ))}
         </ul>
       </div>
-     
-      <h3 className='text-lg font-bold'>대화 내용</h3>
-      <div className='custom-scrollbar w-2/4 h-64 overflow-y-scroll overflow-x-scroll'>
-        {messages && messages.map((message, index ) => (
-          <div>
-            <p key={index}>{message.msg}</p>
-            <img alt='' src={message.img} style={{ width: "200px"}}/>
-          </div>
-        ))}
-        
-        { recImgURL && recImgURL.map((img, index) => (
-          <div> 
-            <img key={index} alt='' src={img} style={{ width: "200px"}}/>
-          </div>
-        ))}
-      </div>
 
+        <ChatContent className='rounded-lg custom-scrollbar w-2/4 h-64 overflow-y-scroll overflow-x-scroll'>
+          <h3 className='text-lg text-center mt-2 font-bold'>대화 내용</h3>
+          {messages && messages.map((message, index ) => (
+            <div>
+              <p className='ml-2' key={index}>{message.msg}</p>
+              <img  alt='' src={message.img} style={{ width: "200px"}}/>
+            </div>
+          ))}
+          
+          { recImgURL && recImgURL.map((img, index) => (
+            <div> 
+              <img key={index} alt='' src={img} style={{ width: "200px"}}/>
+            </div>
+          ))}
+        </ChatContent>
+ 
       <div>
-      닉네임:
-      <input
-        className='flex-1 mr-2 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300'
-        type="text"
-        value={userName}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <button onClick={setUName}>참가</button>
-      message:
-      <input
-        className='flex-1 mr-2 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300'
-        type="text"
-        value={inputMessage}
-        onChange={(e) => setInputMessage(e.target.value)}
-      />
-      <button onClick={() => sendMessage()}>Send</button>
+        닉네임:
+        <input
+          className='flex-1 mr-2 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300'
+          type="text"
+          value={userName}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <button onClick={setUName}>참가</button>
+        message:
+        <input
+          className='flex-1 mr-2 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300'
+          type="text"
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
+        />
+        <button onClick={() => sendMessage()}>Send</button>
       </div>
       <form
         onSubmit={handleSubmit((e) => onSubmit(e))}
@@ -558,7 +558,7 @@ export default function Streaming() {
         />  
         <button>이미지 올리기</button>
       </form>
-    </ChatWrapper>
+    </div>
     
 
   </StreamingWrapper>

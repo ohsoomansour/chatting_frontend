@@ -25,6 +25,7 @@
   },
   "include": [
     "src",
-    "postcss.config.js"
+    "postcss.config.js",
+    "public/models/three.js"
   ]
 }
