@@ -6,17 +6,7 @@
  > npx gltfjsx [파일명].jsx
  4. glb 혹은 gltf 파일 valid test site: https://github.khronos.org/glTF-Validator/
  
- 멀리서 걸어서? 다가오는 기능으로 적합
- useFrame((state, delta) => (groupRef.current.position.x += delta))
-  Q.GLB파일에서 애니매이션 데이터 값 불러오는 방법
-  Q. requestAnimationFrame?
-  Q. react-three/fiber에서 requestAnimationFrame 방법
-  Q.로드된 3d모델링을 움직이는 방법
-  A.Object3D의 속성을 조작
   
-  Q. blender 3D TOOL을 통해 애니메이션 값 까지 가져오는 방법(추론상 적절)
-     keyframe > 3
-     
 
 */
 //---------------------------------- 테스트 중 -----------------------------------

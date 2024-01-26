@@ -6,6 +6,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
 export const MoveRobot = () =>{
   let mixer;
   const gltf = useLoader(GLTFLoader, '/models/dogRobot.glb');
+  console.log('gltf:');
+  console.log(gltf)
   if(gltf.animations.length){
     mixer = new THREE.AnimationMixer(gltf.scene)
     gltf.animations.forEach(clip => {
@@ -16,7 +18,7 @@ export const MoveRobot = () =>{
   useFrame((state, delta) => {
     mixer?.update(delta)
   })
-
+  
   return (
     <primitive 
         object={gltf.scene}
