@@ -10,7 +10,7 @@ const Col = styled.div`
   display: flex;
   align-items: center;
 `;
-const Nav = styled.nav`
+const Nav = styled(motion.nav)`
   display:flex;
   justify-content: flex-end;
 `
@@ -26,7 +26,7 @@ const OffSvg = styled.svg`
 
 
 export const Header: React.FC = () => {
-  const inputAnimation = useAnimation();
+  const headerAnimation = useAnimation();
   const [headerOpen, setHeaderOpen] = useState(false);
   const history = useHistory() 
   const onLogOut = () => {
@@ -39,13 +39,13 @@ export const Header: React.FC = () => {
      // false === scaleX:0  "trigger the close animation"
      setHeaderOpen((prev) => !prev);
     if (headerOpen) {
-      inputAnimation.start({
-         scaleX:0,   
+      headerAnimation.start({
+         scaleX:1,   
       })
     // trigger the open animation: headerOpen이 true의 경우 
     } else {
-      inputAnimation.start({
-         scaleX: 1,
+      headerAnimation.start({
+         scaleX: 0,
       })
       
     }
@@ -53,25 +53,17 @@ export const Header: React.FC = () => {
   }
 
   return(
-
-    <Nav className=" max-w-xl mx-auto bg-white p-6 rounded-md shadow-md">
-     <Col> 
-      <motion.svg
-        onClick={toggleSearch}
-        animate={{ x: headerOpen ? -500: 0 }}
+   <motion.div>
+    <Nav 
+      className=" max-w-xl mx-auto bg-white p-6 rounded-md shadow-md"
+      initial={{ scaleX: 1}} //랜더링 되었을 때 값 
+        animate={headerAnimation}
         transition={{ type: "linear" }}
-        fill="black"
-        viewBox="0 0 512 512"
       >
-        <motion.path 
-          d="M500.3 443.7l-119.7-119.7c27.22-40.41 40.65-90.9 33.46-144.7C401.8 87.79 326.8 13.32 235.2 1.723C99.01-15.51-15.51 99.01 1.724 235.2c11.6 91.64 86.08 166.7 177.6 178.9c53.8 7.189 104.3-6.236 144.7-33.46l119.7 119.7c15.62 15.62 40.95 15.62 56.57 0C515.9 484.7 515.9 459.3 500.3 443.7zM79.1 208c0-70.58 57.42-128 128-128s128 57.42 128 128c0 70.58-57.42 128-128 128S79.1 278.6 79.1 208z"
-        />
-      </motion.svg>
+     <Col> 
+      
       <motion.div
-        className=" flex"
-        initial={{ scaleX: 0}} //랜더링 되었을 때 값 
-        animate={{x: headerOpen ? -500: 0}}
-        transition={{ type: "linear" }}
+        
       >
         <Link to="/streaming">스트리밍</Link>
         <Button onClick={() => onLogOut()} className=" flex flex-col items-center gap-2 font-semibold">
@@ -80,9 +72,17 @@ export const Header: React.FC = () => {
           </OffSvg>
         </Button>
       </motion.div>
+      
       </Col>
     </Nav>
-
+    <motion.button
+        onClick={toggleSearch}
+       
+        transition={{ type: "linear" }}
+      >
+        헤더 컨트롤러
+      </motion.button>
+    </motion.div>
 
   )
 }
