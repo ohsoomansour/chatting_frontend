@@ -11,7 +11,7 @@ import { SignUpForMember } from "../pages/signUpForMember";
 import {ManageMembers} from "../pages/manageMembers";
 import { EditUserInfo } from "../pages/editUserInfo";
 import { ActiveAccount } from "../components/activeAccount";
-import { Home } from "../components/home";
+import { Home } from "../pages/home";
 
 const commonRoutes = [
   {path: "/", component: <Home />},

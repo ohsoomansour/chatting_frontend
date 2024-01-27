@@ -10,27 +10,15 @@
 
 */
 //---------------------------------- 테스트 중 -----------------------------------
-import React, { useRef, useEffect } from 'react'
-import { useGLTF, useAnimations } from '@react-three/drei'
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
+import React, { useRef} from 'react'
+import { useGLTF } from '@react-three/drei'
+
 //---------------------------------- -----------------------------------------------------
-import * as THREE from 'three';
-import {  useFrame, useLoader } from '@react-three/fiber'
 
 
 export function DogRobot(props) {
   const groupRef = useRef()
-  //---------------------------------- 테스트 중 -----------------------------------
-  
-
-
-
-
-//---------------------------------- -----------------------------------------------------
-
-
-  
-  const { nodes, materials, animations } = useGLTF('/models/dogRobot.glb')
+  const { nodes, materials } = useGLTF('/models/dogRobot.glb')
   //animation
   console.log('DogROBOT:')
   console.log(nodes);
