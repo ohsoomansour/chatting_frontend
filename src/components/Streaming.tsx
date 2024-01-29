@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import styled from 'styled-components';
 import {  useSetRecoilState } from 'recoil';
 import { isDarkAtom } from '../recoil/atom_Theme';
+import ReactPlayer from "react-player";
+
 
 const StreamingWrapper  = styled.div`
   background-color: ${(props) => props.theme.bgColor};
@@ -269,7 +271,6 @@ export default function Streaming() {
   })
 
   const onSubmit = async (e:any) => {
-    e.preventDefault();
     try {
       setUploading(true)
       const { file  } = getValues();

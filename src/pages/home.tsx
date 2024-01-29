@@ -32,7 +32,7 @@ export const Home = () => {
   return(
     <div>
       <h1 className=" text-lg font-bold text-center mt-6">Welcome to Robot Trader </h1>
-      <Header />
+      
       
       <Canvas>
       <OrbitControls autoRotate={true}/>

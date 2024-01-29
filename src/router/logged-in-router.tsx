@@ -5,20 +5,13 @@
 */
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Streaming from "../components/Streaming";
-import Login from "../pages/logIn";
 import React from "react";
-import { SignUpForMember } from "../pages/signUpForMember";
 import {ManageMembers} from "../pages/manageMembers";
 import { EditUserInfo } from "../pages/editUserInfo";
 import { ActiveAccount } from "../components/activeAccount";
 import { Home } from "../pages/home";
+import { Header } from "../components/header";
 
-const commonRoutes = [
-  {path: "/", component: <Home />},
-  {path: "/login", component: <Login />},
-  {path:"/create-account", component: <SignUpForMember /> },
-  
-]
 const accountRoutes = [
   {path: "/streaming", component: <Streaming />},
 ]
@@ -26,6 +19,7 @@ const adminRoutes = [
   {path: "/admin", component: <ManageMembers />}
 ]
 const userRoutes = [
+  {path: "/", component: <Home />},
   {path: "/member/privateInfo", component: <EditUserInfo />},
   {path: "/member/activate", component: <ActiveAccount /> }
 ]
@@ -36,15 +30,12 @@ export const LoggedInRouter = () => {
   return (
     <BrowserRouter>
     <React.StrictMode>
+      <Header />
       <Switch>
-      {commonRoutes.map((route, index) => (
-          <Route key={index} exact path={route.path}>
-            {route.component}
-          </Route>
-      ))}  
+
       {accountRoutes.map((route, index) => (
           <Route key={index} exact path={route.path}>
-            {route.component}
+            {route.component  }
           </Route>
       ))}  
       {adminRoutes.map((route, index) => (
@@ -54,7 +45,8 @@ export const LoggedInRouter = () => {
       ))}
       {userRoutes.map((route, index) => (
         <Route key={index} exact path={route.path}>
-          {route.component}
+          
+          {route.component }
         </Route>
       ))}
       </Switch>
