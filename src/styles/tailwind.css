@@ -37,7 +37,7 @@
   #toggle:checked + #toggle-dot + #toggle-text {
     color: #38a169; /* On 상태의 텍스트 색상 */
   }
-
+  
 
   
 @tailwind utilities;

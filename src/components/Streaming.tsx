@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
-import { useForm } from "react-hook-form";
 import styled from 'styled-components';
 import {  useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDarkAtom } from '../recoil/atom_Theme';
@@ -8,7 +7,6 @@ import ReactPlayer from "react-player";
 import { userIdState } from '../recoil/atom_user';
 import React, { useCallback } from 'react';
 import {useDropzone} from 'react-dropzone'
-
 
 const StreamingWrapper  = styled.div`
   background-color: ${(props) => props.theme.bgColor};
@@ -21,20 +19,29 @@ const UI = styled.div`
   display:flex;
   flex-direction: column;
 `
-const ChatContainer = styled.div`
+const ChatContainer = styled.div``
+const RplayerWrapper = styled.div`
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  
+  .player {
+    border-radius: 20px;
+    overflow: hidden;
+  }
 
 `
 
 interface ImsgObj{
   msg:string;
   url:string;
+  time:string;
 }
-interface IFormProps {
-  file: FileList
-}
+
 interface IProps {
   msg:string;
   url:string;
+  time: string;
 }
 //DOM elements.
 //var srcObject: any;
@@ -65,6 +72,7 @@ const iceServers = {
 }
 
 
+
 export default function Streaming() {
   const userId = useRecoilValue(userIdState);
   const setDarkAtom = useSetRecoilState(isDarkAtom);
@@ -72,14 +80,12 @@ export default function Streaming() {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const roomInputRef = useRef<HTMLInputElement>(null);
   const [sc, setSocket] = useState<Socket>();
-  const [messages, setMessages] = useState<IProps[]>([{msg:'', url: ''}]);
+  const [messages, setMessages] = useState<IProps[]>([{msg:'', url: '', time: ''}]);
   const [inputMessage, setInputMessage] = useState('');
   const [userName, setUsername] = useState('');
   const [joinedUserList, setJoinedUserList] = useState<string[]>(['']);
   const [particapants, setParticapants] = useState<string[]>([''])
-  const [uploading, setUploading] = useState(false)
-  const [ImageUrl, setImageUrl] = useState<string>("")
-
+  const [DraggedFile, setDragFile] = useState([])
 
   useEffect(() => {
     let sc = io('http://localhost:8080', {transports:['websocket'], path:'/webrtc'}) 
@@ -234,78 +240,6 @@ export default function Streaming() {
     };
   
   }, [])
-  // ====================================== Chatting function ===================================
-  const setUName = () => {
-    sc!.emit('joinRoom', { userName: userId, roomId: roomId })
-  }
-  
-  const { getValues, register} = useForm<IFormProps>({
-    mode:"onChange"
-  })
-
-  const [DraggedFile, setDragFile] = useState([])
-  const sendMessage = async () => {
-    try {
-      const { file  } = getValues();
-      console.log(typeof file) //object
-      console.log(file)
-      if(file.length !== 0) {
-        const actualFile = file[0]
-        const formBody = new FormData();
-        formBody.append('file', actualFile)
-      
-        const { url: coverImage } = await ( 
-          await fetch("http://localhost:3000/upload/", {
-            method: 'POST',
-            //headers:{ 'Content-Type': 'multipart/form-data' },
-            body: formBody,
-          })
-           ).json()
-        setImageUrl(coverImage);
-        
-      } 
-      if (DraggedFile.length !== 0) {
-        const actualFile = DraggedFile[0]
-        const formBody = new FormData();
-        formBody.append('file', actualFile)
-      
-        const { url: coverImage } = await ( 
-          await fetch("http://localhost:3000/upload/", {
-            method: 'POST',
-            //headers:{ 'Content-Type': 'multipart/form-data' },
-            body: formBody,
-          })
-           ).json()
-        setImageUrl(coverImage);
-      }
-
-     if (inputMessage.trim() !== '') {
-       if(userId === ''){
-         console.log(userName);
-         alert('로그인 또는 참가 닉네임을 설정하세요!')
-         return new Error('닉네임 없음');
-       } else {
-         // 서버로 메시지 전송: 메세지 + 이미지를 같이 보낸다.
-       sc!.emit('message', [`${userId}:`+ inputMessage, ImageUrl]); 
-       setInputMessage('');
-       setImageUrl('');
-       }
-       
-     } else if(inputMessage.trim() === '') {
-       if(userId === ''){
-         alert('로그인 또는 참가 닉네임을 설정하세요!')
-         return new Error('닉네임 없음');
-       } else if (ImageUrl !== ''){
-         sc!.emit('message', [`${userId}:`+ inputMessage, ImageUrl]); 
-         setImageUrl('');
-       }
-     }
-    } catch (e) {}
-  };
-
-
-
-  
   // ====================================== Conference function ===================================
   function joinRoom (room:string) {
     if(room === '') {
@@ -458,47 +392,83 @@ export default function Streaming() {
     })
   }
   // ====================================== Conference function End ===================================
-   
+ 
+  // ====================================== Chatting function =========================================
+  const setUName = () => {
+    sc!.emit('joinRoom', { userName: userId, roomId: roomId })
+  }
+
+  let fileUrl: string = '';
+  console.log('fileURL');
+  console.log(fileUrl); 
+  const sendMessage = async () => {
+    try {
+      if (DraggedFile.length !== 0) {
+        const actualFile = DraggedFile[0]
+        const formBody = new FormData();
+        formBody.append('file', actualFile)
+        const { url: coverImage } = await ( 
+          await fetch("http://localhost:3000/upload/", {
+            method: 'POST',
+            body: formBody,
+          })
+           ).json()
+        fileUrl = coverImage;
+        console.log('sendMessage안  fileUrl')
+        console.log(fileUrl)
+        //setImageUrl(coverImage);
+
+      }
+
+     if (inputMessage.trim() !== '') {
+      console.log('1에 들어오나')
+      console.log(fileUrl);
+       if(fileUrl === ''){
+         alert('로그인 또는 참가 닉네임을 설정하세요!')
+         return new Error('닉네임 없음');
+       } else {
+         // 서버로 메시지 전송: 메세지 + 이미지를 같이 보낸다.
+       // eslint-disable-next-line no-useless-concat
+       sc!.emit('message', [`${userId}:` + "  " + inputMessage, fileUrl]); 
+       setInputMessage('');
+       fileUrl = ''  
+       console.log('영상 업로드 올라간 후');
+       console.log(fileUrl)
+       //setImageUrl('');
+      }
+       
+     } else if(inputMessage.trim() === '') {
+       console.log('2에 들어오나')
+       console.log(fileUrl);
+       if(userId === ''){
+         alert('로그인 또는 참가 닉네임을 설정하세요!')
+         return new Error('닉네임 없음');
+       } else if (fileUrl !== ''){
+         sc!.emit('message', [`${userId}:`+ inputMessage, fileUrl]); 
+         fileUrl = '';
+         console.log('영상 업로드 올라간 후');
+        console.log(fileUrl)
+
+       }
+     }
+    } catch (e) {}
+  };
+
   const handleOnCheck = (event:any) => {
     //:ChangeEvent<HTMLInputElement>
     //event.target.checked 속성을 사용하여 checkbox의 체크 여부를 확인
     //<input> 태그의 checked 속성은 페이지가 로드될 때 미리 선택될 <input> 요소를 명시
     const isChecked = event.target.checked;
     setDarkAtom(isChecked)
-    console.log('isChecked:')
-    console.log(isChecked);
   } 
-  //=========================== Drag and drop ===================================
 
   const onDrop = useCallback( (acceptedFiles:any) => {
     // 파일이 드롭됐을 때의 로직을 처리합니다.
     console.log(acceptedFiles);
     setDragFile(acceptedFiles)
-    /*
-    if(acceptedFiles.length !== 0) {
-      const actualFile = acceptedFiles[0]
-      const formBody = new FormData();
-      formBody.append('file', actualFile)
-      
-      async function call(){
 
-        const { url: coverImage } = await ( 
-          await fetch("http://localhost:3000/upload/", {
-            method: 'POST',
-            //headers:{ 'Content-Type': 'multipart/form-data' },
-            body: formBody,
-          })
-           ).json()
-        setImageUrl(coverImage);
-      }
-      call()
-      }
-    */
-
-
-   
   }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: {
       'image/jpeg': ['.jpeg'],
@@ -507,8 +477,6 @@ export default function Streaming() {
     }
   });
 
-  
-  //============================================================================================
   return (
   <StreamingWrapper>
     <div id="room-selection-container" className='centered' >
@@ -519,9 +487,9 @@ export default function Streaming() {
         <button>roomId 제출</button>
       </form>
     </div>
-    <div id="video-chat-container" className='video-position' style={{display:"block"}}>
-      <video id="local-video" autoPlay loop muted width="100%" height="100%" ref={videoRef} ></video>
-      <video id="remote-video" autoPlay loop muted width="100%" height="100%" ref={remoteVideoRef}> </video>
+    <div id="video-chat-container" className='video-position flex' style={{display:"block"}}>
+      <video id="local-video" autoPlay loop muted width="30%" height="30%" ref={videoRef} ></video>
+      <video id="remote-video" autoPlay loop muted width="30%" height="30%" ref={remoteVideoRef}> </video>
     </div>
     <ChatContainer className='flex-1 flex flex-col items-center justify-center'>
       <label className="relative flex justify-between items-center group p-2 text-xl">
@@ -552,25 +520,26 @@ export default function Streaming() {
           <h3 className='text-lg text-center mt-2 font-bold'>대화 내용</h3>
           {messages && messages.map((message, index ) => (
             <div>
-              <p className='ml-2' key={index}>{message.msg}</p>
-              {message.url.includes('.png') ? (
-                <>
-                  
-                  <img  alt='' src={message.url} style={{ width: "200px"}}/>  
-                </>
+              <p className='mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' key={index}>{message.msg}</p>
+              {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
+                <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className=' ml-4 mt-1 rounded-md' />  
               ): null}
-              {message.url.includes('.mp4') ? (
-                <ReactPlayer 
-                key={message.url}
-                className="react-player"
-                url={message.url}
-                width="calc(40vw)"
-                height="calc(30vh)"
-                controls={true}
-                playing={true}
-              >
-              </ReactPlayer>
-              ) : null}
+
+              <RplayerWrapper >  
+                {(message.url.includes('.mp4') || message.url.includes('.MP4') )? (
+                    <ReactPlayer 
+                      key={message.url}
+                      className="player"
+                      url={message.url}
+                      width="calc(40vw)"
+                      height="calc(30vh)"
+                      controls={true}
+                      playing={true}
+                  />
+                  
+                  ) : null}
+              </RplayerWrapper>
+              <p className='text text-right text-sm mr-4' key={message.time}>{message.time}</p>
             </div>
           ))}
           
@@ -596,25 +565,22 @@ export default function Streaming() {
           
           <div 
            {...getRootProps()}
-           className="flex items-center justify-center w-full mt-2 ">
+           className="flex items-center justify-center w-full h-24 sm:h-32 md:h-40 lg:h-48 xl:h-56 mt-2 ">
             <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                  <path stroke="currentColor"  stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                  <path stroke="currentColor"  strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                 </svg>
                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG, GIF  (MAX. 800x400px) or MP4</p>
               </div>
-              <input
-                
-                {...getInputProps()}
-                {...register("file", { required: true })}
-                id="dropzone-file"
-                type="file"
-                accept="image/*"
-                
-              />
+              
             </label>
+            <input
+              {...getInputProps()}
+              type="file"
+              accept="image/*"
+              />
           </div> 
 
         <button onClick={() => sendMessage()} className='min-w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md'>Send</button>
