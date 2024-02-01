@@ -2,6 +2,7 @@ import { Link, useHistory } from "react-router-dom"
 import styled from "styled-components";
 import {motion, useAnimation} from "framer-motion";
 import { useState } from "react";
+
 const Wrapper = styled(motion.div)`
   display:flex;
   flex-direction: column;
@@ -11,7 +12,7 @@ const Nav = styled(motion.nav)`
   justify-content: flex-end;
 `
 const Button = styled.button``
-const OffSvg = styled.svg`
+export const OffSvg = styled.svg`
   width:35px;
   height:35px;
   transition: fill 0.3s ease-in-out;

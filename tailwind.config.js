@@ -4,7 +4,17 @@ const colors = require('tailwindcss/colors')
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        load: {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
+        },
+      },
+      animation: {
+        load: "load 1.5s ease-in-out infinite",
+      },
+    },
   },
   plugins: [],
 }
