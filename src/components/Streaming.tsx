@@ -17,7 +17,7 @@ const ChatContent = styled.div`
   color:${(props) => props.theme.textColor};
   background-color: whitesmoke;
 `
-const UI = styled.div`
+export const UI = styled.div`
   display:flex;
   flex-direction: column;
 `
@@ -590,9 +590,7 @@ export default function Streaming() {
               type="file"
             />
               
-          </div>
-          
-
+          </div>      
         <button onClick={() => sendMessage()} className='min-w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md'>Send</button>
       </UI>
     </ChatContainer>

@@ -11,17 +11,19 @@ import { EditUserInfo } from "../pages/editUserInfo";
 import { ActiveAccount } from "../components/activeAccount";
 import { Home } from "../pages/home";
 import { Header } from "../components/header";
+import { SellerPage } from "../pages/sellerPage";
 
-const accountRoutes = [
-  {path: "/streaming", component: <Streaming />},
-]
-const adminRoutes = [
-  {path: "/admin", component: <ManageMembers />}
-]
 const userRoutes = [
   {path: "/", component: <Home />},
   {path: "/member/privateInfo", component: <EditUserInfo />},
-  {path: "/member/activate", component: <ActiveAccount /> }
+  {path: "/member/activate", component: <ActiveAccount /> },
+  {path: "/seller", component: <SellerPage /> }
+]
+const accountRoutes = [
+  {path: "/cc", component: <Streaming />},
+]
+const adminRoutes = [
+  {path: "/admin", component: <ManageMembers />}
 ]
 
 

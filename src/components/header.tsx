@@ -63,7 +63,8 @@ export const Header: React.FC = () => {
     >
       <link ></link>
       <Link to="/" rel="home" className=" mr-4" >Home</Link>
-      <Link to="/streaming" rel="streaming" className=" mr-4">Streaming</Link>
+      <Link to="/seller" className=" mr-4">seller</Link>
+      <Link to="/cc" rel="customer center" className=" mr-4">Customer Center</Link>
       <Link to="/member/privateInfo" rel="profile" className=" mr-4">
         <ProfileSvg
             className=" mr-4"

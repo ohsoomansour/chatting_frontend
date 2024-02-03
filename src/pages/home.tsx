@@ -4,7 +4,6 @@ import { DogRobot } from "../components/robots/DogRobot"
 import { MoveRobot } from "../components/robots/MoveRobot"
 import { HexaRbot } from "../components/robots/hexahedronRobot"
 import { CuteRobot } from "../components/robots/cuteRobot"
-import { Header } from "../components/header"
 
 
 /*#로그아웃 기능 추가
@@ -32,8 +31,6 @@ export const Home = () => {
   return(
     <div>
       <h1 className=" text-lg font-bold text-center mt-6">Welcome to Robot Trader </h1>
-      
-      
       <Canvas>
       <OrbitControls autoRotate={true}/>
         <mesh>

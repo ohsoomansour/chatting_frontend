@@ -40,6 +40,7 @@ import { useRecoilState} from 'recoil';
 import { FormError } from "../components/form-error";
 import { userIdState } from "../recoil/atom_user";
 import { IuserInfo } from "./editUserInfo";
+import { useEffect } from "react";
 
 interface ILoginForm {
   email: string;
@@ -52,7 +53,9 @@ const Login:React.FC = () => {
   const history = useHistory();
   const [token, setToken] = useRecoilState(tokenState)
   const [user, setUserId] = useRecoilState(userIdState)
+  useEffect(() => {
 
+  })
   const onValid = async (e:any) => {
     try {
       const {email, password} = getValues();
@@ -84,9 +87,10 @@ const Login:React.FC = () => {
           })
         ).json();
         if(user.isDormant === true ){
-          history.push('/member/activate');
+          // '/member/activate'
+          window.location.href= '/member/activate';
         } else {
-          history.push('/');
+          window.location.href= "/";
         }
       
       }     
