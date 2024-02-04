@@ -81,7 +81,7 @@ export const SellerPage = () => {
 
   return (
   <Wrapper>  
-    <UI className=' w-2/4'>
+    <UI className=' w-2/4 border-4 border-gray-100 p-4 shadow-lg rounded-lg'>
     <h2 className=" text-lg font-bold">Seller</h2> 
     <input
         {...register('sellerName')}

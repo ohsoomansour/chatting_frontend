@@ -27,8 +27,8 @@ interface IschUser{
 const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUser, isAll:boolean}) => {
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [id, setId] = useState(0);
-  const token = useRecoilValue(tokenState)
-  const {getValues, register} = useForm()
+  const token = useRecoilValue(tokenState);
+  const {getValues, register} = useForm();
   const openPopup = () => {
     setPopupOpen(true);
   };

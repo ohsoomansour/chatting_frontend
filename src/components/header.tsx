@@ -61,10 +61,10 @@ export const Header: React.FC = () => {
       animate={headerAnimation}
       transition={{ type: "linear" }}
     >
-      <link ></link>
-      <Link to="/" rel="home" className=" mr-4" >Home</Link>
-      <Link to="/seller" className=" mr-4">seller</Link>
-      <Link to="/cc" rel="customer center" className=" mr-4">Customer Center</Link>
+      <Link to="/" rel="home" className=" text font-semibold mr-4" >Home</Link>
+      <Link to="/trade" rel="trade a product" className=" text font-semibold mr-4">Trade </Link>
+      <Link to="/seller" className=" text font-semibold mr-4">seller</Link>
+      <Link to="/cc" rel="customer center" className=" text font-semibold mr-4">A/S</Link>
       <Link to="/member/privateInfo" rel="profile" className=" mr-4">
         <ProfileSvg
             className=" mr-4"

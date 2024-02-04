@@ -501,7 +501,7 @@ export default function Streaming() {
       <video id="local-video" autoPlay loop muted width="30%" height="30%" ref={videoRef} ></video>
       <video id="remote-video" autoPlay loop muted width="30%" height="30%" ref={remoteVideoRef}> </video>
     </div>
-    <ChatContainer className='flex-1 flex flex-col items-center justify-center'>
+    <ChatContainer className='border border-solid border-gray-300 p-4 flex-1 flex flex-col items-center justify-center'>
       <label className="relative flex justify-between items-center group p-2 text-xl">
         <input
           type="checkbox" 
@@ -526,7 +526,7 @@ export default function Streaming() {
         </ul>
       </div>
 
-        <ChatContent className=' shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll'>
+        <ChatContent className='   shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll'>
           <h3 className='text-lg text-center mt-2 font-bold'>대화 내용</h3>
           {messages && messages.map((message, index ) => (
             <div>

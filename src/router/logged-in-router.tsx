@@ -12,12 +12,17 @@ import { ActiveAccount } from "../components/activeAccount";
 import { Home } from "../pages/home";
 import { Header } from "../components/header";
 import { SellerPage } from "../pages/sellerPage";
+import { TradePlatform } from "../components/TradePlatform";
+
+const tradeRoutes = [
+  {path: "/trade", component: <TradePlatform /> },
+  {path: "/seller", component: <SellerPage /> }
+]
 
 const userRoutes = [
   {path: "/", component: <Home />},
   {path: "/member/privateInfo", component: <EditUserInfo />},
-  {path: "/member/activate", component: <ActiveAccount /> },
-  {path: "/seller", component: <SellerPage /> }
+  {path: "/member/activate", component: <ActiveAccount /> }
 ]
 const accountRoutes = [
   {path: "/cc", component: <Streaming />},
@@ -25,7 +30,6 @@ const accountRoutes = [
 const adminRoutes = [
   {path: "/admin", component: <ManageMembers />}
 ]
-
 
 export const LoggedInRouter = () => {
 
@@ -46,9 +50,13 @@ export const LoggedInRouter = () => {
           </Route>
       ))}
       {userRoutes.map((route, index) => (
-        <Route key={index} exact path={route.path}>
-          
+        <Route key={index} exact path={route.path}>          
           {route.component }
+        </Route>
+      ))}
+      {tradeRoutes.map((route, index) => (
+        <Route key={index} exact path={route.path}>
+          {route.component}
         </Route>
       ))}
       </Switch>

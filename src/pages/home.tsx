@@ -25,8 +25,49 @@ import { CuteRobot } from "../components/robots/cuteRobot"
   </Button>
 */
 
+/*
+localhost/:1 Access to fetch at 'https://goodganglabs3.s3.ap-northeast-2.amazonaws.com/1706965081463cuteRobot.glb' from origin 'http://localhost:3001' 
+has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs
+, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+
+
+*/
+
+/**/
+
+const glbUrl= "https://goodganglabs3.s3.ap-northeast-2.amazonaws.com/1706965081463cuteRobot.glb";
+fetch(glbUrl, {
+   mode: 'no-cors',
+   method: 'GET' 
+})
+.then(response => {
+  console.log(response);
+  // HTTP 응답이 성공적인지 확인
+  if (!response.ok) {
+    throw new Error(`Network response was not ok: ${response.status}`);
+  }
+  // GLB 파일을 ArrayBuffer로 변환: 바이너리 데이터를 로우 레벨로 표현 response.arrayBuffer();
+  return response.arrayBuffer();
+})
+.then(glbData => {
+  // 여기에서 glbData를 사용하여 GLB 파일을 처리하십시오.
+  console.log('GLB 파일 데이터:', glbData);
+  // 예를 들어, Three.js 라이브러리를 사용하여 GLB 모델을 렌더링할 수 있습니다.
+  // const loader = new THREE.GLTFLoader();
+  // loader.parse(glbData, '', (gltf) => {
+  //   scene.add(gltf.scene);
+  // });
+})
+.catch(error => {
+  console.error('GLB 파일을 가져오는 중 오류 발생:', error);
+});
+
+
+
+
 
 export const Home = () => {
+  //https 
 
   return(
     <div>
@@ -84,6 +125,7 @@ export const Home = () => {
         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={2} />
           
       </Canvas>
+      
     </div>
   )
 }
