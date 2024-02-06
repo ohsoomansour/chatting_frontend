@@ -4,6 +4,10 @@ import { DogRobot } from "../components/robots/DogRobot"
 import { MoveRobot } from "../components/robots/MoveRobot"
 import { HexaRbot } from "../components/robots/hexahedronRobot"
 import { CuteRobot } from "../components/robots/cuteRobot"
+import { useRecoilValue } from "recoil"
+import { tokenState } from "../recoil/atom_token"
+
+const glbUrl= "https://goodganglabs3.s3.ap-northeast-2.amazonaws.com/1706965081463cuteRobot.glb";
 
 
 /*#로그아웃 기능 추가
@@ -30,47 +34,33 @@ localhost/:1 Access to fetch at 'https://goodganglabs3.s3.ap-northeast-2.amazona
 has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs
 , set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
 
+ 1. No 'Access-Control-Allow-Origin' header is present on the requested resource 의미 파악 
+   - 
+ 
+ 2.프록시 서버로 해결? 
+ https://velog.io/@yunsungyang-omc/React-React-App%EC%97%90%EC%84%9C-CORS-%EC%9D%B4%EC%8A%88-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0
+ - 설치: npm i http-proxy-middleware
+ - 
 
+ */
+
+/*
+let headers = new Headers({
+  'Access-Control-Allow-Origin' : "http://localhost:3000",
+  'Access-Control-Allow-Headers' : "*",
+  'Access-Control-Allow-Methods': "GET",
+  'Allow-Control-Allow-Credentials': 'true',
+  'Content-Type': 'application/glb'
+});
 */
 
-/**/
-
-const glbUrl= "https://goodganglabs3.s3.ap-northeast-2.amazonaws.com/1706965081463cuteRobot.glb";
-fetch(glbUrl, {
-   mode: 'no-cors',
-   method: 'GET' 
-})
-.then(response => {
-  console.log(response);
-  // HTTP 응답이 성공적인지 확인
-  if (!response.ok) {
-    throw new Error(`Network response was not ok: ${response.status}`);
-  }
-  // GLB 파일을 ArrayBuffer로 변환: 바이너리 데이터를 로우 레벨로 표현 response.arrayBuffer();
-  return response.arrayBuffer();
-})
-.then(glbData => {
-  // 여기에서 glbData를 사용하여 GLB 파일을 처리하십시오.
-  console.log('GLB 파일 데이터:', glbData);
-  // 예를 들어, Three.js 라이브러리를 사용하여 GLB 모델을 렌더링할 수 있습니다.
-  // const loader = new THREE.GLTFLoader();
-  // loader.parse(glbData, '', (gltf) => {
-  //   scene.add(gltf.scene);
-  // });
-})
-.catch(error => {
-  console.error('GLB 파일을 가져오는 중 오류 발생:', error);
-});
-
-
-
-
-
 export const Home = () => {
-  //https 
+const token  = useRecoilValue(tokenState);
+
 
   return(
     <div>
+    
       <h1 className=" text-lg font-bold text-center mt-6">Welcome to Robot Trader </h1>
       <Canvas>
       <OrbitControls autoRotate={true}/>

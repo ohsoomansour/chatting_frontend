@@ -6,7 +6,32 @@ import { useRecoilValue } from "recoil";
 import { tokenState } from "../recoil/atom_token";
 import { useForm } from "react-hook-form";
 import { userIdState } from "../recoil/atom_user";
+/*    
+    {
+          headers:headers,
+          method: 'POST',
+          body: JSON.stringify({
+            seller: sellerName,
+            robot:{
+              name: rbName,
+              price: price,
+              descrption: descrption,
+              rgb3D_glb: threeDFile[0]
+            }
+          })
+        }
+      formBody.append('name', rbName);
+      formBody.append('price', price);
+      formBody.append('descrption', descrption);   
+      formBody.append('rgb3D_glb', actualFile);
 
+      const robot = {name: rbName, price: price, descrption: descrption, rgb3D_glb: actualFile}
+      formBody.append('robot',
+        new Blob([JSON.stringify(robot)], {
+          type: "application/json"
+        })
+     )
+      */  
 const Wrapper = styled.div`
   display:flex;
   justify-content: center;
@@ -20,42 +45,56 @@ export const SellerPage = () => {
   const [threeDFile, setThreeDFile] = useState([])
   const {getValues, register} = useForm()
   // s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업 
-  let rb3dURL = '';
+  
+  let rb3dURL = "";
   const onRegister = async() => {
+    
     try {
-      const actualFile = threeDFile[0];
-      const formBody = new FormData();
-      formBody.append('file', actualFile);
-      const { url: Robot3dURL} = await (
-        await fetch("http://localhost:3000/upload", {
-          method: 'POST',
-          body: formBody
-        })
-      ).json();
-      rb3dURL = Robot3dURL;
-      // fetch API 
-      if(rb3dURL !== '') {
+      if(threeDFile.length !== 0){
+        // GLB URL 생성
+        const formBody =  new FormData();
+        const actualFile = threeDFile[0];
+  
+        formBody.append('file', actualFile);
+        const { url: Robot3dURL} = await (
+          await fetch("http://localhost:3000/upload", {
+            method: 'POST',
+            body: formBody
+          })
+        ).json();
+        rb3dURL = Robot3dURL;
+        // deal 생성
+        const {sellerName, rbName, price, descrption } = getValues();
         const headers = new Headers({
-          'Content-Type':'application/json; charset=utf-8',
+          'Content-Type':'application/json; charset=utf-8',  // 'application/json; charset=utf-8', //'multipart/form-data',  
           'x-jwt': `${token}`,
         });
-        const {sellerName, rbName, price, descrption } = getValues()
-        const deal = fetch('http://localhost:3000/seller/make-deal', {
-          headers:headers,
-          method: 'POST',
-          body: JSON.stringify({
-            seller: sellerName,
-            robot:{
+        console.log('threeDFile 들어오나?')
+        console.log(threeDFile[0])
+        
+        const deal = await (
+          await fetch('http://localhost:3000/seller/make-deal', {
+            headers:headers,
+            method: 'POST',
+            body: JSON.stringify({
+              seller: sellerName,
               name: rbName,
               price: price,
               descrption: descrption,
-              rb_glbURL: rb3dURL
-            }
+              rb3dURL: rb3dURL
+            })
           })
-        })
+        ).json()
+          
+        
         console.log('deal 생성:')
         console.log(deal);
       }
+     
+
+     
+  
+
     } catch (e) {
 
     }
