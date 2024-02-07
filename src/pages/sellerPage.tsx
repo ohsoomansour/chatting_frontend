@@ -46,7 +46,7 @@ export const SellerPage = () => {
   const {getValues, register} = useForm()
   // s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업 
   
-  let rb3dURL = "";
+  let rbURL = "";
   const onRegister = async() => {
     
     try {
@@ -56,13 +56,13 @@ export const SellerPage = () => {
         const actualFile = threeDFile[0];
   
         formBody.append('file', actualFile);
-        const { url: Robot3dURL} = await (
+        const { url: RobotURL} = await (
           await fetch("http://localhost:3000/upload", {
             method: 'POST',
             body: formBody
           })
         ).json();
-        rb3dURL = Robot3dURL;
+        rbURL = RobotURL;
         // deal 생성
         const {sellerName, rbName, price, descrption } = getValues();
         const headers = new Headers({
@@ -81,20 +81,13 @@ export const SellerPage = () => {
               name: rbName,
               price: price,
               descrption: descrption,
-              rb3dURL: rb3dURL
+              rbURL: rbURL
             })
           })
         ).json()
-          
-        
         console.log('deal 생성:')
         console.log(deal);
       }
-     
-
-     
-  
-
     } catch (e) {
 
     }

@@ -27,7 +27,7 @@ const ChatContainer = styled.div``
   width:calc(45vw);
   height:calc(40vh);
 */
-const RplayerWrapper = styled.div`
+export const RplayerWrapper = styled.div`
   display:flex;
   align-items:center;
   justify-content:center;

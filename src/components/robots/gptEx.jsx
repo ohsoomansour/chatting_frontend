@@ -1,13 +1,23 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { GLTFLoader, } from 'three/examples/jsm/loaders/GLTFLoader';
 
 // ArrayBuffer를 가져오는 함수
 async function loadArrayBuffer(url) {
-  //https://goodganglabs3.s3.ap-northeast-2.amazonaws.com/1707223578702dogRobot.gltf
   // const objTest = "1706965081463cuteRobot.glb";
-  //https://goodganglabs3.s3.ap-northeast-2.amazonaws.com/1707223733700hexaRobot.glb
-  const objTest = "1707223733700hexaRobot.glb"
+  //https://goodganglabs3.s3.ap-northeast-2.amazonaws.com/1707232216128ddog.glb
+  /* # gltf버전 >=2.0
+    > npm install -g gltf-pipeline
+    > gltf-pipeline -i input.gltf -o output.gltf
+
+    Three.js의 GLTFExporter를 사용하여 3D 모델을 glb 파일로 내보낼 수 있습니다.
+
+따라서 React에서 ArrayBuffer를 glb 파일로 변환하려면, 먼저 적절한 3D 모델을 생성하고, 그 모델을 glb 파일로 변환하는 과정을 따라야 합니다.
+  
+     Babylon.js 등과 같은 3D 그래픽 프레임워크
+*/
+
+  const objTest = "1707232216128ddog.glb"
   const response =
     await(
       await fetch(url, {
@@ -20,7 +30,7 @@ async function loadArrayBuffer(url) {
         objTest
       })
     })
-    ).arrayBuffer()
+    ).blob()
     console.log('response:')
     console.log(response)
   /*
