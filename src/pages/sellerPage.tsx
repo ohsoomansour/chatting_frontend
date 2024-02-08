@@ -6,32 +6,7 @@ import { useRecoilValue } from "recoil";
 import { tokenState } from "../recoil/atom_token";
 import { useForm } from "react-hook-form";
 import { userIdState } from "../recoil/atom_user";
-/*    
-    {
-          headers:headers,
-          method: 'POST',
-          body: JSON.stringify({
-            seller: sellerName,
-            robot:{
-              name: rbName,
-              price: price,
-              descrption: descrption,
-              rgb3D_glb: threeDFile[0]
-            }
-          })
-        }
-      formBody.append('name', rbName);
-      formBody.append('price', price);
-      formBody.append('descrption', descrption);   
-      formBody.append('rgb3D_glb', actualFile);
 
-      const robot = {name: rbName, price: price, descrption: descrption, rgb3D_glb: actualFile}
-      formBody.append('robot',
-        new Blob([JSON.stringify(robot)], {
-          type: "application/json"
-        })
-     )
-      */  
 const Wrapper = styled.div`
   display:flex;
   justify-content: center;
@@ -64,7 +39,7 @@ export const SellerPage = () => {
         ).json();
         rbURL = RobotURL;
         // deal 생성
-        const {sellerName, rbName, price, descrption } = getValues();
+        const {sellerName, rbName, price ,maintenace_cost, descrption } = getValues();
         const headers = new Headers({
           'Content-Type':'application/json; charset=utf-8',  // 'application/json; charset=utf-8', //'multipart/form-data',  
           'x-jwt': `${token}`,
@@ -79,9 +54,10 @@ export const SellerPage = () => {
             body: JSON.stringify({
               seller: sellerName,
               name: rbName,
-              price: price,
-              descrption: descrption,
-              rbURL: rbURL
+              price,
+              maintenace_cost,
+              descrption,
+              rbURL
             })
           })
         ).json()
@@ -138,6 +114,14 @@ export const SellerPage = () => {
         type="number"
         size={10}
       />
+      <input
+        {...register('maintenace_cost')}
+        className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
+        placeholder="Maintenace Cost"
+        type="number"
+        size={10}
+      />
+
       <input
         {...register('descrption')}
         className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'

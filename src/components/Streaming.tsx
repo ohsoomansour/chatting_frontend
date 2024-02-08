@@ -8,44 +8,36 @@ import { userIdState } from '../recoil/atom_user';
 import React, { useCallback } from 'react';
 import {useDropzone} from 'react-dropzone'
 
-
-const StreamingWrapper  = styled.div`
+const StreamingWrapper=styled.div`
   background-color: ${(props) => props.theme.bgColor};
-`
+`;
 //border: ${(props) => `4px solid ${props.theme.accentColor}`};
-const ChatContent = styled.div`
+const ChatContent=styled.div`
   color:${(props) => props.theme.textColor};
   background-color: whitesmoke;
-`
+`;
 export const UI = styled.div`
   display:flex;
   flex-direction: column;
-`
-const ChatContainer = styled.div``
-
-/*
-  width:calc(45vw);
-  height:calc(40vh);
-*/
+`;
+const ChatContainer = styled.div``;
 export const RplayerWrapper = styled.div`
   display:flex;
   align-items:center;
   justify-content:center;
-  
   .player {
     border-radius: 20px;
     overflow: hidden;
     margin-top:10px;
   }
-
-`
+`;
 
 const LoadingSvg = styled.svg`
   fill: #7e79ad;
   position: fixed;
   top: 50%;
   left: 50%;
-`
+`;
 interface ImsgObj{
   msg:string;
   url:string;
@@ -67,7 +59,7 @@ const mediaConstraints = {
   video: {width:1280, height:720} 
 }
 let localStream: MediaStream; 
-let remoteStream : MediaStream; 
+let remoteStream: MediaStream; 
 
 
 let isRoomCreator: boolean; 
