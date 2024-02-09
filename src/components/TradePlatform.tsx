@@ -1,12 +1,8 @@
-import {useRouteMatch, Link, Switch, Route, useLocation, useParams } from "react-router-dom";
-import { useRecoilValue } from "recoil";
 import styled from "styled-components"
 import { RBproduct } from "./robots/RBproduct";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-
 import ReactPlayer from "react-player";
-
 import {Order} from "./order";
 
 const Wrapper = styled.div`
@@ -46,15 +42,17 @@ const DSA = styled.a`
 
 export interface IRobot{
   id:number;
-  name:string;
+  name:number;
   price:number;
-  maintenance_cost:number;
+  maintenance_cost:string;
   description:string;
   rbURL:string;
 }
 
 export interface IDeal{
   id: number;
+  compa_name:string;
+  compaBrand_ImgURL:string;
   sellerId:number;
   robotId:number;
   robot:IRobot;
@@ -81,6 +79,7 @@ export const TradePlatform = () => {
       {allDeals.map((deal, index) => (
       <div key={index}>
       <ProductContainer className="border-4 border-gray-100 p-4 shadow-lg rounded-lg">
+        <img  alt='company logo' src={deal.compaBrand_ImgURL} width={"10%"} height={"10%"}></img>
         <h1 className=" text-lg font-semibold text-center">{deal.robot.name}</h1>
         {deal.robot.rbURL.includes('.glb') ? (
           <Canvas camera={{ position: [0, 0, 5] }}>
