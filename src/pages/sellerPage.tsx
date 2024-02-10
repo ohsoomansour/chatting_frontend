@@ -1,3 +1,4 @@
+
 import { useDropzone } from "react-dropzone";
 import { UI } from "../components/Streaming"
 import { useCallback, useState } from "react";
@@ -8,6 +9,8 @@ import { useForm } from "react-hook-form";
 import { userIdState } from "../recoil/atom_user";
 import { CompaImg } from "../components/CompaImg";
 import { compaImgState } from "../recoil/atom_compaImg";
+import { FormError } from "../components/form-error";
+import Postcode from "../components/postcode";
 
 const Wrapper = styled.div`
   display:flex;
@@ -16,12 +19,24 @@ const Wrapper = styled.div`
   height: 100vh;
 `
 
+interface ISellerForm {
+  company: string;
+  sellerId: string;
+  rbName: string;
+  price:number;
+  maintenance_cost: number;
+  description:string;
+}   
+
+
+
+
 export const SellerPage = () => {
   const token = useRecoilValue(tokenState)
   const userId = useRecoilValue(userIdState);
   const compaImg = useRecoilValue(compaImgState);
   const [threeDFile, setThreeDFile] = useState([])
-  const {getValues, register} = useForm()
+  const {getValues, register, formState:{errors}} = useForm<ISellerForm>({ mode: "onChange" })
   // s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업 
   
   let rbURL = "";
@@ -59,7 +74,7 @@ export const SellerPage = () => {
         ).json();
         rbURL = RobotURL;
         // deal 생성
-        const {company, sellerName, rbName, price ,maintenance_cost, description } = getValues();
+        const {company, sellerId, rbName, price ,maintenance_cost, description } = getValues();
 
         
         const headers = new Headers({
@@ -75,7 +90,7 @@ export const SellerPage = () => {
             body: JSON.stringify({
               compa_name: company,
               compaBrand_ImgURL: coImgURL,
-              seller: sellerName,
+              seller: sellerId,
               name: rbName,
               price,
               maintenance_cost,
@@ -114,36 +129,45 @@ export const SellerPage = () => {
   return (
   <Wrapper>  
     <UI className=' w-2/4 border-4 border-gray-100 p-4 shadow-lg rounded-lg'>
-    <h2 className=" text-lg font-bold">Company</h2> 
-    <input
-        {...register('company', { required: true })}
-        className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
-        type="text"
-        size={10}
-      />
-    <h3 className="text-center">add your company Logo</h3>
-    <CompaImg />
-    <h2 className=" text-lg font-bold">Seller</h2> 
-    <input
-        {...register('sellerName')}
+    <h2 className=" text-lg font-bold ">Private or Company</h2> 
+      <input
+          {...register('company', { required: "What is the manufacturing company? " })}
+          className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
+          placeholder="A manufacturing company (en) entreprise de fabrication(français)"
+          type="text"
+          size={10}
+        />
+      {errors.company?.message && <FormError errorMessage={errors.company.message}/>}
+      <h3 className="text-center">Add your robot Brand Image</h3>
+      <CompaImg />
+      <h2 className=" text-lg font-bold ">Seller</h2> 
+      <input
+        {...register('sellerId',
+        {required:true,
+          pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
+        })}
         className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
         value={userId}
-        type="text"
-        size={10}
+        placeholder="Your Email address!"
+        type="email"
+        size={10} 
       />
-      
-    <h2 className=" text-lg font-bold">Product</h2>  
+      {errors.sellerId?.type === "pattern" && (<FormError errorMessage="You need to log in!"/>)}
+      <Postcode />
+
+      <h2 className=" text-lg font-bold ">Product</h2>  
       <input
-        {...register('rbName')}
+        {...register('rbName', {required:"Please write a product name"})}
         className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
         type="text"
-        placeholder="Robot Name"
+        placeholder="The robot name"
         size={10}
       />
+      {errors.rbName?.message && (<FormError errorMessage={errors.rbName.message}/>)}
       <input
         {...register('price')}
         className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
-        placeholder="Price"
+        placeholder="The selling price"
         type="number"
         size={10}
       />
@@ -158,7 +182,7 @@ export const SellerPage = () => {
       <input
         {...register('description')}
         className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
-        placeholder="Explain your a product about Robot"
+        placeholder="Explain your product about the robot"
         type="text"
         size={10}
       />          
@@ -171,7 +195,7 @@ export const SellerPage = () => {
               <path stroke="currentColor"  strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
             </svg>
             <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload or drag</span>  and drop your Robot product video or 3d Model</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">GLB or SVG, PNG, JPG, GIF  (MAX. 800x400px) or mp4</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">GLB or or mp4 or SVG, PNG, JPG, GIF  (MAX. 800x400px) </p>
           </div>
           
         </label>

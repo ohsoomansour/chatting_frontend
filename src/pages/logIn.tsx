@@ -50,7 +50,6 @@ interface ILoginForm {
 const Login:React.FC = () => {
 //Validation is triggered on the changeevent for each input, leading to multiple re-renders. Warning: this often comes with a significant impact on performance.
   const { register, formState:{ errors },handleSubmit, formState, getValues } = useForm<ILoginForm>({mode: "onChange"});
-  const history = useHistory();
   const [token, setToken] = useRecoilState(tokenState)
   const [user, setUserId] = useRecoilState(userIdState)
   useEffect(() => {
@@ -59,7 +58,6 @@ const Login:React.FC = () => {
   const onValid = async (e:any) => {
     try {
       const {email, password} = getValues();
-      
       const response =  await (
         await fetch('http://localhost:3000/member/login', {
         headers : {"Content-Type":"application/json; charset=utf-8"},
@@ -69,7 +67,7 @@ const Login:React.FC = () => {
           password: password, // or data.password
         })
       })
-      ).json()
+      ).json();
       setToken(response.token)
       setUserId(email);
       if(response.token !== ''){

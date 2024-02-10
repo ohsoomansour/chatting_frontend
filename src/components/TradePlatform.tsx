@@ -68,13 +68,12 @@ const allDeals:IDeal[] = await (
    method: 'GET'
  })
 ).json()
-// DB 안에 등록이 안되면 일단 src 경로를 저장해서 DB에 저장하는 방법ㅇ
+// DB 안에 등록이 안되면 일단 src 경로를 저장해서 DB에 저장하는 방법
 console.log('allDeals:')
 console.log(allDeals);
 export const TradePlatform = () => {
 
-  return (
-    
+  return ( 
     <Wrapper className=" max-w-full max-h-full border-4 border-gray-100 p-4 shadow-lg rounded-lg">
       {allDeals.map((deal, index) => (
       <div key={index}>
