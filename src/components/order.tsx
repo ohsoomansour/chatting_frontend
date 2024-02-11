@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-
 import { useForm } from 'react-hook-form';
 import { IDeal, IRobot } from './TradePlatform';
 import { useRecoilValue } from 'recoil';
 import { tokenState } from '../recoil/atom_token';
 import { userIdState } from '../recoil/atom_user';
+
+import BuyerPostcode from './address/buyer-postcode';
+import { buyerAddress } from '../recoil/atom_address';
 
 const MantenanceOption = styled.div``;
 const Robot = styled.div``;
@@ -21,49 +23,23 @@ interface OrderProps{
 export const Order = ({robot, deal}:OrderProps) => {
   const token = useRecoilValue(tokenState);
   const userId = useRecoilValue(userIdState);
+  const customerAddress = useRecoilValue(buyerAddress); 
   const [maintenanceYN, setMaintenanceYN] = useState(false);
-  console.log('handleOptionSelect 밖 maintenanceYN:')
-  console.log(maintenanceYN) //
+
 
 
   const handleOptionSelect = (option:boolean) => {
-    //setMaintenance(option)
+
     setMaintenanceYN(option);
-    console.log('handleOptionSelect 안 maintenanceYN:')
-    console.log(maintenanceYN) //
+
   };
   const {register, getValues} = useForm();
-  /* 문제는 NaN 이 값은 숫자가 아닌 연산의 결과물로 발생하는 경우 
-    랜더링 될 때 기본값은 undefined 그 다음의 getValues값은 input 태그의 각각의 값인거지 
-  
-  */
-  
-  /*/ 
-  //✅ 이해하고 넘어가기
-  console.log(price)   //랜더링 undefined
-  console.log(maintenance_cost)  //랜더링 undefined
-  console.log(total)  //랜더링 undefined
 
-  const numPrice = parseFloat(price);   
-  console.log('numPrice');
-  console.log(numPrice);   //처음 랜더링: NaN
-  const numMaintenace_cost = parseFloat(maintenance_cost); //처음 랜더링: NaN
-  console.log('numMaintenace_cost:') 
-  console.log(numMaintenace_cost)
-  const numTotal = numPrice + numMaintenace_cost;
-  console.log(numTotal)//처음 랜더링: NaN
-  
-  */
-  
-  
-
-  
  const onOrder = async() => {
-     //✅ 이해하고 넘어가기: 체음 랜더링시 undefined -> parseFormat(total): NaN 
-     // 랜더링 후의 값을 불러온다. 따라서 input태그의 value를 불러옴
-    const {customer, address, description, price , maintenance_cost } = getValues()
+
+    const {customer, price , maintenance_cost } = getValues()
     const numPrice = parseFloat(price);
-    const numManitenance = parseFloat(maintenance_cost);
+    const numManitenance = maintenance_cost === undefined ? 0 : parseFloat(maintenance_cost);
     const numTotal = numPrice + numManitenance;
 
     const newOrder = await(
@@ -76,8 +52,7 @@ export const Order = ({robot, deal}:OrderProps) => {
         body:JSON.stringify({
           dealId: deal.id,
           customer,
-          address,
-          description,
+          address:customerAddress,
           items:{
             robot: robot,   //relation으로 price 여기에 포함되어있고 가져오면됨  
             options:{
@@ -132,15 +107,8 @@ export const Order = ({robot, deal}:OrderProps) => {
           className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-pink-400'
           placeholder='Please write your name'
           /> 
-        <h2 className=' text-lg font-bold '>address</h2>
-        <input 
-          {...register('address', {required: true})}
-          type='text'
-          size={30}
-          className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-pink-400'
-          placeholder='Please write your address'
-          
-        />
+        
+        <BuyerPostcode />
         <h2 className=' text-lg font-bold '>Description</h2>
         <input
           {...register('description', {required: true})}

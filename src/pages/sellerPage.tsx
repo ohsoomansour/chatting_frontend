@@ -1,4 +1,3 @@
-
 import { useDropzone } from "react-dropzone";
 import { UI } from "../components/Streaming"
 import { useCallback, useState } from "react";
@@ -10,14 +9,15 @@ import { userIdState } from "../recoil/atom_user";
 import { CompaImg } from "../components/CompaImg";
 import { compaImgState } from "../recoil/atom_compaImg";
 import { FormError } from "../components/form-error";
-import Postcode from "../components/postcode";
+import { sellerAddress } from "../recoil/atom_address";
+import SellerPostcode from "../components/address/seller-postcode";
 
 const Wrapper = styled.div`
   display:flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-`
+`;
 
 interface ISellerForm {
   company: string;
@@ -29,14 +29,13 @@ interface ISellerForm {
 }   
 
 
-
-
 export const SellerPage = () => {
   const token = useRecoilValue(tokenState)
   const userId = useRecoilValue(userIdState);
   const compaImg = useRecoilValue(compaImgState);
-  const [threeDFile, setThreeDFile] = useState([])
+  const [threeDFile, setThreeDFile] = useState([]);
   const {getValues, register, formState:{errors}} = useForm<ISellerForm>({ mode: "onChange" })
+  const selAddress = useRecoilValue(sellerAddress);
   // s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업 
   
   let rbURL = "";
@@ -90,6 +89,7 @@ export const SellerPage = () => {
             body: JSON.stringify({
               compa_name: company,
               compaBrand_ImgURL: coImgURL,
+              seller_address: selAddress,
               seller: sellerId,
               name: rbName,
               price,
@@ -99,8 +99,8 @@ export const SellerPage = () => {
             })
           })
         ).json()
-        
         window.location.href = '/trade'
+        
       }
     } catch (e) {
 
@@ -153,7 +153,7 @@ export const SellerPage = () => {
         size={10} 
       />
       {errors.sellerId?.type === "pattern" && (<FormError errorMessage="You need to log in!"/>)}
-      <Postcode />
+      <SellerPostcode />
 
       <h2 className=" text-lg font-bold ">Product</h2>  
       <input
