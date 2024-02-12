@@ -13,6 +13,7 @@ import { Home } from "../pages/home";
 import { Header } from "../components/header";
 import { SellerPage } from "../pages/sellerPage";
 import { TradePlatform } from "../components/TradePlatform";
+import { OrderInfo } from "../pages/orderInfo";
 
 const tradeRoutes = [
   {path: "/trade", component: <TradePlatform /> },
@@ -22,8 +23,10 @@ const tradeRoutes = [
 const userRoutes = [
   {path: "/", component: <Home />},
   {path: "/member/privateInfo", component: <EditUserInfo />},
-  {path: "/member/activate", component: <ActiveAccount /> }
+  {path: "/member/activate", component: <ActiveAccount /> },
+  {path: "/order/info/:orderId", component: <OrderInfo /> }
 ]
+
 const accountRoutes = [
   {path: "/cc", component: <Streaming />},
 ]

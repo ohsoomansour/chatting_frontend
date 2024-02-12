@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { isDarkAtom } from './recoil/atom_Theme';
 import { darkTheme, lightTheme } from './theme.t';
 import { LoggedOutRouter } from './router/logged-out-router';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 
 
@@ -20,14 +21,14 @@ import { LoggedOutRouter } from './router/logged-out-router';
 
 export default function App() {
   const isDark = useRecoilValue(isDarkAtom);
+  const queryClent = new QueryClient();
 
   return (
     <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-      
-      <LoggedInRouter />
-      <LoggedOutRouter />
-
-      
+      <QueryClientProvider client={queryClent}>
+        <LoggedInRouter />
+        <LoggedOutRouter />
+      </QueryClientProvider> 
     </ThemeProvider>
   );
 }

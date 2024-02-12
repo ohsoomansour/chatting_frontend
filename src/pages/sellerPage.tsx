@@ -10,7 +10,7 @@ import { CompaImg } from "../components/CompaImg";
 import { compaImgState } from "../recoil/atom_compaImg";
 import { FormError } from "../components/form-error";
 import { sellerAddress } from "../recoil/atom_address";
-import SellerPostcode from "../components/address/seller-postcode";
+import SellerPostcode from "../components/address/seller-postalcode";
 
 const Wrapper = styled.div`
   display:flex;

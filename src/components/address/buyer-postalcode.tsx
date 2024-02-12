@@ -74,7 +74,7 @@ const BuyerPostcode: React.FC = () =>{
     // 상세 주소검색 event
     const changeHandler = (e:React.ChangeEvent<HTMLInputElement>) =>{
         setDetailAddress(e.target.value);
-        setFullAddress(roadAddress +" "+ e.target.value)
+        setFullAddress(zipCode + " " + roadAddress +" "+ e.target.value)
     }
 
     const onClose = () =>  {

@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form"
 import { FormError } from "../components/form-error";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { tokenState } from "../recoil/atom_token";
-import { useState } from "react";
+
 import { userIdState } from "../recoil/atom_user";
 
 interface IeditUserInfo{

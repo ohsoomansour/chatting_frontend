@@ -67,7 +67,8 @@ const allDeals:IDeal[] = await (
    headers,
    method: 'GET'
  })
-).json()
+).json();
+
 // DB 안에 등록이 안되면 일단 src 경로를 저장해서 DB에 저장하는 방법
 console.log('allDeals:')
 console.log(allDeals);

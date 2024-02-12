@@ -6,8 +6,9 @@ import { useRecoilValue } from 'recoil';
 import { tokenState } from '../recoil/atom_token';
 import { userIdState } from '../recoil/atom_user';
 
-import BuyerPostcode from './address/buyer-postcode';
+import BuyerPostcode from './address/buyer-postalcode';
 import { buyerAddress } from '../recoil/atom_address';
+import { useHistory } from 'react-router-dom';
 
 const MantenanceOption = styled.div``;
 const Robot = styled.div``;
@@ -17,15 +18,12 @@ interface OrderProps{
   deal: IDeal;
 }
 
-
-
-
 export const Order = ({robot, deal}:OrderProps) => {
   const token = useRecoilValue(tokenState);
   const userId = useRecoilValue(userIdState);
   const customerAddress = useRecoilValue(buyerAddress); 
   const [maintenanceYN, setMaintenanceYN] = useState(false);
-
+  const history  = useHistory();
 
 
   const handleOptionSelect = (option:boolean) => {
@@ -67,6 +65,15 @@ export const Order = ({robot, deal}:OrderProps) => {
     ).json();
     console.log('newOrder:')
     console.log(newOrder);
+    //history.push(`/order/info/${newOrder.order.id}`)
+  
+    /*🌟주문 정보로 이동하 window.location.href = 'order/info/`${newOrder.order.id}`' 
+      -> 라우팅된 주문정보 페이지로 이동 
+      -> useParams 
+      -> 주문 정보 페이지에서 let {orderId} = useParams로 fetch('order/info/`{orderId}`)
+      -> 
+
+  */
   }
    
   

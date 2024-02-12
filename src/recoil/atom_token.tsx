@@ -18,7 +18,7 @@ export const { persistAtom } = recoilPersist({
 
 export const tokenState = atom({
   key: 'token',
-  default: '11',
+  default: '',
   effects_UNSTABLE: [persistAtom],
 });
 
