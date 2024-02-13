@@ -49,6 +49,14 @@ export interface IRobot{
   rbURL:string;
 }
 
+export interface IMember{
+  id:number;
+  userId:string;
+  address:string;
+  name:string;
+  memberRole:string;
+}
+
 export interface IDeal{
   id: number;
   compa_name:string;
@@ -56,6 +64,7 @@ export interface IDeal{
   sellerId:number;
   robotId:number;
   robot:IRobot;
+  seller:IMember;
 }
 
 const headers = new Headers({
@@ -69,8 +78,7 @@ const allDeals:IDeal[] = await (
  })
 ).json();
 
-// DB 안에 등록이 안되면 일단 src 경로를 저장해서 DB에 저장하는 방법
-console.log('allDeals:')
+// DB에 저장은 무겁다 그래서 일단 로컬 경로로 저장
 console.log(allDeals);
 export const TradePlatform = () => {
 

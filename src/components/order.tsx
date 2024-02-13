@@ -34,13 +34,17 @@ export const Order = ({robot, deal}:OrderProps) => {
   const {register, getValues} = useForm();
 
  const onOrder = async() => {
-
-    const {customer, price , maintenance_cost } = getValues()
+    //판매자 추가
+    const {seller, customer, price , maintenance_cost } = getValues()
+    console.log("seller:")
+    console.log(seller);
     const numPrice = parseFloat(price);
     const numManitenance = maintenance_cost === undefined ? 0 : parseFloat(maintenance_cost);
     const numTotal = numPrice + numManitenance;
-
+    
     const newOrder = await(
+    //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
+
       await fetch('http://localhost:3000/order/make', {
         headers:{
           'x-jwt':token,
@@ -49,6 +53,7 @@ export const Order = ({robot, deal}:OrderProps) => {
         method:'POST',
         body:JSON.stringify({
           dealId: deal.id,
+          seller,
           customer,
           address:customerAddress,
           items:{
@@ -103,7 +108,16 @@ export const Order = ({robot, deal}:OrderProps) => {
       </MantenanceOption>
       <Robot>
       <form className='ml-2'>
-         
+        <h2 className=' text-lg font-bold '>Seller</h2>
+        <input 
+          {...register('seller', {required: true})}
+          type='text'
+          
+          value={deal.seller.userId}
+          size={30}
+          className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-pink-400'
+          placeholder='Please write your name'
+          />
         <h2 className=' text-lg font-bold '>Customer</h2>
         <input 
           {...register('customer', {required: true})}
