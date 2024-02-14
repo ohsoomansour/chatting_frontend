@@ -10,6 +10,7 @@ import BuyerPostcode from './address/buyer-postalcode';
 import { buyerAddress } from '../recoil/atom_address';
 import { useHistory } from 'react-router-dom';
 
+
 const MantenanceOption = styled.div``;
 const Robot = styled.div``;
 
@@ -26,12 +27,37 @@ export const Order = ({robot, deal}:OrderProps) => {
   const history  = useHistory();
 
 
-  const handleOptionSelect = (option:boolean) => {
-
+ const handleOptionSelect = (option:boolean) => {
     setMaintenanceYN(option);
+ };
+ 
+ const {register, getValues} = useForm();
 
-  };
-  const {register, getValues} = useForm();
+
+ const onSave = async () =>{
+  const {seller, customer, price , maintenance_cost } = getValues();
+  const numPrice = parseFloat(price);
+  const numManitenance = maintenance_cost === undefined ? 0 : parseFloat(maintenance_cost);
+  const numTotal = numPrice + numManitenance;
+    
+  const savingGoods = await(
+    //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
+
+    await fetch('http://localhost:3000/order/storegoods', {
+      headers:{
+        'x-jwt':token,
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      method:'POST',
+      body:JSON.stringify({
+        dealId: deal.id,
+        customer,
+      })
+    })
+  ).json();
+  //console.log(savingGoods);
+}
+
 
  const onOrder = async() => {
     //판매자 추가
@@ -64,7 +90,7 @@ export const Order = ({robot, deal}:OrderProps) => {
             }
           },
           total:  numTotal , //문제: total: ''  빈값 + string 값 
-
+          
         })
       })
     ).json();
@@ -179,6 +205,11 @@ export const Order = ({robot, deal}:OrderProps) => {
         onClick={onOrder} 
         className=' font-semibold min-w-full mx-auto mt-2 mb-4 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-green-200 transition-colors'
       > Order
+      </button>
+      <button 
+        onClick={onSave} 
+        className=' font-semibold min-w-full mx-auto mt-2 mb-4 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-green-200 transition-colors'
+      > SaveGoods
       </button>
     </div>
   );
