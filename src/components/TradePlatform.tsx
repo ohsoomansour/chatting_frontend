@@ -4,6 +4,8 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import ReactPlayer from "react-player";
 import {Order} from "./order";
+import { useQuery } from "react-query";
+import { getallDeals } from "../api";
 
 const Wrapper = styled.div`
   dispaly:flex;
@@ -35,10 +37,6 @@ const DSA = styled.a`
   width:30px;
   height:30px;
 `;
-/* deal 전체 조회, getAllDeal 비즈니스 로직 -> 뿌려주고 -> TradePlatform   
- 선택한 Robot의 종류에 따라 > Robot의 3d모델링 DB를 꺼내와야된다. -> r3f에서 처리
-  sellerId, robotId 
-*/
 
 export interface IRobot{
   id:number;
@@ -67,21 +65,17 @@ export interface IDeal{
   seller:IMember;
 }
 
-const headers = new Headers({
-  'Content-Type':'application/json; charset=utf-8',
-
-});
-const allDeals:IDeal[] = await (
- await fetch('http://localhost:3000/seller/getallDeals', {
-   headers,
-   method: 'GET'
- })
-).json();
-
-// DB에 저장은 무겁다 그래서 일단 로컬 경로로 저장
-console.log(allDeals);
 export const TradePlatform = () => {
-
+  const {data:Deals, isLoading} = useQuery<IDeal[]>(
+    ["getDeals", "Deal"], () => getallDeals() 
+  )
+  const allDeals = isLoading
+    ? []
+    : Deals   
+    ? Deals
+    : [];   // undefined의 경우 [] 반환
+  console.log(allDeals);
+  
   return ( 
     <Wrapper className=" max-w-full max-h-full border-4 border-gray-100 p-4 shadow-lg rounded-lg">
       {allDeals.map((deal, index) => (

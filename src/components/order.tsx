@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
 import { IDeal, IRobot } from './TradePlatform';
 import { useRecoilValue } from 'recoil';
 import { tokenState } from '../recoil/atom_token';
 import { userIdState } from '../recoil/atom_user';
-
 import BuyerPostcode from './address/buyer-postalcode';
 import { buyerAddress } from '../recoil/atom_address';
-import { useHistory } from 'react-router-dom';
 
 
 const MantenanceOption = styled.div``;
@@ -24,23 +22,19 @@ export const Order = ({robot, deal}:OrderProps) => {
   const userId = useRecoilValue(userIdState);
   const customerAddress = useRecoilValue(buyerAddress); 
   const [maintenanceYN, setMaintenanceYN] = useState(false);
-  const history  = useHistory();
 
-
- const handleOptionSelect = (option:boolean) => {
+  const handleOptionSelect = (option:boolean) => {
     setMaintenanceYN(option);
- };
+  };
  
- const {register, getValues} = useForm();
-
-
- const onSave = async () =>{
-  const {seller, customer, price , maintenance_cost } = getValues();
+  const {register, getValues} = useForm();
+  const onSave = async () => {
+  const { customer, price , maintenance_cost } = getValues();
   const numPrice = parseFloat(price);
   const numManitenance = maintenance_cost === undefined ? 0 : parseFloat(maintenance_cost);
   const numTotal = numPrice + numManitenance;
     
-  const savingGoods = await(
+  const isStored = await(
     //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
 
     await fetch('http://localhost:3000/order/storegoods', {
@@ -52,10 +46,17 @@ export const Order = ({robot, deal}:OrderProps) => {
       body:JSON.stringify({
         dealId: deal.id,
         customer,
+        payment:{
+          price:numPrice,   //relation으로 price 여기에 포함되어있고 가져오면됨  
+          maintenanceYN,
+          maintenance_cost: numManitenance, //{ maintenanceYN: true, maintenance_cost: '100' }
+          total:numTotal , //문제: total: ''  빈값 + string 값
+        },
       })
     })
-  ).json();
-  //console.log(savingGoods);
+  ).ok   
+  isStored ? alert('고객님이 선택하신 제품을 카트에 담았고 쇼핑을 계속하세요!💛') : alert('🚫고객님이 선택하신 제품의 저장을 실패 하였습니다. ')
+  console.log(isStored);
 }
 
 

@@ -15,6 +15,7 @@ import { SellerPage } from "../pages/sellerPage";
 import { TradePlatform } from "../components/TradePlatform";
 import { OrderInfo } from "../pages/myorderInfo";
 import { TakingOrderInfo } from "../pages/takeordersInfo";
+import { StoredGoods } from "../pages/storedGoods";
 
 const tradeRoutes = [
   {path: "/trade", component: <TradePlatform /> },
@@ -26,7 +27,8 @@ const userRoutes = [
   {path: "/member/privateInfo", component: <EditUserInfo />},
   {path: "/member/activate", component: <ActiveAccount /> },
   {path: "/order/info/", component: <OrderInfo /> },
-  {path: "/order/takeorders", component: <TakingOrderInfo />}
+  {path: "/order/takeorders", component: <TakingOrderInfo />},
+  {path: "/order/getstoredgoods", component: <StoredGoods /> }
 ]
 
 const accountRoutes = [

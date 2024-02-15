@@ -32,7 +32,7 @@ npx tailwindcss init
 
 */
 import { useForm } from "react-hook-form";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "../components/Button";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import {  tokenState } from "../recoil/atom_token";
@@ -92,15 +92,8 @@ const Login:React.FC = () => {
         }
       
       }     
-      console.log('token:')
-      console.log(response.token); 
-      
-      
     } catch (e) {}
-     
   }
-  
-  
   return (
     <div className="m-5">
     <HelmetProvider>

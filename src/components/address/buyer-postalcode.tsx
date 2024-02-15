@@ -37,7 +37,6 @@ const SearchSVG = styled.svg`
 const FullAddress = styled.div`
     display:flex;
 `
-
 const BuyerPostcode: React.FC = () =>{
     const [zipCode, setZipcode] = useState<string>("");
     const [roadAddress, setRoadAddress] = useState<string>("");
@@ -68,7 +67,6 @@ const BuyerPostcode: React.FC = () =>{
     const completeHandler = (data:any) =>{
         setZipcode(data.zonecode);
         setRoadAddress(data.roadAddress);
-        
         setIsOpen(false);
     }
     // 상세 주소검색 event
@@ -76,11 +74,9 @@ const BuyerPostcode: React.FC = () =>{
         setDetailAddress(e.target.value);
         setFullAddress(zipCode + " " + roadAddress +" "+ e.target.value)
     }
-
     const onClose = () =>  {
         setIsOpen((prev) => !prev)
     }
-
     return(
         <div className=" mt-2">
             <input className="border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300" value={zipCode} readOnly placeholder="POSTAL CODE" />

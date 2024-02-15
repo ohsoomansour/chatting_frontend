@@ -57,17 +57,10 @@ const Wrapper = styled.div``;
 
 export const OrderInfo = () => {
   const token = useRecoilValue(tokenState);
-  console.log('token:')
-  // http://localhost:3001/order/takeorders
-
   const { data: myOrderInfo, isLoading }  = useQuery<IMyOrders>(
     ["customerOrderInfo", "ORDER"], () => getMyOrder(token)
   )
-  console.log("whoIam:")
-  console.log(myOrderInfo?.name);
 
-  console.log('myOrderInfo:')
-  console.log(myOrderInfo);
   const myOrderInfos = isLoading 
     ? []
     : myOrderInfo

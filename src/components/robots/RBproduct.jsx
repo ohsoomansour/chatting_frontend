@@ -1,9 +1,6 @@
-/**/
-import React, { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three';
 import {  useFrame, useLoader } from '@react-three/fiber'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
-import { TextureLoader } from 'three';
 
 /* 
  # URL -> 로드하는 방법 
@@ -16,12 +13,8 @@ export const RBproduct = ({rbURL}) => {
     let mixer
     let start = rbURL.indexOf('_') + 1;
     let glbModel = rbURL.slice(start)
-    console.log('glbModel:')
-    console.log(glbModel)
     let inputSrc = `/models/${glbModel}`
     const glb = useLoader(GLTFLoader, inputSrc);
-    console.log('glb:');
-    console.log(glb)
     if(glb.animations.length){
       mixer = new THREE.AnimationMixer(glb.scene) //three.js에서 제공하는 '애니메이션을 관리'하는 핵심 클래스 중 하나
       glb.animations.forEach(clip => {

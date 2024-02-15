@@ -9,3 +9,8 @@ export const buyerAddress = atom({
   key: "buyerAddres",
   default:""
 })
+
+export const storedGoodsAddress = atom({
+  key: "buyerStoringGoods",
+  default:""
+})

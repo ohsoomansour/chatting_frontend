@@ -13,15 +13,16 @@ interface ICustomer{
   name:string;
   userId:string;
 }
-interface IRobot{
+
+export interface IRobot{
   description:string;
   id:number;
   name:string;
   price:number;
   maintenance_cost:number;
   rbURL:string;
-  
 }
+
 interface Iitems{
   createdAt:string;
   id:number;

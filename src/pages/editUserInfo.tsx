@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form"
 import { FormError } from "../components/form-error";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { tokenState } from "../recoil/atom_token";
-
 import { userIdState } from "../recoil/atom_user";
 
 interface IeditUserInfo{
@@ -25,16 +24,13 @@ export const EditUserInfo  = () => {
   const {register, getValues, formState:{errors} } = useForm<IeditUserInfo>({"mode": "onChange"})
   const token = useRecoilValue(tokenState);
   const [userId, setUserId] = useRecoilState<string>(userIdState);
-  console.log('sessionStorage의 현재 userId:')
-  console.log(userId);
-
   const headers = new Headers({
     'Content-Type':'application/json; charset=utf-8',
     'x-jwt': `${token}`,
   });
   const onModify = async (e: any) => {
     e.preventDefault(); //새로고침 방지
-    //#기존의 id와 member를 불러와야 됨
+
     const {email, password, address } = getValues() //이건 변경된 email 
     console.log(email, password, address) 
    // #구분을 id로 지정
@@ -48,9 +44,7 @@ export const EditUserInfo  = () => {
       })
     ).json();
     setUserId(email);  
-    //setId(result);
-    console.log('prevUserId_id:');
-    console.log(user);
+
     const result = await (
       await fetch(`http://localhost:3000/member/update/${user.id}`, {
         headers: headers,
@@ -62,11 +56,7 @@ export const EditUserInfo  = () => {
         })
       })
     ).json(); 
-      
-    console.log('Client가 editProfile 실행한 결과:')
-    console.log(result);
   }
-
   return (
     <div className="fixed w-full h-full flex flex-col items-center justify-center">
       <form

@@ -12,7 +12,6 @@ import { Loading } from './loading';
 const StreamingWrapper=styled.div`
   background-color: ${(props) => props.theme.bgColor};
 `;
-//border: ${(props) => `4px solid ${props.theme.accentColor}`};
 const ChatContent=styled.div`
   color:${(props) => props.theme.textColor};
   background-color: whitesmoke;
@@ -33,12 +32,7 @@ export const RplayerWrapper = styled.div`
   }
 `;
 
-const LoadingSvg = styled.svg`
-  fill: #7e79ad;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-`;
+
 interface ImsgObj{
   msg:string;
   url:string;
@@ -476,10 +470,6 @@ export default function Streaming() {
     }
   });
 
-  const fileInputRef = useRef(null);
-  const handleFileDelete = (e:React.FormEvent<HTMLInputElement>) => {
-    e.currentTarget.value = '';
-  };
   return (
   <StreamingWrapper>
     <div id="room-selection-container" className='centered' >
