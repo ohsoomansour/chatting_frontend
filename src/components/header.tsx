@@ -1,7 +1,12 @@
-import { Link, useHistory } from "react-router-dom"
+import { Link } from "react-router-dom"
 import styled from "styled-components";
 import {motion, useAnimation} from "framer-motion";
 import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { useQuery } from "react-query";
+import { tokenState } from "../recoil/atom_token";
+import { IuserInfo } from "../pages/editUserInfo";
+import { getMyinfo } from "../api";
 
 const Wrapper = styled(motion.div)`
   display:flex;
@@ -72,9 +77,36 @@ const RegistrationSVG = styled.svg`
     fill: #A2B59F;
   }
 `;
+const AdminSVG = styled.svg`
+  fill:#A2B59F;
+  transition: fill 0.3s ease-in-out;
+  &:hover {
+    fill: #009933;
+  }
+`;
 
+const LogInSVG = styled.svg`
+  fill:#130f40;
+  transition: fill 0.3s ease-in-out;
+  &:hover {
+    fill: #00FF80;
+  }
+`;
+
+
+export enum MemberRole {
+  admin = "admin",
+  manager = "manager",
+  client = "client",
+  any = "any"
+}
 
 export const Header: React.FC = () => {
+  const token = useRecoilValue(tokenState)
+  const {data:me, isLoading} = useQuery<IuserInfo>(
+    ["me2", "Member"], () => getMyinfo(token)
+  );
+  
   const [headerCLose, setHeaderClose] = useState(false);
   const toggleSearch = (e:any) => {
     if (headerCLose) {
@@ -107,8 +139,16 @@ export const Header: React.FC = () => {
     >
       <Link to="/" rel="home" className=" text font-semibold mr-4" >
         Home
-        
       </Link>
+      {me?.memberRole === MemberRole.admin ? (
+        <Link to="/admin" className="  mr-4"> 
+          <AdminSVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" height="40px" width="40px">
+            <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c1.8 0 3.5-.2 5.3-.5c-76.3-55.1-99.8-141-103.1-200.2c-16.1-4.8-33.1-7.3-50.7-7.3H178.3zm308.8-78.3l-120 48C358 277.4 352 286.2 352 296c0 63.3 25.9 168.8 134.8 214.2c5.9 2.5 12.6 2.5 18.5 0C614.1 464.8 640 359.3 640 296c0-9.8-6-18.6-15.1-22.3l-120-48c-5.7-2.3-12.1-2.3-17.8 0zM591.4 312c-3.9 50.7-27.2 116.7-95.4 149.7V273.8L591.4 312z"/>
+          </AdminSVG>
+        </Link>
+      )
+      : null} 
+
       <Link to="/trade" rel="trade a product" className=" text font-semibold mr-4">
         <TranasactionSVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" height="40px" width="40px">
             <path d="M320 0c17.7 0 32 14.3 32 32V96H472c39.8 0 72 32.2 72 72V440c0 39.8-32.2 72-72 72H168c-39.8 0-72-32.2-72-72V168c0-39.8 32.2-72 72-72H288V32c0-17.7 14.3-32 32-32zM208 384c-8.8 0-16 7.2-16 16s7.2 16 16 16h32c8.8 0 16-7.2 16-16s-7.2-16-16-16H208zm96 0c-8.8 0-16 7.2-16 16s7.2 16 16 16h32c8.8 0 16-7.2 16-16s-7.2-16-16-16H304zm96 0c-8.8 0-16 7.2-16 16s7.2 16 16 16h32c8.8 0 16-7.2 16-16s-7.2-16-16-16H400zM264 256a40 40 0 1 0 -80 0 40 40 0 1 0 80 0zm152 40a40 40 0 1 0 0-80 40 40 0 1 0 0 80zM48 224H64V416H48c-26.5 0-48-21.5-48-48V272c0-26.5 21.5-48 48-48zm544 0c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H576V224h16z"/>
@@ -143,6 +183,11 @@ export const Header: React.FC = () => {
         <ProfileSvg xmlns="http://www.w3.org/2000/svg"viewBox="0 0 448 512" height="40px" width="40px">
           <path d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0S96 57.3 96 128s57.3 128 128 128zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/>
         </ProfileSvg>
+      </Link>
+      <Link to="/login">
+        <LogInSVG  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className=" mr-4" height="40px" width="40px">
+          <path d="M96 0C78.3 0 64 14.3 64 32v96h64V32c0-17.7-14.3-32-32-32zM288 0c-17.7 0-32 14.3-32 32v96h64V32c0-17.7-14.3-32-32-32zM32 160c-17.7 0-32 14.3-32 32s14.3 32 32 32v32c0 77.4 55 142 128 156.8V480c0 17.7 14.3 32 32 32s32-14.3 32-32V412.8c12.3-2.5 24.1-6.4 35.1-11.5c-2.1-10.8-3.1-21.9-3.1-33.3c0-80.3 53.8-148 127.3-169.2c.5-2.2 .7-4.5 .7-6.8c0-17.7-14.3-32-32-32H32zM432 512a144 144 0 1 0 0-288 144 144 0 1 0 0 288zm47.9-225c4.3 3.7 5.4 9.9 2.6 14.9L452.4 356H488c5.2 0 9.8 3.3 11.4 8.2s-.1 10.3-4.2 13.4l-96 72c-4.5 3.4-10.8 3.2-15.1-.6s-5.4-9.9-2.6-14.9L411.6 380H376c-5.2 0-9.8-3.3-11.4-8.2s.1-10.3 4.2-13.4l96-72c4.5-3.4 10.8-3.2 15.1 .6z"/>
+        </LogInSVG >
       </Link>
       <Button onClick={() => onLogOut()} className=" flex flex-col items-center gap-2 font-semibold">
         <OffSvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">

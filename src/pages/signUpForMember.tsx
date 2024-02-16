@@ -2,6 +2,8 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
 import { Button } from "../components/Button";
+import { useRecoilState } from "recoil";
+import { tokenState } from "../recoil/atom_token";
 
 interface ISignUpForMemberForm {
   email: string;
@@ -10,10 +12,11 @@ interface ISignUpForMemberForm {
   name:string;
   memberRole:string;
 }
-//📄https://react-hook-form.com/api/useform 제대로 이해해야 로직이 이해가 감 
+//📄https://react-hook-form.com/api/useform 제대로 이해 필요함 
 export const SignUpForMember = () => {
   const {register, getValues, formState:{ errors },handleSubmit, formState,} = useForm<ISignUpForMemberForm>({mode: "onChange" });
-  const history = useHistory()
+  const history = useHistory();
+  const [token, setToken] = useRecoilState(tokenState)
   const onValid = async (data:ISignUpForMemberForm) => {
     try {
       const {email, password, name, address, memberRole} = getValues();
@@ -30,7 +33,7 @@ export const SignUpForMember = () => {
       })
       
       if(result.redirected){
-        history.push('/')
+        history.push('/login')
       }
     } catch(e) {
       console.error(e);
@@ -42,7 +45,7 @@ export const SignUpForMember = () => {
   <div className="h-screen flex items-center flex-col mt-10 lg:mt-28"> 
    <HelmetProvider>
     <Helmet>
-      <title>Sign Up For Member | GGL Entertainment</title>
+      <title>Trader | Sign up</title>
     </Helmet>
    </HelmetProvider>
     <div className=" w-full max-w-screen-sm flex flex-col px-5 items-center">
@@ -89,7 +92,7 @@ export const SignUpForMember = () => {
         />
       </form>
       <div>
-        You already used GGL Entertainment?{" "}
+        You already used Trader?{" "}
         <Link to="/login" className=" text-green-300 font-bold hover:underline"> Sign in </Link>
       </div>
     </div>        

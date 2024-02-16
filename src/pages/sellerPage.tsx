@@ -1,5 +1,5 @@
 import { useDropzone } from "react-dropzone";
-import { UI } from "../components/Streaming"
+import { UI } from "./Streaming"
 import { useCallback, useState } from "react";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
@@ -11,6 +11,7 @@ import { compaImgState } from "../recoil/atom_compaImg";
 import { FormError } from "../components/form-error";
 import { sellerAddress } from "../recoil/atom_address";
 import SellerPostcode from "../components/address/seller-postalcode";
+import { Helmet } from "react-helmet";
 
 const Wrapper = styled.div`
   display:flex;
@@ -127,7 +128,10 @@ export const SellerPage = () => {
   });
 
   return (
-  <Wrapper>  
+  <Wrapper>
+    <Helmet>
+         <title>Trader | Seller Page </title>       
+    </Helmet>  
     <UI className=' w-2/4 border-4 border-gray-100 p-4 shadow-lg rounded-lg'>
     <h2 className=" text-lg font-bold ">Private or Company</h2> 
       <input

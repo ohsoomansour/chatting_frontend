@@ -4,6 +4,7 @@ import { getMyOrder } from "../api";
 import { useRecoilValue } from "recoil";
 import { tokenState } from "../recoil/atom_token";
 import { Loading } from "../components/loading";
+import { Helmet } from "react-helmet";
 
 export enum OrderStatus  {
   Pending = "Pending",
@@ -70,6 +71,9 @@ export const OrderInfo = () => {
 
   return (
     <Wrapper className="mt-6">
+      <Helmet>
+        <title>Trader | My Order</title>
+      </Helmet>
       {isLoading 
       ? <Loading /> 
       :(myOrderInfos.map((order, index) => (

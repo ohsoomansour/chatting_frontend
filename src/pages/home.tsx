@@ -4,12 +4,15 @@ import { DogRobot } from "../components/robots/DogRobot"
 import { MoveRobot } from "../components/robots/MoveRobot"
 import { HexaRbot } from "../components/robots/hexahedronRobot"
 import { CuteRobot } from "../components/robots/cuteRobot"
+import { Helmet } from "react-helmet"
 
 export const Home = () => {
 
   return(
     <div>
-    
+      <Helmet>
+         <title>Trader | Home </title>       
+      </Helmet>
       <h1 className=" text-lg font-bold text-center mt-6">Welcome to Robot Trader </h1>
       <Canvas>
       <OrbitControls autoRotate={true}/>

@@ -8,6 +8,7 @@ import { IRobot } from "./takeordersInfo";
 import { userIdState } from "../recoil/atom_user";
 import StoredGoodsPostcode from "../components/address/storedGoods-postalcode";
 import { storedGoodsAddress } from "../recoil/atom_address";
+import { Helmet } from "react-helmet";
 
 const BASE_PATH = "http://localhost:3000";
 
@@ -62,7 +63,7 @@ const CompaWrapper = styled.div`
 const CompaName = styled.span`
   margin-left:90px;
 `;
-const ButttonContainer = styled.div`
+export const ButttonContainer = styled.div`
   display:flex;
 `
 
@@ -75,6 +76,13 @@ export const StoredGoods = () => {
   )
   console.log("storedDeals:")
   console.log(mystoredDeals)
+
+  const stores = isLoading 
+    ? []
+    : mystoredDeals?.store
+    ? mystoredDeals.store
+    : [];
+
   const onDelete = async (storageId:number) => {
     const isDel = 
     await fetch(`${BASE_PATH}/order/deletestoredgoods/${storageId}`, {
@@ -84,10 +92,6 @@ export const StoredGoods = () => {
         'Content-Type': 'application/json; charset=utf-8',
       },
     }).then(response => response.ok ? refetch() : null );
-    
-      
-    
-    
     
     console.log('isDel');
     console.log(isDel);
@@ -124,11 +128,14 @@ export const StoredGoods = () => {
   }
   return (
     <Wrapper className=" mt-6">
-      <h1 className=" text-2xl text-center font-semibold mb-4" >{mystoredDeals?.name }님 안녕하세요  </h1>
+      <Helmet>
+        <title>Stored Goods</title>
+      </Helmet>
+      <h1 className=" text-2xl text-center font-semibold mb-4" > {mystoredDeals?.store? mystoredDeals?.name + "님 안녕하세요" : null }</h1>
       <p className=" text-xl text-center font-semibold">{"아래의 로봇 제품들은 고객님께서 미리 담기를 선택하신 목록입니다. "}</p>
       {isLoading 
         ? <Loading /> 
-        : (mystoredDeals?.store.map((store, index) => (
+        : (stores.map((store, index) => (
           <DealContainer key={index} className="mb-2 max-w-md mx-auto p-6 bg-white rounded-lg shadow-md"> 
             <CompaWrapper >
               <img alt='company logo' src={store.deal.compaBrand_ImgURL} width={"20%"} height={"20%"} className=" inline-block"></img>

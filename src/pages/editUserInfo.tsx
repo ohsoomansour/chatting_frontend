@@ -3,6 +3,9 @@ import { FormError } from "../components/form-error";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { tokenState } from "../recoil/atom_token";
 import { userIdState } from "../recoil/atom_user";
+import { Helmet } from "react-helmet";
+import { useQuery } from "react-query";
+import { getMyinfo } from "../api";
 
 interface IeditUserInfo{
   email:string;
@@ -24,29 +27,24 @@ export const EditUserInfo  = () => {
   const {register, getValues, formState:{errors} } = useForm<IeditUserInfo>({"mode": "onChange"})
   const token = useRecoilValue(tokenState);
   const [userId, setUserId] = useRecoilState<string>(userIdState);
+
+  const { data:whoamI, isLoading } = useQuery<IuserInfo>(
+    ["me", "Member"], () => getMyinfo(token)
+  );
+  console.log('whoamI?');
+  console.log(whoamI);
+
+  
   const headers = new Headers({
     'Content-Type':'application/json; charset=utf-8',
     'x-jwt': `${token}`,
   });
   const onModify = async (e: any) => {
     e.preventDefault(); //새로고침 방지
-
     const {email, password, address } = getValues() //이건 변경된 email 
-    console.log(email, password, address) 
-   // #구분을 id로 지정
-    const user:IuserInfo = await (
-      await fetch('http://localhost:3000/member/getuser', {
-        headers: headers,
-        method: 'POST',
-        body: JSON.stringify({
-          userId:userId,
-        })
-      })
-    ).json();
     setUserId(email);  
-
     const result = await (
-      await fetch(`http://localhost:3000/member/update/${user.id}`, {
+      await fetch(`http://localhost:3000/member/update/${whoamI?.id}`, {
         headers: headers,
         method: 'PATCH',
         body: JSON.stringify({
@@ -59,6 +57,9 @@ export const EditUserInfo  = () => {
   }
   return (
     <div className="fixed w-full h-full flex flex-col items-center justify-center">
+      <Helmet>
+        <title>Trader | Edit Profile</title>
+      </Helmet>
       <form
         
         > 

@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import { IDeal, IRobot } from './TradePlatform';
+import { IDeal, IRobot } from '../pages/TradePlatform';
 import { useRecoilValue } from 'recoil';
 import { tokenState } from '../recoil/atom_token';
 import { userIdState } from '../recoil/atom_user';
 import BuyerPostcode from './address/buyer-postalcode';
 import { buyerAddress } from '../recoil/atom_address';
+import { ButttonContainer } from '../pages/storedGoods';
 
 
 const MantenanceOption = styled.div``;
@@ -202,16 +203,19 @@ export const Order = ({robot, deal}:OrderProps) => {
         
       </div>
       </Robot>
-      <button 
-        onClick={onOrder} 
-        className=' font-semibold min-w-full mx-auto mt-2 mb-4 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-green-200 transition-colors'
-      > Order
-      </button>
-      <button 
-        onClick={onSave} 
-        className=' font-semibold min-w-full mx-auto mt-2 mb-4 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-green-200 transition-colors'
-      > SaveGoods
-      </button>
+      <ButttonContainer className=' mt-10'>
+        <button 
+          onClick={onSave} 
+          className=' text-2xl font-semibold w-full mx-auto mt-2 mr-6 mb-4 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-pink-300 transition-colors'
+        > Store
+        </button>  
+        <button 
+          onClick={onOrder} 
+          className=' text-2xl font-semibold w-full mx-auto mt-2 mb-4 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-green-200 transition-colors'
+        > Order
+        </button>
+      </ButttonContainer>
+      
     </div>
   );
 }

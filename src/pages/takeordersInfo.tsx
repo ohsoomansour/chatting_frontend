@@ -4,6 +4,7 @@ import { useRecoilValue } from "recoil";
 import { tokenState } from "../recoil/atom_token";
 import styled from "styled-components";
 import { Loading } from "../components/loading";
+import { Helmet } from "react-helmet";
 
 const Wrapper = styled.div``;
 
@@ -70,6 +71,9 @@ export const TakingOrderInfo = () => {
 
   return (
     <Wrapper className="mt-6 ">
+      <Helmet>
+        <title>Trader | My Sales</title>
+      </Helmet>
       {isLoading 
         ? <Loading /> 
         :  ( takeOrderInfos.map((order, index) => (

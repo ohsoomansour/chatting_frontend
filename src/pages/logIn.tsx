@@ -34,7 +34,7 @@ npx tailwindcss init
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { Button } from "../components/Button";
-import { Helmet, HelmetProvider } from "react-helmet-async";
+import {  Helmet, HelmetProvider } from "react-helmet-async";
 import {  tokenState } from "../recoil/atom_token";
 import { useRecoilState} from 'recoil';
 import { FormError } from "../components/form-error";
@@ -68,6 +68,7 @@ const Login:React.FC = () => {
         })
       })
       ).json();
+
       setToken(response.token)
       setUserId(email);
       if(response.token !== ''){
@@ -96,9 +97,10 @@ const Login:React.FC = () => {
   }
   return (
     <div className="m-5">
+
     <HelmetProvider>
       <Helmet>
-        <title>Login | GGL Entertainment </title>
+        <title>Trader | Login</title>
       </Helmet>
     </HelmetProvider>
       <h4 className="w-full font-medium text-left text-3xl mb-5">
@@ -143,8 +145,8 @@ const Login:React.FC = () => {
         />
       </form>
       <div>
-        New to Streaming?{""}      
-        <Link to="/create-account" className=" text-red-300 font-bold hover:underline "> Sign up for membership</Link>
+      {token === '' ? <Link to="/create-account" className=" text-red-300 font-bold hover:underline "> Sign up for membership</Link> : null}      
+        
       </div>
     </div>
   )

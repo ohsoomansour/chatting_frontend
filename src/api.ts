@@ -1,4 +1,5 @@
-import { IDeal } from "./components/TradePlatform";
+import { IDeal } from "./pages/TradePlatform";
+import { IuserInfo } from "./pages/editUserInfo";
 
 const BASE_PATH = "http://localhost:3000";
 export const headers = new Headers({
@@ -14,8 +15,6 @@ export async function getallDeals() {
   ).json();
   return allDeals;
 }
-
-
 
 export async function getMyOrder(token:string) {
   const myOrder = await (
@@ -45,7 +44,6 @@ export async function takeOrders(token:string) {
   return takingOrders;
 }
 
-
 export async function storedGoods(token:string) {
   const storedGoods = await (
     await fetch(`${BASE_PATH}/order/getstoredgoods`, {
@@ -58,3 +56,19 @@ export async function storedGoods(token:string) {
   
   return storedGoods;
 }
+
+
+export async function getMyinfo(token:string) {
+  const user:IuserInfo = await (
+    await fetch(`${BASE_PATH}/member/getmyinfo`, {
+      headers: {
+        'Content-Type':'application/json; charset=utf-8',
+        'x-jwt': token,
+      },
+      method: 'GET',
+    })
+  ).json();
+  return user;
+}
+
+

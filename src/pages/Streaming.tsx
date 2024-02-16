@@ -7,7 +7,8 @@ import ReactPlayer from "react-player";
 import { userIdState } from '../recoil/atom_user';
 import React, { useCallback } from 'react';
 import {useDropzone} from 'react-dropzone'
-import { Loading } from './loading';
+import { Loading } from '../components/loading';
+import { Helmet } from 'react-helmet';
 
 const StreamingWrapper=styled.div`
   background-color: ${(props) => props.theme.bgColor};
@@ -472,6 +473,9 @@ export default function Streaming() {
 
   return (
   <StreamingWrapper>
+    <Helmet>
+         <title>Trader | A/S </title>       
+    </Helmet> 
     <div id="room-selection-container" className='centered' >
       <h1>WebRTC video Conference</h1>
       <label>Enter the number of the room you want to connect</label>
