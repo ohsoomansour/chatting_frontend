@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MemberTable from "../components/MembersTable";
 import { tokenState } from "../recoil/atom_token";
 import { useRecoilValue} from 'recoil';
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
+import styled from "styled-components";
+
 
 interface Imember {
   id: number;
@@ -27,6 +29,39 @@ interface ImngMember{
   searchedName: string;
 
 }
+const SearchSVG = styled.svg`
+  width: 35px;
+  height: 35px;
+  fill: black;
+  transition: fill 0.3s ease-in-out;
+  &:hover {
+      fill: #696969;
+  }
+
+`
+const SearchBtn = styled.button`
+  display: flex;
+  justify-content: center; /* 수평 가운데 정렬 */
+  align-items: center; /* 수직 가운데 정렬 */
+  font-size: 15px;
+  height: 35px;
+  width:200px;
+  margin-top:10px;
+  border: none;
+  outline: none;
+  cursor:pointer;
+  color: #D0EE17;
+  background-color: gray;
+  transition: background-color 0.3s ease-in-out;
+  &:hover {
+    background-color: #696969;
+  }
+  box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.3);
+`;
+const BtnContainer = styled.div`
+  display:flex;
+`
+
 /*
  * @Author : OSOOMAN
  * @Date : 2024.1.16
@@ -42,38 +77,37 @@ export const ManageMembers:React.FC = () => {
   const token = useRecoilValue(tokenState)
   const [isAll, setIsAll ] = useState(false);
   const [members, setMembers] = useState<Imember[]>([{id:0, userId:'', address:'', name:'', lastActivityAt:'', isDormant:null, memberRole: '' }]);
-  const [searchedUser, setSearchedUser] = useState<IschUser>({id:0, userId:'', address:'', name:'', lastActivityAt:'', isDormant:null, memberRole: '' });
-
-
+  const [searchedUser, setSearchedUser] = useState<IschUser[]>([{id:0, userId:'', address:'', name:'', lastActivityAt:'', isDormant:null, memberRole: '' }]);
+  
   const headers = new Headers({
     'Content-Type':'application/json; charset=utf-8',
     'x-jwt': `${token}`,
   });
   //@Explain: 전체 회원 조회
+
   const getMembers = async () => {
     setIsAll(true);
     const members = await (
-        //then 후속 메서드: 도착한 응답에도 접근 vs await 
-        await fetch('http://localhost:3000/admin/members', {
-          headers : headers,
-          method: 'GET',
-        })
+      await fetch('http://localhost:3000/admin/members', {
+        headers : headers,
+        method: 'GET',
+      })
     ).json();
-    console.log(members);
     setMembers(members)
   }
   //@Explain: (회원 이름으로 ) 검색 기능
   const searchAmember = async () => {
     setIsAll(false);
     const {searchedName} = getValues();
-    const schAUser = await (
+    const searchedUser = await (
       await fetch(`http://localhost:3000/admin/members/search?name=${searchedName}`, {
         headers: headers,
         method: 'GET',
       })
     ).json();
-    setSearchedUser(schAUser);
+    setSearchedUser(searchedUser);
   }
+
   //@Explain: 사용자 계정 비활성화 기능 
   const inactivateAccount = async () => {
     try {
@@ -99,10 +133,20 @@ export const ManageMembers:React.FC = () => {
             placeholder="회원 이름을 검색하세요."
             className="w-full border-none focus:outline-none"
           />
-          <button onClick={() => searchAmember()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline-blue">검색</button>
+          <SearchSVG
+            onClick={() => searchAmember() }
+            className=" mt-4 ml-2 cursor-pointer"
+            viewBox="0 0 512 512"
+          >
+            <path 
+                d="M500.3 443.7l-119.7-119.7c27.22-40.41 40.65-90.9 33.46-144.7C401.8 87.79 326.8 13.32 235.2 1.723C99.01-15.51-15.51 99.01 1.724 235.2c11.6 91.64 86.08 166.7 177.6 178.9c53.8 7.189 104.3-6.236 144.7-33.46l119.7 119.7c15.62 15.62 40.95 15.62 56.57 0C515.9 484.7 515.9 459.3 500.3 443.7zM79.1 208c0-70.58 57.42-128 128-128s128 57.42 128 128c0 70.58-57.42 128-128 128S79.1 278.6 79.1 208z"
+            />
+          </SearchSVG>
         </div >
-        <button onClick={() => getMembers()} className="bg-blue-500 text-white font-bold transition-colors  hover:bg-blue-700  py-2 px-4 mr-2 rounded focus:outline-none focus:shadow-outline-blue">회원 전체 조회</button>
-        <button onClick={inactivateAccount} className=" bg-green-400 text-white font-bold transition-colors hover:bg-slate-600  py-2 px-4 rounded focus:outline-none focus:shadow-outline-black">회원 계정 비활성화</button>
+        <BtnContainer>
+          <SearchBtn onClick={() => getMembers()} className="  text-white font-bold transition-colors  py-2 px-4 mr-2 rounded focus:outline-none focus:shadow-outline-blue">View all members</SearchBtn>
+          <SearchBtn onClick={inactivateAccount} className=" text-white font-bold transition-colors  py-2 px-4 rounded focus:outline-none focus:shadow-outline-black">Deactivate accounts</SearchBtn>
+        </BtnContainer>
       </div>
       <MemberTable members={members} member={searchedUser} isAll={isAll} />
     </div>

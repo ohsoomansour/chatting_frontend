@@ -24,7 +24,7 @@ interface IschUser{
 
 //로직: props로 members는 전체 회원, searchedMember
 // 파라미터{prop1, prop2}:{prop1:Imember[], prop2:}
-const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUser, isAll:boolean}) => {
+const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUser[], isAll:boolean}) => {
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [id, setId] = useState(0);
   const token = useRecoilValue(tokenState);
@@ -36,7 +36,7 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
     setPopupOpen(false);
   };
   const onEditUser = (id:number) => {
-    //#솔루션:팝업창 띄워서 바로 해결
+    //#팝업창 띄워서 바로 회원 정보 변경
     openPopup();
     setId(id)
   }
@@ -60,11 +60,9 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
     
     ).json();
     alert(`Address:${member.address} MemberRole:${member.memberRole} are updated!`)
-    console.log('업데이트된 member');
-    console.log(member);
   }
   return (
-    <div className="container mx-auto my-8">
+    <div className="container mx-auto my-8 text-center">
       <h1 className="text-2xl font-semibold mb-4">Member List</h1>
       <table className="min-w-full bg-white border border-gray-300">
         <thead>
@@ -72,10 +70,10 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
             <th className="py-2 px-4 border-b">UserId</th>
             <th className="py-2 px-4 border-b">Name</th>
             <th className="py-2 px-4 border-b">Address</th>
-            <th className="py-2 px-4 border-b">lastActivityAt</th>
-            <th className="py-2 px-4 border-b">isDormant</th>
-            <th className="py-2 px-4 border-b">memberRole</th>
-            <th className="py-2 px-4 border-b">변경</th>
+            <th className="py-2 px-4 border-b">LastActivityAt</th>
+            <th className="py-2 px-4 border-b">IsDormant</th>
+            <th className="py-2 px-4 border-b">Member role</th>
+            <th className="py-2 px-4 border-b"></th>
           </tr>
         </thead>
         <tbody>
@@ -88,20 +86,20 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
                 <td className="text-center py-2 px-4 border-b">{member.lastActivityAt}</td>
                 <td className="text-center py-2 px-4 border-b">{member.isDormant ? 'true' : (member.isDormant === false ? 'false' : '')}</td>
                 <td className="text-center py-2 px-4 border-b">{member.memberRole}</td>
-                <button onClick={() => onEditUser(member.id)} className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">편집</button>
+                <button onClick={() => onEditUser(member.id)} className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-400">Edit</button>
               </tr>
             ))
-            :(
-              <tr className="text-center">
-                <td className="text-center py-2 px-4 border-b">{member.userId}</td>
-                <td className="text-center py-2 px-4 border-b">{member.name}</td>
-                <td className="text-center py-2 px-4 border-b">{member.address}</td>
-                <td className="text-center py-2 px-4 border-b">{member.lastActivityAt}</td>
-                <td className="text-center py-2 px-4 border-b">{member.isDormant ? 'true' : (member.isDormant === false ? 'false' : '')}</td>
-                <td className="text-center py-2 px-4 border-b">{member.memberRole}</td>
-                <button onClick={() => onEditUser(member.id)} className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">편집</button>
+            : member.map((searchedMembers, index) => (
+              <tr className="text-center" key={index}>
+                <td className="text-center py-2 px-4 border-b">{searchedMembers.userId}</td>
+                <td className="text-center py-2 px-4 border-b">{searchedMembers.name}</td>
+                <td className="text-center py-2 px-4 border-b">{searchedMembers.address}</td>
+                <td className="text-center py-2 px-4 border-b">{searchedMembers.lastActivityAt}</td>
+                <td className="text-center py-2 px-4 border-b">{searchedMembers.isDormant ? 'true' : (searchedMembers.isDormant === false ? 'false' : '')}</td>
+                <td className="text-center py-2 px-4 border-b">{searchedMembers.memberRole}</td>
+                <button onClick={() => onEditUser(searchedMembers.id)} className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-400">Edit</button>
               </tr>
-             )
+            ))
           }
           
           

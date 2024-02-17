@@ -35,6 +35,7 @@ export const PlayerWrapper = styled.div`
     border-radius: 20px;
     overflow: hidden;
     margin-top:10px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.6);
   }
 `;
 const SoundBtn = styled.div`
@@ -42,7 +43,7 @@ const SoundBtn = styled.div`
   justify-content: center; /* 수평 가운데 정렬 */
   align-items: center; /* 수직 가운데 정렬 */
   font-size: 15px;
-  height: 30px;
+  height: 35px;
   width:150px;
   margin-top:10px;
   border: none;
@@ -50,10 +51,11 @@ const SoundBtn = styled.div`
   cursor:pointer;
   color: #D0EE17;
   background-color: gray;
-  transition: color 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out;
   &:hover {
-    color: #D0EE17;
+    background-color: #696969;
   }
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.4);
 `;
 const DownloadSVG = styled.svg`
   width: 30px;
