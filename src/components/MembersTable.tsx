@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRecoilValue } from "recoil";
 import { tokenState } from "../recoil/atom_token";
+import { BASE_PATH } from "../pages/logIn";
 
 interface Imember {
   id:number;
@@ -21,6 +22,7 @@ interface IschUser{
   isDormant:boolean | null;
   memberRole:string;
 }
+
 
 //로직: props로 members는 전체 회원, searchedMember
 // 파라미터{prop1, prop2}:{prop1:Imember[], prop2:}
@@ -48,7 +50,7 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
     //변경된 부분 알림!
     const {address, memberRole} = getValues()
     const member = await (
-      await fetch(`http://localhost:3000/admin/update/${id}`, {
+      await fetch(`${BASE_PATH}/admin/update/${id}`, {
         headers: headers,
         method: 'PATCH',
         body:JSON.stringify({

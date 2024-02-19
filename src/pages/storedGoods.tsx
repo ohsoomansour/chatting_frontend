@@ -9,8 +9,9 @@ import { userIdState } from "../recoil/atom_user";
 import StoredGoodsPostcode from "../components/address/storedGoods-postalcode";
 import { storedGoodsAddress } from "../recoil/atom_address";
 import { Helmet } from "react-helmet";
+import { BASE_PATH } from "./logIn";
 
-const BASE_PATH = "http://localhost:3000";
+
 
 interface ISeller {
   address:string;

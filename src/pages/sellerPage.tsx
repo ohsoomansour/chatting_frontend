@@ -12,6 +12,7 @@ import { FormError } from "../components/form-error";
 import { sellerAddress } from "../recoil/atom_address";
 import SellerPostcode from "../components/address/seller-postalcode";
 import { Helmet } from "react-helmet";
+import { BASE_PATH } from "./logIn";
 
 const Wrapper = styled.div`
   display:flex;
@@ -84,7 +85,7 @@ export const SellerPage = () => {
         console.log('threeDFile 들어오나?')
         console.log(threeDFile[0])
         await (
-          await fetch('http://localhost:3000/seller/make-deal', {
+          await fetch(`${BASE_PATH}/seller/make-deal`, {
             headers:headers,
             method: 'POST',
             body: JSON.stringify({

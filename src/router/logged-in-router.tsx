@@ -24,6 +24,7 @@ import Chatting from "../pages/chatting";
 
 const userRoutes = [
   {path: "/", component: <Home />},
+  {path: "/streaming", component: <Streaming /> },
   {path: "/member/privateInfo", component: <EditUserInfo />},
   {path: "/member/activate", component: <ActiveAccount /> },
   {path: "/order/info/", component: <OrderInfo /> },

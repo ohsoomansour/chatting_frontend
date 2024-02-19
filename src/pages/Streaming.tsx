@@ -1,52 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { Socket, io } from 'socket.io-client';
 import styled from 'styled-components';
-import {  useRecoilValue, useSetRecoilState } from 'recoil';
+import { useEffect, useRef, useState } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { isDarkAtom } from '../recoil/atom_Theme';
-import ReactPlayer from "react-player";
-import { userIdState } from '../recoil/atom_user';
-import React, { useCallback } from 'react';
-import {useDropzone} from 'react-dropzone'
 import { Loading } from '../components/loading';
 import { Helmet } from 'react-helmet';
 
 const StreamingWrapper=styled.div`
   background-color: ${(props) => props.theme.bgColor};
 `;
-const ChatContent=styled.div`
-  color:${(props) => props.theme.textColor};
-  background-color: whitesmoke;
-`;
 export const UI = styled.div`
   display:flex;
   flex-direction: column;
 `;
-const ChatContainer = styled.div``;
-export const RplayerWrapper = styled.div`
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  .player {
-    border-radius: 20px;
-    overflow: hidden;
-    margin-top:10px;
-  }
-`;
-
-
-interface ImsgObj{
-  msg:string;
-  url:string;
-  time:string;
-}
-
-interface IProps {
-  msg:string;
-  url:string;
-  time: string;
-}
-//DOM elements.
-//var srcObject: any;
 const roomSelectionContainer = document.getElementById('room-selection-container');
 const videoChatContainer = document.getElementById('video-chat-container');
 //연결
@@ -73,23 +40,13 @@ const iceServers = {
   ]
 }
 
-
-
 export default function Streaming() {
-  
-  const userId = useRecoilValue(userIdState);
   const setDarkAtom = useSetRecoilState(isDarkAtom);
   const videoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const roomInputRef = useRef<HTMLInputElement>(null);
   const [sc, setSocket] = useState<Socket>();
-  const [messages, setMessages] = useState<IProps[]>([{msg:'', url: '', time: ''}]);
-  const [inputMessage, setInputMessage] = useState('');
-  const [joinedUserList, setJoinedUserList] = useState<string[]>(['']);
-  const [particapants, setParticapants] = useState<string[]>([''])
-  const [DraggedFile, setDragFile] = useState([])
   const [isLoading, setLoading] = useState(false);
-
 
   useEffect(() => {
     let sc = io('http://localhost:8080', {transports:['websocket'], path:'/webrtc'}) 
@@ -140,18 +97,13 @@ export default function Streaming() {
           }
         }
         //setRemoteStream;
-
-
-
         rtcPeerConnection.onicecandidate = sendIceCandidate;  
       //✅자신의 SessionDescription을 생성 + Signaling Server를 통해 상대방 peer에게 전달!
         await createSDPOffer(rtcPeerConnection);      
       }
     })
-    
     sc.on('webrtc_offer', async (webrtc_offer_event) => {
       console.log(`Socekt event callback: webrtc_offer ${webrtc_offer_event}`);
-  
       if(!isRoomCreator) {
         //자신의 Public Address를 알아내고 === 공인 ip와 port를 찾아줌
         rtcPeerConnection = new RTCPeerConnection(iceServers);
@@ -163,7 +115,7 @@ export default function Streaming() {
         await createSDPAnswer(rtcPeerConnection);
       }
     })
-     
+
     sc.on('webrtc_answer', async (answerSDPEvent) => {
       console.log('Socekt event callback: webrtc_answer')
       console.log(answerSDPEvent);
@@ -181,7 +133,6 @@ export default function Streaming() {
           //remoteVideoRef.current!.srcObject = new MediaStream([ev.track]);
         }
       }
-
         //#연결 성립
         rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(answerSDPEvent)) //가정: answer 
         //#상대박의 트랙이 변동 발생 시 이벤트 헨들러 동작 방식 설정
@@ -216,24 +167,7 @@ export default function Streaming() {
 
 
     })
-    
-   //================================================ Chatting ===============================================
-   sc.on('message', (msgObj:ImsgObj) => {
-    console.log('msgObj:')
-    console.log(msgObj)
-    setMessages((prev) => [...prev, msgObj]); 
-    setLoading(isLoading)
-  });
- 
-
-    sc.on('userJoined', (userInfo) => {
-      console.log('userJoin 이벤트의 userInfo.userList:')
-      console.log(userInfo.userList);
-      setJoinedUserList(userInfo.userList);
-    })
-    sc.on('participants', (p) => {
-      setParticapants(p.participant);
-    })
+  
 
     /*#컴포넌트가 언마운트될 때 웹 소켓연결을 닫음
     1.dependency가 바뀌어서 effect가 달라져야 할 때 (이전 effect 청소)
@@ -244,7 +178,7 @@ export default function Streaming() {
     };
   
   }, [])
-  // ====================================== Conference function ===================================
+
   function joinRoom (room:string) {
     if(room === '') {
       alert('Please type a room ID');
@@ -395,89 +329,14 @@ export default function Streaming() {
       rtcPeerConnection.addTrack(track, localStream);
     })
   }
-  // ====================================== Conference function End ===================================
- 
-  // ====================================== Chatting function =========================================
-  const setUName = () => {
-    sc!.emit('joinRoom', { userName: userId, roomId: roomId } )
-
-  }
-  let fileUrl: string = '';
-  const sendMessage = async () => {
-    
-    try {
-      if (DraggedFile.length !== 0) {
-        setLoading(true);
-        const actualFile = DraggedFile[0]
-        const formBody = new FormData();
-        formBody.append('file', actualFile)
-        const { url: ImageUrl } = await ( 
-          await fetch("http://localhost:3000/upload/", {
-            method: 'POST',
-            body: formBody,
-          })
-           ).json()
-        fileUrl = ImageUrl;
-        
-      }
-
-     if (inputMessage.trim() !== '') {
-       if(userId === ''){
-         alert('로그인 또는 참가 닉네임을 설정하세요!')
-         return new Error('닉네임 없음');
-       } else {
-         // 서버로 메시지 전송: 메세지 + 이미지를 같이 보낸다.
-       // eslint-disable-next-line no-useless-concat
-       sc!.emit('message', [`${userId}:` + "  " + inputMessage, fileUrl]); 
-       setInputMessage('');
-       fileUrl = String('');
-       console.log("메세지가 있는 경우 fileUrl 값 확인:")
-       setDragFile([]);
-      }
-       
-     } else if(inputMessage.trim() === '') {
-       if(userId === ''){
-         alert('로그인 또는 참가 닉네임을 설정하세요!')
-         return new Error('닉네임 없음');
-       } else if (fileUrl !== ''){
-         sc!.emit('message', [`${userId}:`+ inputMessage, fileUrl]); 
-         setInputMessage('');
-         setDragFile([]);
-       }
-     }
-    } catch (e) {}
-  };
-
-  const handleOnCheck = (event:any) => {
-    //:ChangeEvent<HTMLInputElement>
-    //event.target.checked 속성을 사용하여 checkbox의 체크 여부를 확인
-    //<input> 태그의 checked 속성은 페이지가 로드될 때 미리 선택될 <input> 요소를 명시
-    const isChecked = event.target.checked;
-    setDarkAtom(isChecked)
-  } 
-
-  const onDrop = useCallback( (acceptedFiles:any) => {
-    // 파일이 드롭됐을 때의 로직을 처리합니다.
-    console.log(acceptedFiles);
-    setDragFile(acceptedFiles)
-
-  }, []);
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: {
-      'image/jpeg': ['.jpeg'],
-      'image/png': ['.png'],
-      'video/mp4': ['.mp4', '.MP4'],
-    }
-  });
 
   return (
   <StreamingWrapper>
     <Helmet>
-         <title>Trader | A/S </title>       
+      <title>Trader | Conference </title>       
     </Helmet> 
     <div id="room-selection-container" className='centered' >
-      <h1>WebRTC video Conference</h1>
+      <h1 className=' text-2xl font-semibold text-center mt-4'>Conference</h1>
       <label>Enter the number of the room you want to connect</label>
       <form onSubmit={joinRoomButton}> 
         <input id='room-input' type='text' ref={roomInputRef}/>
@@ -488,102 +347,12 @@ export default function Streaming() {
       <video id="local-video" autoPlay loop muted width="30%" height="30%" ref={videoRef} ></video>
       <video id="remote-video" autoPlay loop muted width="30%" height="30%" ref={remoteVideoRef}> </video>
     </div>
-    <ChatContainer className='border border-solid border-gray-300 p-4 flex-1 flex flex-col items-center justify-center'>
-      <label className="relative flex justify-between items-center group p-2 text-xl">
-        <input
-          type="checkbox" 
-          className="toggle absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md" 
-          onChange={handleOnCheck}
-        />
-        <span className="w-16 h-10 flex items-center flex-shrink-0 ml-4 p-1 bg-gray-300 rounded-full duration-300 ease-in-out peer-checked:bg-green-400 after:w-8 after:h-8 after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-6 group-hover:after:translate-x-1"></span>
-      </label>
-      <div className="rounded-lg w-2/4 bg-gray-300 shadow-lg text-white p-4">
-        <h1 className="text-2xl font-semibold mb-4">Users in this room</h1>
-        <ul>
-          {joinedUserList && joinedUserList!.map((user, index) => (
-            <li key={index} className="mb-2 font-semibold">{user}님 </li>
-          ))}
-        </ul>
-
-        <h1 className="text-2xl text-center font-semibold mb-4">📢안내</h1>
-        <ul>
-        {joinedUserList && particapants!.map((userName, index) => (
-            <li key={index} className='font-semibold'>{userName}</li>
-          ))}
-        </ul>
-      </div>
-
-        <ChatContent className='   shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll'>
-          <h3 className='text-lg text-center mt-2 font-bold'>대화 내용</h3>
-          {messages && messages.map((message, index ) => (
-            <div>
-              <p className='mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' key={index}>{message.msg}</p>
-              {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
-                <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className=' ml-4 mt-1 rounded-md' />  
-              ): null}
-
-              <RplayerWrapper>  
-                {(message.url.includes('.mp4') || message.url.includes('.MP4') )? (
-                    <ReactPlayer 
-                      key={message.url}
-                      className="player "
-                      url={message.url}
-                      width="80%"
-                      height="30%"
-                      controls={true}
-                      playing={true}
-                  />
-                  
-                  ) : null}
-              </RplayerWrapper>
-              <p className='text text-right text-sm mr-4' key={message.time}>{message.time}</p>
-            </div>
-          ))}
-          
-        </ChatContent>
- 
-      <UI className=' w-2/4'>
-          <input
-            className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
-            type="text"
-            value={userId}
-
-            size={10}
-          />
-          <button onClick={setUName}>참가</button>
-      
-          <input
-            className='flex-1 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300'
-            type="text"
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-          />
-          
-          <div 
-           {...getRootProps()}
-           className="flex items-center justify-center w-full  mt-2 ">
-            <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-50 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                  <path stroke="currentColor"  strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                </svg>
-                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG, GIF  (MAX. 800x400px) or MP4</p>
-              </div>
-              
-            </label>
-            <input
-              {...getInputProps()}
-              type="file"
-            />
-              
-          </div>      
-        <button onClick={() => sendMessage()} className='min-w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md'>Send</button>
-      </UI>
-    </ChatContainer>
+    
     {isLoading ? ( <Loading />) : null
     }
-  
+    <p className=' mb-6 text-center font-semibold text-2xl '>We are currently testing the beta. We ask for your understanding of the inconvenience.</p>
+    <p className='text-center font-semibold text-2xl'> Thank you for coming 💛 </p>
+    <br />
   </StreamingWrapper>
   
   )

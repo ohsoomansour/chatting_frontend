@@ -1,7 +1,5 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import styled from "styled-components";
-import { useForm } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
 import { compaImgState } from "../recoil/atom_compaImg";
 

@@ -49,6 +49,10 @@ interface IProps {
   url:string;
   time: string;
 }
+const WS_BASE_PATH = process.env.NODE_ENV === "production" 
+ ? "wss://trade.herokuapp.com"
+ : "http://localhost:8080";
+
 
 export default function Chatting() {
   const userId = useRecoilValue(userIdState);
@@ -63,7 +67,7 @@ export default function Chatting() {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    let sc = io('http://localhost:8080', {transports:['websocket'], path:'/webrtc'}) 
+    let sc = io(`${WS_BASE_PATH}`, {transports:['websocket'], path:'/webrtc'}) 
     setSocket(sc)
     sc.on('message', (msgObj:ImsgObj) => {
       setMessages((prev) => [...prev, msgObj]); 

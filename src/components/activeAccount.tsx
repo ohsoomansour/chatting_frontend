@@ -4,6 +4,7 @@ import { tokenState } from "../recoil/atom_token";
 import { userIdState } from "../recoil/atom_user";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { BASE_PATH } from "../pages/logIn";
 
 
 export const ActiveAccount  = () => {
@@ -19,7 +20,7 @@ export const ActiveAccount  = () => {
   useEffect(() => {
     const getUserFunc = async () => {
       const user:IuserInfo = await (
-        await fetch('http://localhost:3000/member/getuser', {
+        await fetch(`${BASE_PATH}/member/getuser`, {
           headers: headers,
           method: 'POST',
           body: JSON.stringify({

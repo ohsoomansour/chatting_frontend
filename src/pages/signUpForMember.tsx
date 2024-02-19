@@ -2,8 +2,7 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
 import { Button } from "../components/Button";
-import { useRecoilState } from "recoil";
-import { tokenState } from "../recoil/atom_token";
+import { BASE_PATH } from "./logIn";
 
 interface ISignUpForMemberForm {
   email: string;
@@ -16,11 +15,10 @@ interface ISignUpForMemberForm {
 export const SignUpForMember = () => {
   const {register, getValues, formState:{ errors },handleSubmit, formState,} = useForm<ISignUpForMemberForm>({mode: "onChange" });
   const history = useHistory();
-  const [token, setToken] = useRecoilState(tokenState)
   const onValid = async (data:ISignUpForMemberForm) => {
     try {
       const {email, password, name, address, memberRole} = getValues();
-      const result = await fetch('http://localhost:3000/member/join', {
+      const result = await fetch(`${BASE_PATH}/member/join`, {
         headers : {"Content-Type":"application/json; charset=utf-8"},
         method: 'POST',
         body: JSON.stringify({
