@@ -51,7 +51,7 @@ interface IProps {
   time: string;
 }
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
- ? "wss://trade.herokuapp.com"
+ ? "https://trade.herokuapp.com"
  : "http://localhost:8080";
 
 
