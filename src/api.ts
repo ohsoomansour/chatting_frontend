@@ -69,6 +69,7 @@ export async function getMyinfo(token:string) {
         'x-jwt': token,
       },
       method: 'GET',
+      mode:'cors',
     })
   ).json();
   return user;

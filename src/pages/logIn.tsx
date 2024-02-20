@@ -69,6 +69,7 @@ const Login:React.FC = () => {
         await fetch(`${BASE_PATH}/member/login`, {
         headers : {"Content-Type":"application/json; charset=utf-8"},
         method: 'POST',
+        mode:'cors',
         body: JSON.stringify({
           userId: email, // or data.email
           password: password, // or data.password
@@ -81,12 +82,13 @@ const Login:React.FC = () => {
       if(response.token !== ''){
       //@Explain: 로그인된 유저의 isDormant가 true의 경우, 활성화 페이지 vs false의 경우 홈으로 이동
         const user:IuserInfo = await (
-          await fetch('http://localhost:3000/member/getuser', {
+          await fetch(`${BASE_PATH}/member/getuser`, {
             headers: {
               'Content-Type':'application/json; charset=utf-8',
               'x-jwt': `${token}`,
             },
             method: 'POST',
+            mode:'cors',
             body: JSON.stringify({
               userId: email,
             })
