@@ -5,6 +5,7 @@ import { useRecoilValue} from 'recoil';
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
 import styled from "styled-components";
+import { BASE_PATH } from "./logIn";
 
 
 interface Imember {
@@ -78,7 +79,7 @@ export const ManageMembers:React.FC = () => {
   const [isAll, setIsAll ] = useState(false);
   const [members, setMembers] = useState<Imember[]>([{id:0, userId:'', address:'', name:'', lastActivityAt:'', isDormant:null, memberRole: '' }]);
   const [searchedUser, setSearchedUser] = useState<IschUser[]>([{id:0, userId:'', address:'', name:'', lastActivityAt:'', isDormant:null, memberRole: '' }]);
-  
+
   const headers = new Headers({
     'Content-Type':'application/json; charset=utf-8',
     'x-jwt': `${token}`,
@@ -88,7 +89,7 @@ export const ManageMembers:React.FC = () => {
   const getMembers = async () => {
     setIsAll(true);
     const members = await (
-      await fetch('http://localhost:3000/admin/members', {
+      await fetch(`${BASE_PATH}/admin/members`, {
         headers : headers,
         method: 'GET',
       })
@@ -100,7 +101,7 @@ export const ManageMembers:React.FC = () => {
     setIsAll(false);
     const {searchedName} = getValues();
     const searchedUser = await (
-      await fetch(`http://localhost:3000/admin/members/search?name=${searchedName}`, {
+      await fetch(`${BASE_PATH}/admin/members/search?name=${searchedName}`, {
         headers: headers,
         method: 'GET',
       })
