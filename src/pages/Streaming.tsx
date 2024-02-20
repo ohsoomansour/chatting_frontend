@@ -6,6 +6,7 @@ import { useSetRecoilState } from 'recoil';
 import { isDarkAtom } from '../recoil/atom_Theme';
 import { Loading } from '../components/loading';
 import { Helmet } from 'react-helmet';
+import { WS_BASE_PATH } from './chatting';
 
 const StreamingWrapper=styled.div`
   background-color: ${(props) => props.theme.bgColor};
@@ -49,7 +50,7 @@ export default function Streaming() {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    let sc = io('http://localhost:8080', {transports:['websocket'], path:'/webrtc'}) 
+    let sc = io(`${WS_BASE_PATH}`, {transports:['websocket'], path:'/webrtc'}) 
     setSocket(sc)
     sc.on('room_created', async () => {
       console.log('Socket event callback: room_created');
