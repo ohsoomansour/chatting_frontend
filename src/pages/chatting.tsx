@@ -10,6 +10,7 @@ import {useDropzone} from 'react-dropzone'
 import { Loading } from '../components/loading';
 import { Helmet } from 'react-helmet';
 import { useForm } from 'react-hook-form';
+import { BASE_PATH } from './logIn';
 
 const StreamingWrapper=styled.div`
   background-color: ${(props) => props.theme.bgColor};
@@ -50,7 +51,7 @@ interface IProps {
   time: string;
 }
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
- ? "https://trade-2507d8197825.herokuapp.com"
+ ? "wss://trade-2507d8197825.herokuapp.com"
  : "http://localhost:8080";
 
 
@@ -101,7 +102,7 @@ export default function Chatting() {
         const formBody = new FormData();
         formBody.append('file', actualFile)
         const { url: ImageUrl } = await ( 
-          await fetch("http://localhost:3000/upload/", {
+          await fetch(`${BASE_PATH}/upload/`, {
             method: 'POST',
             body: formBody,
           })
