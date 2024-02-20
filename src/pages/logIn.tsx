@@ -88,7 +88,7 @@ const Login:React.FC = () => {
               'x-jwt': `${token}`,
             },
             method: 'POST',
-            mode:'cors',
+            mode:'cors', //Preflignt 요청을 보낼 수 있도록한다. 
             body: JSON.stringify({
               userId: email,
             })
