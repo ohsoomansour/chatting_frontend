@@ -71,13 +71,13 @@ export default function Chatting() {
   const [isLoading, setLoading] = useState(false);
  
   useEffect(() => {
-    let sc = io(`${WS_BASE_PATH}/socket.io`, {
+    let sc = io(`${WS_BASE_PATH}`, {
       withCredentials:true,
       extraHeaders:{
         Authorization: `Bearer ${token}`,
       },
       transports:['websocket', 'polling', 'webtransport'],
-      path:'chat',
+      path:'/chat/socket.io',
       
     },
     
