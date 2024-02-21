@@ -60,6 +60,26 @@ export async function storedGoods(token:string) {
 
 
 export async function getMyinfo(token:string) {
+  try {
+    const response = await fetch(`${BASE_PATH}/member/getmyinfo`, {
+      headers: {
+        'Content-Type':'application/json; charset=utf-8',
+        'x-jwt': token,
+      },
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch user information');
+    }
+
+    const user:IuserInfo = await response.json();
+    return user;
+  } catch (error) {
+    console.error('Error fetching user information:', error);
+    throw error;
+  }
+  /*
   const user:IuserInfo = await (
     await fetch(`${BASE_PATH}/member/getmyinfo`, {
       headers: {
@@ -70,6 +90,7 @@ export async function getMyinfo(token:string) {
     })
   ).json();
   return user;
+  */
 }
 
 
