@@ -25,7 +25,6 @@ export async function getMyOrder(token:string) {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'x-jwt': token,
-
       }
     })
   ).json(); 
@@ -39,7 +38,6 @@ export async function takeOrders(token:string) {
       headers:{
         'Content-Type': 'application/json; charset=utf-8',
         'x-jwt': token,
-
       }
     })
   ).json()
@@ -69,7 +67,6 @@ export async function getMyinfo(token:string) {
         'x-jwt': token,
       },
       method: 'GET',
-      mode:'cors',
     })
   ).json();
   return user;
