@@ -51,9 +51,9 @@ interface IProps {
   url:string;
   time: string;
 }
-//"https://trade-2507d8197825.herokuapp.com:8080"
+//"https://trade-2507d8197825.herokuapp.com:8080"  
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
- ? "https://trade-2507d8197825.herokuapp.com:8080/socket.io"
+ ? "wss://trade-2507d8197825.herokuapp.com:8080/socket.io"
  : "http://localhost:8080"
 
 
