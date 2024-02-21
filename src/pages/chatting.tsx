@@ -52,8 +52,8 @@ interface IProps {
 }
 //https://trade-2507d8197825.herokuapp.com
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
- ? `https://trade.herokuapp.com`
- : "http://localhost:8080";
+ ? "wss://trade-2507d8197825.herokuapp.com"
+ : "http://localhost:8080"
 
 
 export default function Chatting() {
