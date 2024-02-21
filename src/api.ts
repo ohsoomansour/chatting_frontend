@@ -79,18 +79,7 @@ export async function getMyinfo(token:string) {
     console.error('Error fetching user information:', error);
     throw error;
   }
-  /*
-  const user:IuserInfo = await (
-    await fetch(`${BASE_PATH}/member/getmyinfo`, {
-      headers: {
-        'Content-Type':'application/json; charset=utf-8',
-        'x-jwt': token,
-      },
-      method: 'GET',
-    })
-  ).json();
-  return user;
-  */
+  
 }
 
 
