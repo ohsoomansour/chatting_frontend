@@ -53,7 +53,7 @@ interface IProps {
 }
 //https://trade-2507d8197825.herokuapp.com
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
- ? `wss://trade-2507d8197825.herokuapp.com`
+ ? "https://trade-2507d8197825.herokuapp.com:8080"
  : "http://localhost:8080"
 
 
@@ -76,9 +76,9 @@ export default function Chatting() {
       extraHeaders:{
         Authorization: `Bearer ${token}`,
       },
-      transports:['websocket', 'polling', 'webtransport'],
-      path:'/chat/socket.io',
-      
+      transports:['websocket'], //, 'polling', 'webtransport'
+      path:'/chat/',
+
     },
     
     ) 
