@@ -73,12 +73,13 @@ export default function Chatting() {
   useEffect(() => {
     // ✅https://socket.io/docs/v4/client-options/
     let sc = io(`${WS_BASE_PATH}`, {
+      /*
       withCredentials:true,
       extraHeaders:{
         Authorization: `Bearer ${token}`,
-      },
+      },*/
       transports:['websocket'], //, 'polling', 'webtransport'
-      path:'/chat/',
+      path:'/chat',
 
     },
     
