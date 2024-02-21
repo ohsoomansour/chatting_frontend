@@ -77,12 +77,9 @@ export default function Chatting() {
       extraHeaders:{
         Authorization: `Bearer ${token}`,
       },*/
-      
-      transports:['polling'], //, 'polling', 'webtransport'
+      transports:['webtransport'], //, 'polling', 'webtransport'
       path:'/chat',
-
     },
-    
     ) 
     setSocket(sc)
     sc.on('message', (msgObj:ImsgObj) => {
