@@ -79,7 +79,7 @@ export default function Chatting() {
         Authorization: `Bearer ${token}`,
       },*/
       transports:['websocket'], 
-      path:'/chat',
+      //path:'/chat/socket.io',
     },
     ) 
     setSocket(sc)
