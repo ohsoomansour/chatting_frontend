@@ -51,9 +51,9 @@ interface IProps {
   url:string;
   time: string;
 }
-//https://trade-2507d8197825.herokuapp.com
+//"https://trade-2507d8197825.herokuapp.com:8080"
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
- ? "https://trade-2507d8197825.herokuapp.com:8080"
+ ? "https://trade-2507d8197825.herokuapp.com:8080/socket.io"
  : "http://localhost:8080"
 
 
@@ -71,6 +71,7 @@ export default function Chatting() {
   const [isLoading, setLoading] = useState(false);
  
   useEffect(() => {
+    // ✅https://socket.io/docs/v4/client-options/
     let sc = io(`${WS_BASE_PATH}`, {
       withCredentials:true,
       extraHeaders:{
