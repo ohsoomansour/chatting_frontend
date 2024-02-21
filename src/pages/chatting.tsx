@@ -51,9 +51,9 @@ interface IProps {
   url:string;
   time: string;
 }
-//"https://trade-2507d8197825.herokuapp.com:8080"  
+//"wss://trade-2507d8197825.herokuapp.com:8080/(네임스페이스)"  
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
- ? "wss://trade-2507d8197825.herokuapp.com:8080/socket.io"
+ ? "wss://trade-2507d8197825.herokuapp.com:8080/test"
  : "http://localhost:8080"
 
 
@@ -78,6 +78,7 @@ export default function Chatting() {
       extraHeaders:{
         Authorization: `Bearer ${token}`,
       },*/
+      
       transports:['websocket'], //, 'polling', 'webtransport'
       path:'/chat',
 
