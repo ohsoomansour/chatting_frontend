@@ -53,9 +53,8 @@ interface IProps {
 }
 //"wss://trade-2507d8197825.herokuapp.com:8080/(네임스페이스)"  
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
- ? "https://trade-2507d8197825.herokuapp.com:443/test"
+ ? `https://trade-2507d8197825.herokuapp.com:${process.env.PORT}/test`
  : "http://localhost:8080"
-
 
 export default function Chatting() {
   const userId = useRecoilValue(userIdState);
