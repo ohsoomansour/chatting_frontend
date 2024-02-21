@@ -11,6 +11,7 @@ import { Loading } from '../components/loading';
 import { Helmet } from 'react-helmet';
 import { useForm } from 'react-hook-form';
 import { BASE_PATH } from './logIn';
+import { tokenState } from '../recoil/atom_token';
 
 const StreamingWrapper=styled.div`
   background-color: ${(props) => props.theme.bgColor};
@@ -59,6 +60,7 @@ export const WS_BASE_PATH = process.env.NODE_ENV === "production"
 export default function Chatting() {
   const userId = useRecoilValue(userIdState);
   const setDarkAtom = useSetRecoilState(isDarkAtom);
+  const token = useRecoilValue(tokenState);
   const {register, getValues} = useForm({mode: "onChange"})
   const [sc, setSocket] = useState<Socket>();
   const [messages, setMessages] = useState<IProps[]>([{msg:'', url: '', time: ''}]);
@@ -67,11 +69,15 @@ export default function Chatting() {
   const [particapants, setParticapants] = useState<string[]>([''])
   const [DraggedFile, setDragFile] = useState([])
   const [isLoading, setLoading] = useState(false);
-
+ 
   useEffect(() => {
     let sc = io(`${WS_BASE_PATH}`, {
+      withCredentials:true,
+      extraHeaders:{
+        Authorization: `Bearer ${token}`,
+      },
       transports:['websocket', 'polling', 'webtransport'],
-      path:'/webrtc',
+      //path:'/webrtc',
       
     },
     
