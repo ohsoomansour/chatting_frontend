@@ -60,7 +60,6 @@ export const WS_BASE_PATH = process.env.NODE_ENV === "production"
 export default function Chatting() {
   const userId = useRecoilValue(userIdState);
   const setDarkAtom = useSetRecoilState(isDarkAtom);
-  const token = useRecoilValue(tokenState);
   const {register, getValues} = useForm({mode: "onChange"})
   const [sc, setSocket] = useState<Socket>();
   const [messages, setMessages] = useState<IProps[]>([{msg:'', url: '', time: ''}]);
@@ -79,7 +78,7 @@ export default function Chatting() {
         Authorization: `Bearer ${token}`,
       },*/
       
-      transports:['websocket'], //, 'polling', 'webtransport'
+      transports:['polling'], //, 'polling', 'webtransport'
       path:'/chat',
 
     },
