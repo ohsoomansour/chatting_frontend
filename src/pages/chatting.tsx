@@ -54,7 +54,7 @@ interface IProps {
 //"wss://trade-2507d8197825.herokuapp.com:8080/(네임스페이스)"  
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
 //wss:// 스킴은 기본적으로 443 포트를 사용하므로 포트를 지정할 필요가 없습니다.
- ? `wss://trade-2507d8197825.herokuapp.com/test`
+ ? `https://trade-2507d8197825.herokuapp.com`
  : "http://localhost:8080"
 
 export default function Chatting() {
