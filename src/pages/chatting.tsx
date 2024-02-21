@@ -77,7 +77,7 @@ export default function Chatting() {
         Authorization: `Bearer ${token}`,
       },
       transports:['websocket', 'polling', 'webtransport'],
-      path:'/chat/socket.io',
+      path:'/socket.io/chat',
       
     },
     
