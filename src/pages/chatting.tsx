@@ -53,7 +53,7 @@ interface IProps {
 }
 //https://trade-2507d8197825.herokuapp.com
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
- ? `wss://trade-2507d8197825.herokuapp.com:${process.env.PORT}`
+ ? `wss://trade-2507d8197825.herokuapp.com`
  : "http://localhost:8080"
 
 
@@ -71,13 +71,13 @@ export default function Chatting() {
   const [isLoading, setLoading] = useState(false);
  
   useEffect(() => {
-    let sc = io(`${WS_BASE_PATH}`, {
+    let sc = io(`${WS_BASE_PATH}/socket.io`, {
       withCredentials:true,
       extraHeaders:{
         Authorization: `Bearer ${token}`,
       },
       transports:['websocket', 'polling', 'webtransport'],
-      //path:'/webrtc',
+      path:'/chat',
       
     },
     
