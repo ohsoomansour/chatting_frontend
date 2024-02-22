@@ -21,6 +21,7 @@ import { tokenState } from "../recoil/atom_token";
 import { useQuery } from "react-query";
 import { getMyinfo } from "../api";
 import Chatting from "../pages/chatting";
+import { Conference } from "../pages/conference";
 
 const userRoutes = [
   {path: "/", component: <Home />},
@@ -36,7 +37,8 @@ const userRoutes = [
 ]
 
 const adminRoutes = [
-  {path: "/admin", component: <ManageMembers />}
+  {path: "/admin", component: <ManageMembers />},
+  {path: "/conference", component: <Conference />}
 ]
 
 export const LoggedInRouter = () => {

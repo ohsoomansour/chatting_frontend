@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MemberTable from "../components/MembersTable";
 import { tokenState } from "../recoil/atom_token";
 import { useRecoilValue} from 'recoil';

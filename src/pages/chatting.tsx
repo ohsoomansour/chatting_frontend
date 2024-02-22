@@ -55,7 +55,7 @@ interface IProps {
 //git add  -> git commit -m 
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
 //wss:// 스킴은 기본적으로 443 포트를 사용하므로 포트를 지정할 필요가 없습니다.
- ? `https://trade-2507d8197825.herokuapp.com`
+ ? `wss://trade.herokuapp.com`
  : "http://localhost:8080"
 
 export default function Chatting() {
