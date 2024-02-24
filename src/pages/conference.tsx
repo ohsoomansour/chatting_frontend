@@ -284,7 +284,7 @@ export function Conference() {
     
       {//camON ?
         <div id="call">
-          <div id="myFace" className='video-position flex' style={{display:"block"}}>
+          <div id="myFace" className='video-position flex' >
             <video  autoPlay loop muted  ref={videoRef}></video>
             <video  autoPlay loop muted  ref={peerVideoRef}></video>
             <select onChange={handleCameraChange} id="camerasSelectRef" ref={selectRef} >
