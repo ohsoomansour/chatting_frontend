@@ -42,6 +42,7 @@ interface IcameraDevicesInfo {
   label:string
 }
 
+
 const iceServers = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302'},
@@ -58,11 +59,14 @@ let roomName: string;
 let myPeerConnection: RTCPeerConnection;;
 export function Conference() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const peerVideoRef = useRef<HTMLVideoElement>(null)
   const selectRef = useRef(null)
+
   const [isMuted, setMuted] = useState(false);
   const [isCameraOff, setCameraOff] = useState(false)
   const [cameraDevices, setCameraDevices] = useState<IcameraDevicesInfo[]>();
   const [cameraId, setCameraId] = useState<string>("")
+  const [initCamera, setInitCamera] = useState<IcameraDevicesInfo>()
   const [socket, setSocket] = useState<Socket>();
   const [roomId, setRoomId] = useState<string>("")
   const [camON, setCamON] = useState(false);
@@ -77,48 +81,71 @@ export function Conference() {
     ) 
     setSocket(socket)
     
-    socket.on("welcom", async () => { 
+    socket.on("welcome", async () => { 
       // Peer A(파이어 폭스)가 offer 생성 
       const offer = await myPeerConnection.createOffer();
       // PeerA, FireFox 브라우저에서만 실행 
       await myPeerConnection.setLocalDescription(offer); 
       console.log("PeerA just Join!")
-      console.log(offer);
       // Peer A가 Peer B에 보낸다. 
       socket.emit("offer", offer, roomName)
     })
     socket.on("offer", async (offer) => {
       console.log("received the offer");
     //Peer B(크롬)에서만 실행하며(내peer의 description에서 설정)'offer'를 받아서 '상대방의 peer의 description'을 세팅한다. 
-      myPeerConnection.setRemoteDescription(offer); 
+      await myPeerConnection.setRemoteDescription(offer); 
       const answer = await myPeerConnection.createAnswer();
-      myPeerConnection.setLocalDescription(answer);
+      await myPeerConnection.setLocalDescription(answer);
       socket.emit("answer", answer, roomName)
       console.log("sent the answer");
     } )
 
     socket.on("answer", async(answer) => {
       console.log("received the answer");
-      const a = await myPeerConnection.setRemoteDescription(answer)
-      console.log("a:")
-      console.log(a)
+      await myPeerConnection.setRemoteDescription(answer)
     })
 
-    socket.on("ice", (ice) => {
-      myPeerConnection.addIceCandidate(ice);
+    socket.on("ice", async (ice) => {
+      console.log("received candidate");
+      await myPeerConnection.addIceCandidate(ice);  //answer 보낸 후
     })
-
+    async function getCameras () {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+  
+        // devies에서 kind = "videoinput" 만 추출 
+        const cameras = devices.filter(device => device.kind === "videoinput");
+        setInitCamera(cameras[0])
+        setCameraDevices(cameras);
+        console.log("cameras:");
+        console.log(cameras);
+        let currentCamera = myStream.getVideoTracks()[0]; //Logi C270 HD WebCam (046d:0825)
+  
+        currCamera = currentCamera;
+        
+   
+      } catch(e) {
+        console.error(e);
+      }
+    }
+    getCameras ();
     return () => {
       socket.disconnect();
     };
   }, [])
   //✅
+  /*
   async function getCameras () {
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
+
       // devies에서 kind = "videoinput" 만 추출 
       const cameras = devices.filter(device => device.kind === "videoinput");
+      setInitCamera(cameras[0])
+      console.log("cameras:");
+      console.log(cameras);
       let currentCamera = myStream.getVideoTracks()[0]; //Logi C270 HD WebCam (046d:0825)
+
       currCamera = currentCamera;
       setCameraDevices(cameras);
  
@@ -126,12 +153,13 @@ export function Conference() {
       console.error(e);
     }
   }
+  */
   //유저의 카메라와 오디오를 가져온다. 
   const getUserMedia = async (cameraId:string) => {
     //모바일: 카메라 앞을 가져옴
     const initalConstraints = {
       audio:true,
-      vidoe:{ facingMode: "user"}
+      vidoe:true, //{ facingMode: "user"}
     };
     const cameraConstraints = {
       audio:true,
@@ -141,15 +169,15 @@ export function Conference() {
         deviceId: {exact: cameraId }
       }
     }
+ 
     try { 
       //enumerateDevices() : 컴퓨터에 연결되거나 모바일이 가지고 있는 장치
       myStream = await navigator.mediaDevices.getUserMedia( //1번
         cameraId ? cameraConstraints : initalConstraints
       )
-      console.log('myStream:');
-      console.log(myStream);
+
       videoRef!.current!.srcObject = myStream;
-      getCameras();
+      //getCameras();
     } catch (e) {
       console.error(e);
     }
@@ -173,36 +201,65 @@ export function Conference() {
   //RTC Code -> 누구나 myStream에 접촉 할 수 있도록 -> ✅구글의 STUN 서버들 사용하여 연결
   function makeConnection() {
     //누구나 myStream에 접촉 할 수 있도록, 크롬 브라우저와 FireFox에 만드는거다. 
-    myPeerConnection= new RTCPeerConnection();   //2번, iceServers
+    myPeerConnection = new RTCPeerConnection(iceServers);
     myPeerConnection.addEventListener("icecandidate", handleIce);
+    myPeerConnection.addEventListener("addstream", handleAddStream);
     myStream.getTracks().forEach(track => myPeerConnection.addTrack(track, myStream));
+    //stream은 통째로 바꾸는데 track은 바꾸지 않고 있다. 
+    //Sender는 우리의 peer로 보내진 media stream track을 컨트롤해준다. 
+    
   }
   function handleIce(data: any) {
-    socket?.emit("ice", data.candidate, roomName)
+    socket!.emit("ice", data.candidate, roomName)
     console.log("got ice candidate ");
-    console.log(data);
+  }
+  function handleAddStream(data:any) {
+    console.log("addstream이벤트 이제 시작!")
+    peerVideoRef!.current!.srcObject = data.stream; //문제가 data.stream이 null값 
+    console.log("myStream:", myStream)
+    console.log("peerStream:", data.stream)
   }
 
-  async function initialCall(eventValue:any) {
-    await getUserMedia(eventValue);
+  async function initialCall(deviceId:any) {
+    await getUserMedia(deviceId);
     makeConnection();
   }
 
-  const handleCameraChange = (event:any) => {
+  const handleCameraChange = async (event:any) => {
     setCameraId(event.target.value);
-    initialCall(event.target.value); //myPeerConnection 형성 완료를 위해 기다림이 필요!
+    await getUserMedia(event.target.value); //새로운 stream을 받는다.  
+    if(myPeerConnection){
+      const videoTrack = myStream.getVideoTracks()[0]; //
+      console.log("videoTrack:")
+      console.log(videoTrack)
+      const videoSender = myPeerConnection
+        .getSenders()
+        .find((sender) => sender.track?.kind === "video");
+      videoSender?.replaceTrack(videoTrack);
+      console.log("videoSender:");
+      console.log(videoSender);
+    }
   }
-  const handleWelcomeSubmit = (event:any) => {
+  const handleWelcomeSubmit = async(event:any) => {
     event.preventDefault();
     const {roomId} = getValues();
     if(roomId === "") return;
-    initialCall(cameraId); //initialCall(cameraId); 
+    await initialCall(initCamera?.deviceId); //initialCall(cameraId); 
+    /*
+     문제 추정1. 처음 시작하는 stream은  addstream 생성 전 그런데 상대 peer가 join했을 때 이미 addstream 이벤트가 지나가고 r
+     peer의 stream이 없다 -> mystream이 없음 -> addstream 이벤트 실행시 상대 peer의 stream이 없고 이미 ice candidate 까지 지나감 -> 이제 카메라를 바꿈 
+      -> 그러니까 그다음 조인했을 때 그 전의 stream을 반영한다!
+    
+    */
     socket!.emit("join_room", roomId)
     roomName = roomId //방에 참가 했을 때 나중에 쓸 수 있도록 방 이름을 변수에 저장
     setRoomId("")
     setCamON((prev) => !prev)
     
   }
+
+
+
   return (
     <div className=" mt-4 ">
       <Helmet>
@@ -225,17 +282,17 @@ export function Conference() {
       </RoomContainer>
       {/*call 아이디는 초기 로드시 hidden 상태*/}
     
-      {camON ?
+      {//camON ?
         <div id="call">
           <div id="myFace" className='video-position flex' style={{display:"block"}}>
             <video  autoPlay loop muted  ref={videoRef}></video>
+            <video  autoPlay loop muted  ref={peerVideoRef}></video>
             <select onChange={handleCameraChange} id="camerasSelectRef" ref={selectRef} >
               <option value={""}>{"Camera Option"}</option>
               {cameraDevices?.map((camera, index) => (
                 <option 
                   key={index} 
                   value={camera.deviceId}
-                  //selected={}
                   >
                   {camera.label}
                 </option>
@@ -248,7 +305,7 @@ export function Conference() {
             <Btn id="camera" onClick={handleCameraClick}>{isCameraOff ? "Turn Camera On" : "Turn Camera Off"}</Btn>
           </div>
         </div> 
-        : null
+        //: null
       }
       <p className='mt-6 mb-6 text-center font-semibold text-2xl '>We are currently testing the beta. We ask for your understanding of the inconvenience.</p>
       <p className='text-center font-semibold text-2xl'> Thank you for coming 💛 </p>
