@@ -36,12 +36,16 @@ const EnterBtn = styled.button`
 
 const ConferencerWrapper = styled.div`
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
   
 `;
 const CamContainer = styled.div`
   display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
 `
 interface IcameraDevicesInfo {
   deviceId:string; 
@@ -291,25 +295,25 @@ export function Conference() {
       {/*call 아이디는 초기 로드시 hidden 상태*/}
     
       {camON ?
-      <CamContainer id="myFace"  >
+      <CamContainer>
         <video  autoPlay loop muted  ref={videoRef}></video>
         <video  autoPlay loop muted  ref={peerVideoRef}></video>
-        <select onChange={handleCameraChange} id="camerasSelectRef" ref={selectRef} >
-          <option value={""}>{"Camera Option"}</option>
-          {cameraDevices?.map((camera, index) => (
-            <option 
-              key={index} 
-              value={camera.deviceId}
-              >
-              {camera.label}
-            </option>
-          ))}
-        </select>
+      
         <div>
-  
+          <select onChange={handleCameraChange} id="camerasSelectRef" ref={selectRef} >
+            <option value={""}>{"Camera Option"}</option>
+            {cameraDevices?.map((camera, index) => (
+              <option 
+                key={index} 
+                value={camera.deviceId}
+                >
+                {camera.label}
+              </option>
+            ))}
+          </select>
+          <Btn id="muteBtn" onClick={handleMuteClick}>{isMuted ? "Unmuted"  : "Mute" }</Btn>
+          <Btn id="camera" onClick={handleCameraClick}>{isCameraOff ? "Turn Camera On" : "Turn Camera Off"}</Btn>
         </div>
-        <Btn id="muteBtn" onClick={handleMuteClick}>{isMuted ? "Unmuted"  : "Mute" }</Btn>
-        <Btn id="camera" onClick={handleCameraClick}>{isCameraOff ? "Turn Camera On" : "Turn Camera Off"}</Btn>
       </CamContainer>
 
       : null
