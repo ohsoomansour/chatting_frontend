@@ -69,6 +69,8 @@ let myStream: MediaStream;
 let currCamera: MediaStreamTrack;
 let roomName: string;
 let myPeerConnection: RTCPeerConnection;;
+let myDataChannel: RTCDataChannel;
+
 export function Conference() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const peerVideoRef = useRef<HTMLVideoElement>(null)
@@ -92,8 +94,13 @@ export function Conference() {
     },
     ) 
     setSocket(socket)
-    
+    //Failed to execute 'send' on 'RTCDataChannel': RTCDataChannel.readyState is not 'open'
     socket.on("welcome", async () => { 
+      //Peer A에서만 실행(상대 peerB에서는 만들 필요가 없다. )
+      myDataChannel = myPeerConnection.createDataChannel("chat");
+      myDataChannel.addEventListener("message", (event) => console.log(event.data));
+      console.log("made data channel");
+      myDataChannel.send("Hello, I'm peer A")
       // Peer A(파이어 폭스)가 offer 생성 
       const offer = await myPeerConnection.createOffer();
       // PeerA, FireFox 브라우저에서만 실행 
@@ -103,6 +110,20 @@ export function Conference() {
       socket.emit("offer", offer, roomName)
     })
     socket.on("offer", async (offer) => {
+      myPeerConnection.addEventListener("datachannel", (event:RTCDataChannelEvent) =>{
+        console.log("datachannel 발생 함!")
+        console.log(event);
+        myDataChannel = event.channel; //peer B에서 설정
+        myDataChannel.onmessage = (event) =>{
+          console.log("offer에서 메세지 수신")
+          console.log(event.data)
+        }
+        /*
+        myDataChannel.addEventListener("message", (event:any) => {
+          console.log("Received message:", event.data);
+        })*/
+      
+      })
       console.log("received the offer");
     //Peer B(크롬)에서만 실행하며(내peer의 description에서 설정)'offer'를 받아서 '상대방의 peer의 description'을 세팅한다. 
       await myPeerConnection.setRemoteDescription(offer); 
@@ -110,7 +131,7 @@ export function Conference() {
       await myPeerConnection.setLocalDescription(answer);
       socket.emit("answer", answer, roomName)
       console.log("sent the answer");
-    } )
+    })
 
     socket.on("answer", async(answer) => {
       console.log("received the answer");
@@ -234,9 +255,9 @@ export function Conference() {
 
   async function initialCall(deviceId:any) {
     await getUserMedia(deviceId);
-    makeConnection();
+    makeConnection(); 
   }
-
+   
   const handleCameraChange = async (event:any) => {
     setCameraId(event.target.value);
     await getUserMedia(event.target.value); //새로운 stream을 받는다.  
@@ -269,8 +290,6 @@ export function Conference() {
     setCamON((prev) => !prev)
     
   }
-
-
 
   return (
     <ConferencerWrapper className=" mt-4 ">
