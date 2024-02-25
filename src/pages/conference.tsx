@@ -98,9 +98,15 @@ export function Conference() {
     socket.on("welcome", async () => { 
       //Peer A에서만 실행(상대 peerB에서는 만들 필요가 없다. )
       myDataChannel = myPeerConnection.createDataChannel("chat");
-      myDataChannel.addEventListener("message", (event) => console.log(event.data));
       console.log("made data channel");
-      myDataChannel.send("Hello, I'm peer A")
+      //🌟 대화형 구현 1
+      myDataChannel.onopen = () => {
+        console.log('Data channel opened');
+        if(myDataChannel.readyState === "open"){
+          myDataChannel.send("Hi peer B")
+        }
+      };
+      myDataChannel.addEventListener("message", (event) => console.log(event.data));
       // Peer A(파이어 폭스)가 offer 생성 
       const offer = await myPeerConnection.createOffer();
       // PeerA, FireFox 브라우저에서만 실행 
@@ -114,14 +120,24 @@ export function Conference() {
         console.log("datachannel 발생 함!")
         console.log(event);
         myDataChannel = event.channel; //peer B에서 설정
+        //🌟 대화형 구현 2
+        myDataChannel.onopen = () => {
+          console.log('Data channel opened');
+          if(myDataChannel.readyState === "open"){
+            myDataChannel.send("Hi peer A")
+          }
+        };
+        myDataChannel.addEventListener("message", (event:any) => {
+          console.log("Peer B Received message:", event.data);
+        })
+
+        /*
         myDataChannel.onmessage = (event) =>{
           console.log("offer에서 메세지 수신")
           console.log(event.data)
-        }
-        /*
-        myDataChannel.addEventListener("message", (event:any) => {
-          console.log("Received message:", event.data);
-        })*/
+          
+        }*/
+        /**/
       
       })
       console.log("received the offer");
