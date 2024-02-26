@@ -112,6 +112,7 @@ export default function Chatting() {
       if (DraggedFile.length !== 0) {
         setLoading(true);
         const actualFile = DraggedFile[0]
+        console.log(actualFile)
         const formBody = new FormData();
         formBody.append('file', actualFile)
         const { url: ImageUrl } = await ( 
@@ -142,6 +143,7 @@ export default function Chatting() {
          alert('로그인 또는 참가 닉네임을 설정하세요!')
          return new Error('닉네임 없음');
        } else if (fileUrl !== ''){
+        //⭐FE&BE에서 userId를 제거하고 '보낸 메세지를 바탕으로 컨텐츠' / '받는 메세지를 바탕으로 컨텐츠'  
          sc!.emit('message', [`${userId}:`+ inputMessage, fileUrl, chattingRoomId]); 
          setInputMessage('');
          setDragFile([]);
@@ -166,6 +168,8 @@ export default function Chatting() {
       'video/mp4': ['.mp4', '.MP4'],
     }
   });
+  //현재 시간 
+
   return (
   <StreamingWrapper>
     <Helmet>
@@ -205,7 +209,7 @@ export default function Chatting() {
         </ul>
       </div>
 
-        <ChatContent className='   shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll'>
+        <ChatContent className='shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll'>
           <h3 className='text-lg text-center mt-2 font-bold'>대화 내용</h3>
           {messages && messages.map((message, index ) => (
             <div>

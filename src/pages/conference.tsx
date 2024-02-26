@@ -4,10 +4,11 @@ import { useForm } from "react-hook-form";
 import { Socket, io } from "socket.io-client";
 import styled from 'styled-components';
 import { WS_BASE_PATH } from "./chatting";
+import SimplePeer from 'simple-peer';
 const Btn = styled.button`
   display: flex;
-  justify-content: center; /* 수평 가운데 정렬 */
-  align-items: center; /* 수직 가운데 정렬 */
+  justify-content: center; 
+  align-items: center; 
   font-size: 15px;
   height: 35px;
   width:200px;
@@ -41,19 +42,36 @@ const ConferencerWrapper = styled.div`
   justify-content:center;
   
 `;
-const CamContainer = styled.div`
+const CamWrapper = styled.div`
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-`
+`;
+const VideoContainer = styled.div`
+  display:flex;
+  align-items:center;
+  justify-content:center;
+`;
+const BtnContainer = styled.div`
+  display:flex;
+`;
+const ChatContent=styled.div`
+  color:${(props) => props.theme.textColor};
+  background-color: whitesmoke;
+  margin-top: 100px;
+`;
+
+
 interface IcameraDevicesInfo {
   deviceId:string; 
   groupId:string; 
   kind:string; 
   label:string
 }
-
+interface IChat {
+  msg:string;
+}
 
 const iceServers = {
   iceServers: [
@@ -71,6 +89,8 @@ let roomName: string;
 let myPeerConnection: RTCPeerConnection;;
 let myDataChannel: RTCDataChannel;
 
+
+
 export function Conference() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const peerVideoRef = useRef<HTMLVideoElement>(null)
@@ -84,11 +104,15 @@ export function Conference() {
   const [socket, setSocket] = useState<Socket>();
   const [roomId, setRoomId] = useState<string>("")
   const [camON, setCamON] = useState(false);
-  const {register, getValues} = useForm();
-
+  const [sendMessage, setSendmessage] = useState<IChat[]>([{msg:""}]);
+  const [recMessages, setRecMessages] = useState<IChat[]>([{msg:""}]);
+  const {register, getValues} = useForm({mode:"onChange"});
 
   // 강의에서는 PeerA가 'Brave' PeerB가 'FireFox'
   useEffect(() => {  
+    // SimplePeer 인스턴스 생성
+
+
     let socket = io(`${WS_BASE_PATH}`, {
       transports:['websocket'], 
     },
@@ -103,16 +127,20 @@ export function Conference() {
       myDataChannel.onopen = () => {
         console.log('Data channel opened');
         if(myDataChannel.readyState === "open"){
-          myDataChannel.send("Hi peer B")
+
+          myDataChannel.send("Hi peer B! my ready State is being 'open' ")
         }
       };
-      myDataChannel.addEventListener("message", (event) => console.log(event.data));
+      myDataChannel.addEventListener("message", (event:MessageEvent<any>) => {
+        console.log("Peer A Received message:", event.data);
+        setRecMessages((prev) => [...prev, {msg:event.data}]); //[{msg:""}]
+      });
       // Peer A(파이어 폭스)가 offer 생성 
       const offer = await myPeerConnection.createOffer();
       // PeerA, FireFox 브라우저에서만 실행 
       await myPeerConnection.setLocalDescription(offer); 
       console.log("PeerA just Join!")
-      // Peer A가 Peer B에 보낸다. 
+      // Peer A가 Pe er B에 보낸다. 
       socket.emit("offer", offer, roomName)
     })
     socket.on("offer", async (offer) => {
@@ -121,24 +149,26 @@ export function Conference() {
         console.log(event);
         myDataChannel = event.channel; //peer B에서 설정
         //🌟 대화형 구현 2
+        
+        myDataChannel.addEventListener("message", (event:any) => {
+          console.log("Peer B Received message:", event.data);
+          setRecMessages((prev) => [...prev, {msg:event.data}]) //setMessages((prev) => [...prev, event.data]); 
+        })
         myDataChannel.onopen = () => {
           console.log('Data channel opened');
           if(myDataChannel.readyState === "open"){
-            myDataChannel.send("Hi peer A")
+            
+            const {sendMessage} = getValues();
+            console.log(sendMessage)
+            myDataChannel.send("Hi Peer A")
           }
         };
-        myDataChannel.addEventListener("message", (event:any) => {
-          console.log("Peer B Received message:", event.data);
-        })
-
         /*
         myDataChannel.onmessage = (event) =>{
           console.log("offer에서 메세지 수신")
           console.log(event.data)
           
         }*/
-        /**/
-      
       })
       console.log("received the offer");
     //Peer B(크롬)에서만 실행하며(내peer의 description에서 설정)'offer'를 받아서 '상대방의 peer의 description'을 세팅한다. 
@@ -148,7 +178,14 @@ export function Conference() {
       socket.emit("answer", answer, roomName)
       console.log("sent the answer");
     })
+    
+    
 
+    socket.on("chat", () => {
+
+    })
+
+    
     socket.on("answer", async(answer) => {
       console.log("received the answer");
       await myPeerConnection.setRemoteDescription(answer)
@@ -182,27 +219,8 @@ export function Conference() {
       socket.disconnect();
     };
   }, [])
-  //✅
-  /*
-  async function getCameras () {
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
 
-      // devies에서 kind = "videoinput" 만 추출 
-      const cameras = devices.filter(device => device.kind === "videoinput");
-      setInitCamera(cameras[0])
-      console.log("cameras:");
-      console.log(cameras);
-      let currentCamera = myStream.getVideoTracks()[0]; //Logi C270 HD WebCam (046d:0825)
 
-      currCamera = currentCamera;
-      setCameraDevices(cameras);
- 
-    } catch(e) {
-      console.error(e);
-    }
-  }
-  */
   //유저의 카메라와 오디오를 가져온다. 
   const getUserMedia = async (cameraId:string) => {
     //모바일: 카메라 앞을 가져옴
@@ -304,9 +322,24 @@ export function Conference() {
     roomName = roomId //방에 참가 했을 때 나중에 쓸 수 있도록 방 이름을 변수에 저장
     setRoomId("")
     setCamON((prev) => !prev)
-    
+  }
+  
+  function formatCurrentTime(): string {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`; // 01:01:11 형태 반환 
   }
 
+  function handleChatSubmit(event:any) {
+    event.preventDefault();
+    const {sendMessage} = getValues();
+    setSendmessage((prev) => [...prev, {msg: sendMessage}]);
+    console.log(sendMessage)
+    myDataChannel.send(sendMessage);
+  }
+  const currentTime = formatCurrentTime();
   return (
     <ConferencerWrapper className=" mt-4 ">
       <Helmet>
@@ -327,13 +360,13 @@ export function Conference() {
           </EnterBtn>
         </form>
       </RoomContainer>
-      {/*call 아이디는 초기 로드시 hidden 상태*/}
-    
+  
       {camON ?
-      <CamContainer>
-        <video  autoPlay loop muted  ref={videoRef}></video>
-        <video  autoPlay loop muted  ref={peerVideoRef}></video>
-      
+      <CamWrapper>
+        <VideoContainer className="mt-4">
+          <video  autoPlay loop muted  ref={videoRef}></video>
+          <video  autoPlay loop muted  ref={peerVideoRef} className="ml-4"></video>
+        </VideoContainer >
         <div>
           <select onChange={handleCameraChange} id="camerasSelectRef" ref={selectRef} >
             <option value={""}>{"Camera Option"}</option>
@@ -346,15 +379,52 @@ export function Conference() {
               </option>
             ))}
           </select>
-          <Btn id="muteBtn" onClick={handleMuteClick}>{isMuted ? "Unmuted"  : "Mute" }</Btn>
-          <Btn id="camera" onClick={handleCameraClick}>{isCameraOff ? "Turn Camera On" : "Turn Camera Off"}</Btn>
+          <BtnContainer>
+            <Btn id="muteBtn" onClick={handleMuteClick}>{isMuted ? "Unmuted"  : "Mute" }</Btn>
+            <Btn id="camera" onClick={handleCameraClick} className="ml-4">{isCameraOff ? "Turn Camera On" : "Turn Camera Off"}</Btn>
+          </BtnContainer>
         </div>
-      </CamContainer>
+      </CamWrapper>
 
       : null
       }
-      <p className='mt-6 mb-6 text-center font-semibold text-2xl '>We are currently testing the beta. We ask for your understanding of the inconvenience.</p>
-      <p className='text-center font-semibold text-2xl'> Thank you for coming 💛 </p>
+      <ChatContent className=" shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll">
+        {recMessages.map((message, index) => (
+          <div key={index}>
+
+            {message.msg === "" ? null 
+              :
+              <div> 
+                <p className=' text text-black mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' >{message.msg}</p> 
+                <p className='text text-right text-sm mr-4' >{currentTime}</p>
+              </div>
+            }
+          </div>
+        ))}
+        {sendMessage.map((message, index) => (
+          <div key={index}>
+            {message.msg === "" ? null 
+              :
+              <div>
+                <p className=' text text-black mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' >{message.msg}</p> 
+                <p className='text text-right text-sm mr-4' >{currentTime}</p>
+              </div>
+            }
+          </div>
+        ))}
+      </ChatContent>
+        <form className="mt-6" onSubmit={handleChatSubmit}>
+          <input
+            className="flex-1 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300"
+            type="text"
+            {...register("sendMessage", {required:true})} 
+          />
+          <button >제출</button>
+        </form>
+      <footer>
+        <p className='mt-10 mb-6 text-center font-semibold text-2xl '>We are currently testing the beta. We ask for your understanding of the inconvenience.</p>
+        <p className='text-center font-semibold text-2xl'> Thank you for coming 💛 </p>
+      </footer>
       <br />
 
     </ConferencerWrapper>
