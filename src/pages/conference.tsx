@@ -62,6 +62,15 @@ const ChatContent=styled.div`
   margin-top: 100px;
 `;
 
+const PeerMessage = styled.div`
+  display:flex;
+  flex-direction: row;
+`
+const Mymessage = styled.div`
+  display:flex;
+  flex-direction: row-reverse;
+`;
+
 
 interface IcameraDevicesInfo {
   deviceId:string; 
@@ -71,6 +80,7 @@ interface IcameraDevicesInfo {
 }
 interface IChat {
   msg:string;
+  isMe:boolean;
 }
 
 const iceServers = {
@@ -104,8 +114,8 @@ export function Conference() {
   const [socket, setSocket] = useState<Socket>();
   const [roomId, setRoomId] = useState<string>("")
   const [camON, setCamON] = useState(false);
-  const [sendMessage, setSendmessage] = useState<IChat[]>([{msg:""}]);
-  const [recMessages, setRecMessages] = useState<IChat[]>([{msg:""}]);
+  //const [sendMessage, setSendmessage] = useState<IChat[]>([{msg:"", isMe: true}]);
+  const [messages, setMessages] = useState<IChat[]>([{msg:"", isMe: true}]);
   const {register, getValues} = useForm({mode:"onChange"});
 
   // 강의에서는 PeerA가 'Brave' PeerB가 'FireFox'
@@ -132,8 +142,10 @@ export function Conference() {
         }
       };
       myDataChannel.addEventListener("message", (event:MessageEvent<any>) => {
+        //🌟아이디어: 여기서 메세지를 받을 때 setIsMymsg(prev => !prev)   + html 태그에 추가되는 코딩을 해야되는 거다 
         console.log("Peer A Received message:", event.data);
-        setRecMessages((prev) => [...prev, {msg:event.data}]); //[{msg:""}]
+        //🌟아이디어: [{msg:"", isMe: false }] -> message.isMe? 오른쪽 : 왼쪽  -> 전체 메세지에 넣는거지 
+        setMessages((prev) => [...prev, {msg:event.data, isMe:false}]); 
       });
       // Peer A(파이어 폭스)가 offer 생성 
       const offer = await myPeerConnection.createOffer();
@@ -152,7 +164,7 @@ export function Conference() {
         
         myDataChannel.addEventListener("message", (event:any) => {
           console.log("Peer B Received message:", event.data);
-          setRecMessages((prev) => [...prev, {msg:event.data}]) //setMessages((prev) => [...prev, event.data]); 
+          setMessages((prev) => [...prev, {msg:event.data, isMe: false}]) //setMessages((prev) => [...prev, event.data]); 
         })
         myDataChannel.onopen = () => {
           console.log('Data channel opened');
@@ -335,8 +347,7 @@ export function Conference() {
   function handleChatSubmit(event:any) {
     event.preventDefault();
     const {sendMessage} = getValues();
-    setSendmessage((prev) => [...prev, {msg: sendMessage}]);
-    console.log(sendMessage)
+    setMessages((prev) => [...prev, {msg: sendMessage, isMe: true}]);
     myDataChannel.send(sendMessage);
   }
   const currentTime = formatCurrentTime();
@@ -347,7 +358,7 @@ export function Conference() {
       </Helmet> 
       <RoomContainer id="welcom" className="w-2/4 mx-auto bg-white p-6 rounded-md shadow-md">
         <form className=" flex flex-col ">
-          <input
+        <input
             {...register("roomId")}
             type="text"
             placeholder="room name"
@@ -388,30 +399,31 @@ export function Conference() {
 
       : null
       }
+      {/* 방법1. 변수를 통해서  */}
       <ChatContent className=" shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll">
-        {recMessages.map((message, index) => (
-          <div key={index}>
+        {messages.map((message, index) => (
 
-            {message.msg === "" ? null 
-              :
-              <div> 
-                <p className=' text text-black mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' >{message.msg}</p> 
-                <p className='text text-right text-sm mr-4' >{currentTime}</p>
-              </div>
-            }
-          </div>
+          message.isMe 
+            ? 
+          <Mymessage key={index}>
+            <div>
+              <p className=' text text-black mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' >{message.msg}</p> 
+              <p className='text text-right text-sm mr-4' >{currentTime}</p>
+            </div>
+          </Mymessage>
+            :
+          <PeerMessage key={index}>
+            <div> 
+              <p className=' text text-black mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' >{message.msg}</p> 
+              <p className='text text-right text-sm mr-4' >{currentTime}</p>
+            </div>
+
+          </PeerMessage>
         ))}
-        {sendMessage.map((message, index) => (
-          <div key={index}>
-            {message.msg === "" ? null 
-              :
-              <div>
-                <p className=' text text-black mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' >{message.msg}</p> 
-                <p className='text text-right text-sm mr-4' >{currentTime}</p>
-              </div>
-            }
-          </div>
-        ))}
+
+        {
+          
+        }
       </ChatContent>
         <form className="mt-6" onSubmit={handleChatSubmit}>
           <input
@@ -419,7 +431,7 @@ export function Conference() {
             type="text"
             {...register("sendMessage", {required:true})} 
           />
-          <button >제출</button>
+          <button className=" font-semibold ml-2 bg-white p-2 shadow-md rounded-md" >Send</button>
         </form>
       <footer>
         <p className='mt-10 mb-6 text-center font-semibold text-2xl '>We are currently testing the beta. We ask for your understanding of the inconvenience.</p>
