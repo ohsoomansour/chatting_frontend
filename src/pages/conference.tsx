@@ -24,10 +24,11 @@ const Btn = styled.button`
   }
   box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.3);
 `;
-const RoomContainer = styled.div`
+export const RoomContainer = styled.div`
   display:flex;
+  flex-direction:row;
 `
-const EnterBtn = styled.button`
+export const EnterBtn = styled.button`
   background-color:gray;
   transition: background-color 0.3s ease-in-out;
   &:hover {
@@ -62,11 +63,11 @@ const ChatContent=styled.div`
   margin-top: 100px;
 `;
 
-const PeerMessage = styled.div`
+export const PeerMessage = styled.div`
   display:flex;
   flex-direction: row;
 `
-const Mymessage = styled.div`
+export const Mymessage = styled.div`
   display:flex;
   flex-direction: row-reverse;
 `;
@@ -399,7 +400,6 @@ export function Conference() {
 
       : null
       }
-      {/* 방법1. 변수를 통해서  */}
       <ChatContent className=" shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll">
         {messages.map((message, index) => (
 

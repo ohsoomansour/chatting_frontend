@@ -12,6 +12,7 @@ import { Helmet } from 'react-helmet';
 import { useForm } from 'react-hook-form';
 import { BASE_PATH } from './logIn';
 import { tokenState } from '../recoil/atom_token';
+import { EnterBtn, Mymessage, PeerMessage, RoomContainer } from './conference';
 
 const StreamingWrapper=styled.div`
   background-color: ${(props) => props.theme.bgColor};
@@ -44,12 +45,14 @@ interface ImsgObj{
   msg:string;
   url:string;
   time:string;
+  myEmaiId:string;
 }
 
 interface IProps {
   msg:string;
   url:string;
   time: string;
+  myEmaiId:string;
 }
 //"wss://trade-2507d8197825.herokuapp.com:8080/(네임스페이스)"  
 //git add  -> git commit -m 
@@ -63,7 +66,7 @@ export default function Chatting() {
   const setDarkAtom = useSetRecoilState(isDarkAtom);
   const {register, getValues} = useForm({mode: "onChange"})
   const [sc, setSocket] = useState<Socket>();
-  const [messages, setMessages] = useState<IProps[]>([{msg:'', url: '', time: ''}]);
+  const [messages, setMessages] = useState<IProps[]>([{msg:'', url: '', time: '',  myEmaiId: ""}]);
   const [inputMessage, setInputMessage] = useState('');
   const [joinedUserList, setJoinedUserList] = useState<string[]>(['']);
   const [particapants, setParticapants] = useState<string[]>([''])
@@ -84,7 +87,8 @@ export default function Chatting() {
     ) 
     setSocket(sc)
     sc.on('message', (msgObj:ImsgObj) => {
-      setMessages((prev) => [...prev, msgObj]); 
+      //⭐ 보낼때 isMe: false 추가
+      setMessages((prev) => [...prev, msgObj]);    //{msg:'', url: '', time: '', isMe: true}
       setLoading(isLoading)
     });
     sc.on('userJoined', (userInfo) => {
@@ -100,13 +104,15 @@ export default function Chatting() {
   
   }, [])
 
-  const setUName = () => {                  //✅사용자의 아이디 고객과 상담 채팅 구현
+  const setUName = (event:any) => {                  //✅사용자의 아이디 고객과 상담 채팅 구현
+    event.preventDefault();
     const {chattingRoomId} =  getValues()
     console.log(chattingRoomId)
     sc!.emit('joinRoom', { userName: userId, roomId: chattingRoomId } )
   }
   let fileUrl: string = '';
-  const sendMessage = async () => {
+  const sendMessage = async (event:any) => {
+    event.preventDefault();
     const {chattingRoomId} =  getValues()
     try {
       if (DraggedFile.length !== 0) {
@@ -131,7 +137,9 @@ export default function Chatting() {
          return new Error('닉네임 없음');
        } else {
       // 서버로 메시지 전송: 메세지 + 이미지를 같이 보낸다.
-       sc!.emit('message', [`${userId}:` + "  " + inputMessage, fileUrl, chattingRoomId]); 
+       let isMe = true;
+       // 보낼때 id값으로 구분해주자! message. === useId ? 그렇지 않으면 반대 !  
+       sc!.emit('message', [`${userId}:` + "  " + inputMessage, fileUrl, chattingRoomId, userId]); 
        setInputMessage('');
        fileUrl = String('');
        console.log("메세지가 있는 경우 fileUrl 값 확인:")
@@ -144,7 +152,8 @@ export default function Chatting() {
          return new Error('닉네임 없음');
        } else if (fileUrl !== ''){
         //⭐FE&BE에서 userId를 제거하고 '보낸 메세지를 바탕으로 컨텐츠' / '받는 메세지를 바탕으로 컨텐츠'  
-         sc!.emit('message', [`${userId}:`+ inputMessage, fileUrl, chattingRoomId]); 
+        //⭐ 보낼때 isMe: true 추가
+         sc!.emit('message', [`${userId}:`+ inputMessage, fileUrl, chattingRoomId, userId]); 
          setInputMessage('');
          setDragFile([]);
        }
@@ -168,22 +177,31 @@ export default function Chatting() {
       'video/mp4': ['.mp4', '.MP4'],
     }
   });
-  //현재 시간 
 
   return (
-  <StreamingWrapper>
+  <StreamingWrapper className=''>
     <Helmet>
       <title>Trader | A/S </title>       
     </Helmet>
-    <form>
-      <RoomId>
-        <label>채팅 방의 아디를 입력하세요.</label>
+    <RoomContainer id="welcom" className="w-2/4 mx-auto flex justify-center  bg-white p-6 rounded-md shadow-md">
+      <form className=" flex flex-col " onSubmit={setUName}>
         <input
-          {...register('chattingRoomId')}  
-          type='text'
-        />
-      </RoomId>
-    </form> 
+            {...register("chattingRoomId")}
+            type="text"
+            className='focus:border-pink-400 border-4 rounded-md shadow-md border-gray-300  px-4 py-2 outline-none'
+            placeholder="room name"
+          >
+        </input>
+        <input
+            className='w-72 mt-2 focus:border-pink-400 border-4 rounded-md shadow-md border-gray-300  px-4 py-2 outline-none'
+            type="text"
+            value={userId}
+
+            size={10}
+          />
+          <button onClick={setUName} className="font-semibold mt-2 ml-2 bg-white p-2 shadow-md rounded-md" >Join</button>
+        </form>
+    </RoomContainer>
     <ChatContainer className='border border-solid border-gray-300 p-4 flex-1 flex flex-col items-center justify-center'>
       <label className="relative flex justify-between items-center group p-2 text-xl">
         <input
@@ -212,8 +230,11 @@ export default function Chatting() {
         <ChatContent className='shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll'>
           <h3 className='text-lg text-center mt-2 font-bold'>대화 내용</h3>
           {messages && messages.map((message, index ) => (
-            <div>
-              <p className='mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' key={index}>{message.msg}</p>
+           message.myEmaiId === userId
+            ? 
+            (
+            <Mymessage key={index}>
+              <p className='mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' >{message.msg}</p>
               {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
                 <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className=' ml-4 mt-1 rounded-md' />  
               ): null}
@@ -233,25 +254,53 @@ export default function Chatting() {
                   ) : null}
               </RplayerWrapper>
               <p className='text text-right text-sm mr-4' key={message.time}>{message.time}</p>
+            </Mymessage>
+            )
+            :
+            (
+            <PeerMessage key={index}>
+            <div>
+              <p className='mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' key={index}>{message.msg}</p>
+              {/*message.myEmaiId === userId? '' : ''  변수를 주고 왼쪽/오른쪽 정렬 */}
+              <span className='text text-sm text-right' key={message.time}>{message.time}</span>
             </div>
-          ))}
+              {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
+                <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className=' ml-4 mt-1 rounded-md' />  
+              ): null}
+
+              <RplayerWrapper>  
+                {(message.url.includes('.mp4') || message.url.includes('.MP4') )? (
+                    <ReactPlayer 
+                      key={message.url}
+                      className="player "
+                      url={message.url}
+                      width="80%"
+                      height="30%"
+                      controls={true}
+                      playing={true}
+                  />
+                  
+                  ) : null}
+                  
+              </RplayerWrapper>
+            </PeerMessage>
+            )
+
+        ))}
           
         </ChatContent>
  
       <UI className=' w-2/4'>
-          <input
-            className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
-            type="text"
-            value={userId}
-
-            size={10}
-          />
-          <button onClick={setUName}>참가</button>
-      
-          <input
-            className='flex-1 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300'
+        <form onSubmit={sendMessage}>
+          <div className='mt-1 mb-2 flex justify-center'>
+            
+          </div>
+          {/*w-full border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300*/}
+          <input  
+            className='w-full  focus:border-pink-400 border-4 rounded-md shadow-md border-gray-300  px-4 py-2 outline-none'
             type="text"
             value={inputMessage}
+            placeholder='Please enter a message'
             onChange={(e) => setInputMessage(e.target.value)}
           />
           
@@ -273,8 +322,10 @@ export default function Chatting() {
               type="file"
             />
               
-          </div>      
-        <button onClick={() => sendMessage()} className='min-w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md'>Send</button>
+          </div> 
+         {/*<button onClick={() => sendMessage()} className='min-w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md'>Send</button>   */}      
+        <button  className='text font-semibold min-w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md hover:bg-pink-300 transition duration-500' >Send</button>
+      </form>
       </UI>
     </ChatContainer>
     {isLoading ? ( <Loading />) : null
