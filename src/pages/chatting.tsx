@@ -11,8 +11,8 @@ import { Loading } from '../components/loading';
 import { Helmet } from 'react-helmet';
 import { useForm } from 'react-hook-form';
 import { BASE_PATH } from './logIn';
-import { tokenState } from '../recoil/atom_token';
-import { EnterBtn, Mymessage, PeerMessage, RoomContainer } from './conference';
+import {Mymessage, PeerMessage, RoomContainer } from './conference';
+import { useHistory } from 'react-router-dom';
 
 const StreamingWrapper=styled.div`
   background-color: ${(props) => props.theme.bgColor};
@@ -40,6 +40,19 @@ export const RplayerWrapper = styled.div`
     margin-top:10px;
   }
 `;
+const MyMessageWrapper = styled.div`
+  display: flex;
+  flex-direction:column;
+`
+const PeerMessageWrapper = styled.div`
+  display: flex;
+  flex-direction:column;
+`;
+const RoomBtnContainer = styled.div`
+  display:flex;
+  flex-direction:row;
+`
+
 
 interface ImsgObj{
   msg:string;
@@ -61,18 +74,25 @@ export const WS_BASE_PATH = process.env.NODE_ENV === "production"
  ? `wss://trade-2507d8197825.herokuapp.com`    //12.24일, 11:25`wss://trade.herokuapp.com`
  : "http://localhost:8080"
 
+
 export default function Chatting() {
   const userId = useRecoilValue(userIdState);
   const setDarkAtom = useSetRecoilState(isDarkAtom);
+  const [roomName, setRoomName] = useState('');
+  const [joinedUserList, setJoinedUserList] = useState<string[]>(['']);
+  const [particapants, setParticapants] = useState<string[]>(['']);
+  const [userExited, setUserExited ] = useState("");
   const {register, getValues} = useForm({mode: "onChange"})
   const [sc, setSocket] = useState<Socket>();
   const [messages, setMessages] = useState<IProps[]>([{msg:'', url: '', time: '',  myEmaiId: ""}]);
   const [inputMessage, setInputMessage] = useState('');
-  const [joinedUserList, setJoinedUserList] = useState<string[]>(['']);
-  const [particapants, setParticapants] = useState<string[]>([''])
   const [DraggedFile, setDragFile] = useState([])
   const [isLoading, setLoading] = useState(false);
- 
+  const [isUserJoined, setUserJoined] = useState(false);
+  
+  
+  const history = useHistory();
+
   useEffect(() => {
     // ✅https://socket.io/docs/v4/client-options/
     let sc = io(`${WS_BASE_PATH}`, {
@@ -97,6 +117,12 @@ export default function Chatting() {
     sc.on('participants', (p) => {
       setParticapants(p.participant);
     })
+    sc.on('exit', (userInfos) => {
+      setUserExited(userInfos.userId);
+      setJoinedUserList(userInfos.userList);
+      console.log("Exit userInfo" ,userInfos.userId);
+      console.log("Exit joinedUserList" ,userInfos.userList);
+    })
 
     return () => {
       sc.disconnect();
@@ -106,7 +132,9 @@ export default function Chatting() {
 
   const setUName = (event:any) => {                  //✅사용자의 아이디 고객과 상담 채팅 구현
     event.preventDefault();
+    setUserJoined(true)
     const {chattingRoomId} =  getValues()
+    setRoomName(chattingRoomId)
     console.log(chattingRoomId)
     sc!.emit('joinRoom', { userName: userId, roomId: chattingRoomId } )
   }
@@ -177,7 +205,16 @@ export default function Chatting() {
       'video/mp4': ['.mp4', '.MP4'],
     }
   });
+  
+  const onExit = (e:any) => {
+    e.preventDefault();
+    console.log("joinedUserList", joinedUserList);
+    const afterExitUsers = joinedUserList.filter((joinUser) => joinUser !== userId );
+    console.log("afterExitUsers", afterExitUsers);
+    sc!.emit("exit", {userId: userId, roomId: roomName });
+    history.push("/");
 
+  }
   return (
   <StreamingWrapper className=''>
     <Helmet>
@@ -193,14 +230,16 @@ export default function Chatting() {
           >
         </input>
         <input
-            className='w-72 mt-2 focus:border-pink-400 border-4 rounded-md shadow-md border-gray-300  px-4 py-2 outline-none'
-            type="text"
-            value={userId}
-
-            size={10}
-          />
-          <button onClick={setUName} className="font-semibold mt-2 ml-2 bg-white p-2 shadow-md rounded-md" >Join</button>
-        </form>
+          className='w-72 mt-2 focus:border-pink-400 border-4 rounded-md shadow-md border-gray-300  px-4 py-2 outline-none'
+          type="text"
+          value={userId}
+          size={10}
+        /> 
+        <RoomBtnContainer>
+          <button  className=" w-full mx-auto font-semibold mt-2 ml-2 bg-white p-2 shadow-md rounded-md" >Join</button>
+          <button  onClick={onExit} className=" w-full mx-auto font-semibold mt-2 ml-2 bg-white p-2 shadow-md rounded-md" >Exit</button>
+        </RoomBtnContainer>
+      </form>
     </RoomContainer>
     <ChatContainer className='border border-solid border-gray-300 p-4 flex-1 flex flex-col items-center justify-center'>
       <label className="relative flex justify-between items-center group p-2 text-xl">
@@ -212,19 +251,32 @@ export default function Chatting() {
         <span className="w-16 h-10 flex items-center flex-shrink-0 ml-4 p-1 bg-gray-300 rounded-full duration-300 ease-in-out peer-checked:bg-green-400 after:w-8 after:h-8 after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-6 group-hover:after:translate-x-1"></span>
       </label>
       <div className="rounded-lg w-2/4 bg-gray-300 shadow-lg text-white p-4">
-        <h1 className="text-2xl font-semibold mb-4">Users in this room</h1>
-        <ul>
-          {joinedUserList && joinedUserList!.map((user, index) => (
-            <li key={index} className="mb-2 font-semibold">{user}님 </li>
-          ))}
-        </ul>
-
-        <h1 className="text-2xl text-center font-semibold mb-4">📢안내</h1>
-        <ul>
-        {joinedUserList && particapants!.map((userName, index) => (
-            <li key={index} className='font-semibold'>{userName}</li>
-          ))}
-        </ul>
+        <h1 className="text-2xl text-left font-semibold">참가자</h1>
+        {isUserJoined 
+         ?
+        <div className='bg-white p-2 shadow-lg rounded-md mb-2'>
+          <ul>
+            {joinedUserList && joinedUserList!.map((user, index) => (
+              <span key={index} className="text text-black mb-2 font-semibold">{user}님 </span>
+            ))}
+          </ul>
+        </div>    
+      
+        : null}
+        <h1 className="text-2xl text-left font-semibold ">📢안내</h1>
+        {isUserJoined
+          ?
+          <div className='bg-white p-2 shadow-lg rounded-md'>
+            <ul>
+              {joinedUserList && particapants!.map((userName, index) => (
+                  <li key={index} className='text text-black font-semibold'>{userName}</li>
+                ))}
+            </ul>
+              
+          </div>
+          : null
+        }
+        {userExited ? <p className=' text text-red-200'> {userExited}님이 퇴장하였습니다.</p> : null}
       </div>
 
         <ChatContent className='shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll'>
@@ -233,12 +285,16 @@ export default function Chatting() {
            message.myEmaiId === userId
             ? 
             (
-            <Mymessage key={index}>
-              <p className='mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' >{message.msg}</p>
-              {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
-                <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className=' ml-4 mt-1 rounded-md' />  
-              ): null}
-
+            <MyMessageWrapper>
+              <Mymessage key={index}>
+                <div>
+                  <p className='mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' >{message.msg}</p>
+                  <p className='text text-right text-sm mr-4' key={message.time}>{message.time}</p>
+                </div>
+                {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
+                  <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className=' ml-4 mt-1 rounded-md' />  
+                ): null}
+              </Mymessage>
               <RplayerWrapper>  
                 {(message.url.includes('.mp4') || message.url.includes('.MP4') )? (
                     <ReactPlayer 
@@ -250,24 +306,25 @@ export default function Chatting() {
                       controls={true}
                       playing={true}
                   />
-                  
+                   
                   ) : null}
+                  
               </RplayerWrapper>
-              <p className='text text-right text-sm mr-4' key={message.time}>{message.time}</p>
-            </Mymessage>
+            
+            </MyMessageWrapper>
             )
             :
             (
-            <PeerMessage key={index}>
-            <div>
-              <p className='mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' key={index}>{message.msg}</p>
-              {/*message.myEmaiId === userId? '' : ''  변수를 주고 왼쪽/오른쪽 정렬 */}
-              <span className='text text-sm text-right' key={message.time}>{message.time}</span>
-            </div>
-              {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
-                <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className=' ml-4 mt-1 rounded-md' />  
-              ): null}
-
+            <PeerMessageWrapper>
+              <PeerMessage key={index}>
+                <div>
+                  <p className='mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' key={index}>{message.msg}</p>
+                  <p className='text text-sm text-right' key={message.time}>{message.time}</p>
+                </div>
+                {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
+                  <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className=' ml-4 mt-1 rounded-md' />  
+                ): null}
+              </PeerMessage>
               <RplayerWrapper>  
                 {(message.url.includes('.mp4') || message.url.includes('.MP4') )? (
                     <ReactPlayer 
@@ -278,12 +335,15 @@ export default function Chatting() {
                       height="30%"
                       controls={true}
                       playing={true}
+                      muted={true}
+                      volume={0}
+                      //autoPlay={false}
                   />
                   
                   ) : null}
                   
               </RplayerWrapper>
-            </PeerMessage>
+            </PeerMessageWrapper>
             )
 
         ))}

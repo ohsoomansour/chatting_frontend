@@ -359,7 +359,7 @@ export function Conference() {
       </Helmet> 
       <RoomContainer id="welcom" className="w-2/4 mx-auto bg-white p-6 rounded-md shadow-md">
         <form className=" flex flex-col ">
-        <input
+          <input
             {...register("roomId")}
             type="text"
             placeholder="room name"
