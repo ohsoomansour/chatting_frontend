@@ -12,12 +12,15 @@ import { isSoundAtom } from "../recoil/atom_sound";
 
 const Wrapper = styled.div`
   dispaly:flex;
+  flex-direction:column;
   align-items: center;
   justify-content:center;
 `;
 const ProductContainer = styled.div`
   display:flex;
   flex-direction:column;
+  justify-content:center;
+  align-items:center;
 `;
 const VideoContainer = styled.div`
   display:flex;
@@ -113,7 +116,7 @@ export const TradePlatform = () => {
   }
   
   return ( 
-    <Wrapper className=" max-w-full max-h-full border-4 border-gray-100 p-4 shadow-lg rounded-lg">
+    <Wrapper className="items-center max-w-full max-h-full border-4 border-gray-100 p-4 shadow-lg rounded-lg ">
       <Helmet>
          <title>Trader | Transaction </title>       
       </Helmet>
@@ -132,30 +135,30 @@ export const TradePlatform = () => {
             <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
           </Canvas>
         ) : null }
-      <VideoContainer>
-        <PlayerWrapper>    
-          {deal.robot.rbURL.includes('.mp4') || deal.robot.rbURL.includes('.MP4') ? (
-            <ReactPlayer
-              className="player "
-              url={deal.robot.rbURL}
-              width="50%"
-              height="100%"
-              controls={true}
-              playing={true}
-              volume={isSound ? 1 : 0 }           
+        <VideoContainer>
+          <PlayerWrapper>    
+            {deal.robot.rbURL.includes('.mp4') || deal.robot.rbURL.includes('.MP4') ? (
+              <ReactPlayer
+                className="player "
+                url={deal.robot.rbURL}
+                width="50%"
+                height="100%"
+                controls={true}
+                playing={true}
+                volume={isSound ? 1 : 0 }           
+              >
+              </ReactPlayer>
+          ) : null}
+          </PlayerWrapper>
+          {deal.robot.rbURL.includes('.mp4') || deal.robot.rbURL.includes('.MP4') ? 
+            (<SoundBtn 
+              className="text-center bg-blue-500  text-white font-bold rounded-md shadow-2xl"
+              onClick={() => handleChangeSound()}
             >
-            </ReactPlayer>
-        ) : null}
-        </PlayerWrapper>
-        {deal.robot.rbURL.includes('.mp4') || deal.robot.rbURL.includes('.MP4') ? 
-          (<SoundBtn 
-            className="text-center bg-blue-500  text-white font-bold rounded-md shadow-2xl"
-            onClick={() => handleChangeSound()}
-          >
-              {isSound ? "Turn OFF Sound " : "Turn ON Sound " }
-          </SoundBtn> ) 
-        : null}
-      </VideoContainer>
+                {isSound ? "Turn OFF Sound " : "Turn ON Sound " }
+            </SoundBtn> ) 
+          : null}
+        </VideoContainer>
         {deal.robot.rbURL.includes('.png') || deal.robot.rbURL.includes('jpg') || deal.robot.rbURL.includes('JPG') ? (
           <img 
             alt='로봇 사진'

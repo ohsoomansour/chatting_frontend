@@ -145,8 +145,9 @@ export const Order = ({robot, deal}:OrderProps) => {
           type='text'
           
           value={deal.seller.userId}
-          size={30}
-          className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-pink-400'
+          size={30} 
+          
+          className='flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
           placeholder='Please write your name'
           />
         <h2 className=' text-lg font-bold '>Customer</h2>
@@ -156,7 +157,7 @@ export const Order = ({robot, deal}:OrderProps) => {
           
           value={userId}
           size={30}
-          className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-pink-400'
+          className='flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
           placeholder='Please write your name'
           /> 
         
@@ -166,7 +167,7 @@ export const Order = ({robot, deal}:OrderProps) => {
           {...register('description', {required: true})}
           type='text'
           size={30}
-          className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-pink-400'
+          className='border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
           value={robot.description}
         />
 
@@ -175,7 +176,7 @@ export const Order = ({robot, deal}:OrderProps) => {
           {...register('price', {required: true})}
           type='number'
           size={30}
-          className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-pink-400'  
+          className='flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'  
           defaultValue={robot.price}
           placeholder="We will strive to adust to a more reasonable price "
         />
@@ -187,16 +188,16 @@ export const Order = ({robot, deal}:OrderProps) => {
               {...register('maintenance_cost')}
               type='number'
               size={30}
-              className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-pink-400'  
+              className='flex-1 border-4 rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-pink-400'  
               defaultValue={robot.maintenance_cost}
               placeholder="We will strive to adust to a more reasonable price "
             />
           </>  
         ): null}
-        <h2 className=' text-lg font-bold mr-2'>{"Total"}</h2>
+        <h2 className=' text-lg font-bold mr-2 '>{"Total"}</h2>
         <input 
           {...register('total', {required: true})}
-          className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-pink-400'  
+          className='flex-1 border-4 rounded px-2 py-1 mt-2 focus:outline-none  focus:border-pink-400'  
           size={30}                      
           value={robot.price + (maintenanceYN === false ? 0 : parseFloat(robot.maintenance_cost))}
           placeholder="We will strive to adust to a more reasonable price "

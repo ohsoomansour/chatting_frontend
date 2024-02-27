@@ -26,7 +26,7 @@ const Btn = styled.button`
 `;
 export const RoomContainer = styled.div`
   display:flex;
-  flex-direction:row;
+  flex-direction:column;
 `
 export const EnterBtn = styled.button`
   background-color:gray;
@@ -427,7 +427,7 @@ export function Conference() {
       </ChatContent>
         <form className="mt-6" onSubmit={handleChatSubmit}>
           <input
-            className="flex-1 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300"
+            className="flex-1  rounded px-2 py-1 focus:outline-none  focus:border-pink-400 border-4"
             type="text"
             {...register("sendMessage", {required:true})} 
           />

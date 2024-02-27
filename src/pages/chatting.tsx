@@ -5,7 +5,7 @@ import {  useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDarkAtom } from '../recoil/atom_Theme';
 import ReactPlayer from "react-player";
 import { userIdState } from '../recoil/atom_user';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import {useDropzone} from 'react-dropzone'
 import { Loading } from '../components/loading';
 import { Helmet } from 'react-helmet';
@@ -14,7 +14,7 @@ import { BASE_PATH } from './logIn';
 import {Mymessage, PeerMessage, RoomContainer } from './conference';
 import { useHistory } from 'react-router-dom';
 
-const StreamingWrapper=styled.div`
+const ChattingWrapper=styled.div`
   background-color: ${(props) => props.theme.bgColor};
 `;
 const ChatContent=styled.div`
@@ -26,10 +26,7 @@ export const UI = styled.div`
   flex-direction: column;
 `;
 const ChatContainer = styled.div``;
-const RoomId = styled.div`
-  display:flex;
-  flex-direction: column;
-`
+
 export const RplayerWrapper = styled.div`
   display:flex;
   align-items:center;
@@ -89,7 +86,7 @@ export default function Chatting() {
   const [DraggedFile, setDragFile] = useState([])
   const [isLoading, setLoading] = useState(false);
   const [isUserJoined, setUserJoined] = useState(false);
-  
+  const [isJoined, setIsJoined] = useState(false)
   
   const history = useHistory();
 
@@ -132,6 +129,7 @@ export default function Chatting() {
 
   const setUName = (event:any) => {                  //✅사용자의 아이디 고객과 상담 채팅 구현
     event.preventDefault();
+    setIsJoined(true); 
     setUserJoined(true)
     const {chattingRoomId} =  getValues()
     setRoomName(chattingRoomId)
@@ -216,11 +214,21 @@ export default function Chatting() {
 
   }
   return (
-  <StreamingWrapper className=''>
+  <ChattingWrapper className=''>
     <Helmet>
       <title>Trader | A/S </title>       
     </Helmet>
-    <RoomContainer id="welcom" className="w-2/4 mx-auto flex justify-center  bg-white p-6 rounded-md shadow-md">
+    {/*w-2/4 mx-auto flex justify-center  bg-white p-6 rounded-md shadow-md */}
+    <RoomContainer id="welcom" className="max-w-md mx-auto flex justify-center  bg-white p-6 rounded-md shadow-md">
+      <label className="relative flex justify-between items-center group p-2 text-xl">
+        <input
+          type="checkbox" 
+          className="toggle absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md" 
+          onChange={handleOnCheck}
+        />
+        <span className="flex-grow"></span> 
+        <span className="w-16 h-10 flex items-center flex-shrink-0 ml-4 p-1 bg-gray-300 rounded-full duration-300 ease-in-out peer-checked:bg-green-400 after:w-8 after:h-8 after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-6 group-hover:after:translate-x-1"></span>
+      </label>
       <form className=" flex flex-col " onSubmit={setUName}>
         <input
             {...register("chattingRoomId")}
@@ -230,7 +238,7 @@ export default function Chatting() {
           >
         </input>
         <input
-          className='w-72 mt-2 focus:border-pink-400 border-4 rounded-md shadow-md border-gray-300  px-4 py-2 outline-none'
+          className='mt-2 focus:border-pink-400 border-4 rounded-md shadow-md border-gray-300  px-4 py-2 outline-none'
           type="text"
           value={userId}
           size={10}
@@ -241,15 +249,10 @@ export default function Chatting() {
         </RoomBtnContainer>
       </form>
     </RoomContainer>
-    <ChatContainer className='border border-solid border-gray-300 p-4 flex-1 flex flex-col items-center justify-center'>
-      <label className="relative flex justify-between items-center group p-2 text-xl">
-        <input
-          type="checkbox" 
-          className="toggle absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md" 
-          onChange={handleOnCheck}
-        />
-        <span className="w-16 h-10 flex items-center flex-shrink-0 ml-4 p-1 bg-gray-300 rounded-full duration-300 ease-in-out peer-checked:bg-green-400 after:w-8 after:h-8 after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-6 group-hover:after:translate-x-1"></span>
-      </label>
+    {isJoined 
+      ? 
+    <ChatContainer className='mx-auto p-4 flex-1 flex flex-col items-center justify-center'>
+      {/*w-2/4*/}
       <div className="rounded-lg w-2/4 bg-gray-300 shadow-lg text-white p-4">
         <h1 className="text-2xl text-left font-semibold">참가자</h1>
         {isUserJoined 
@@ -276,7 +279,7 @@ export default function Chatting() {
           </div>
           : null
         }
-        {userExited ? <p className=' text text-red-200'> {userExited}님이 퇴장하였습니다.</p> : null}
+        {userExited ? <p className=' text text-red-300'> {userExited}님이 퇴장하였습니다.</p> : null}
       </div>
 
         <ChatContent className='shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll'>
@@ -383,15 +386,17 @@ export default function Chatting() {
             />
               
           </div> 
-         {/*<button onClick={() => sendMessage()} className='min-w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md'>Send</button>   */}      
-        <button  className='text font-semibold min-w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md hover:bg-pink-300 transition duration-500' >Send</button>
+         
+        <button  className='text font-semibold min-w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md hover:bg-gray-300 transition duration-500' >Send</button>
       </form>
       </UI>
     </ChatContainer>
+      : null
+    }
     {isLoading ? ( <Loading />) : null
     }
   
-  </StreamingWrapper>
+  </ChattingWrapper>
   
   )
 } 
