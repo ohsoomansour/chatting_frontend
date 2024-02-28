@@ -9,6 +9,21 @@ import BuyerPostcode from './address/buyer-postalcode';
 import { buyerAddress } from '../recoil/atom_address';
 import { ButttonContainer } from '../pages/storedGoods';
 
+const PlusSvg = styled.svg`
+  fill:red;
+  width:30px;
+  height:30px;
+  margin: 0 5px;
+`;
+const Equalsvg = styled.svg`
+  fill:red;
+  width:30px;
+  height:30px;
+  margin: 0 5px;
+`;
+
+
+
 
 const MantenanceOption = styled.div``;
 const Robot = styled.div``;
@@ -115,93 +130,111 @@ export const Order = ({robot, deal}:OrderProps) => {
   
 
   return (
-    <div className=''>
-      <MantenanceOption className="container mx-auto max-w-xs mt-10">
-        <div className="flex ml-2">
-          <h2 className="text-center text-xl font-bold mr-2">Maintenance</h2>
-          <button
-            className={`py-2 px-4 mr-2 rounded-lg text-white font-semibold ${
-              maintenanceYN === true  ? 'bg-red-500' : 'bg-gray-300'
-            }`}
-            onClick={() => handleOptionSelect(true)}
-          >
-            Yes
-          </button>
-          <button
-            className={`py-2 px-4 rounded-lg text-white font-semibold ${
-              maintenanceYN === false ? 'bg-red-500' : 'bg-gray-300'
-            }`}
-            onClick={() => handleOptionSelect(false)}
-          >
-            No
-          </button>
-        </div>
-      </MantenanceOption>
+    <div className=' w-2/4'>
+      
       <Robot>
       <form className='ml-2'>
-        <h2 className=' text-lg font-bold '>Seller</h2>
-        <input 
-          {...register('seller', {required: true})}
-          type='text'
-          
-          value={deal.seller.userId}
-          size={30} 
-          
-          className='flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
-          placeholder='Please write your name'
+        <div className='flex-col'>
+          <h2 className=' text-lg text-center font-bold '>Seller</h2>
+          <input 
+            {...register('seller', {required: true})}
+            type='text'
+            value={deal.seller.userId}
+            size={30} 
+            className='w-full flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
+            placeholder='Please write your name'
           />
-        <h2 className=' text-lg font-bold '>Customer</h2>
-        <input 
-          {...register('customer', {required: true})}
-          type='text'
-          
-          value={userId}
-          size={30}
-          className='flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
-          placeholder='Please write your name'
-          /> 
+        </div>
+        <div className=' flex-col'>
+          <h2 className=' text-lg text-center font-bold '>Customer</h2>
+          <input 
+            {...register('customer', {required: true})}
+            type='text'
+            value={userId}
+            className=' w-full flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
+            placeholder='Please write your name'
+            /> 
+        </div>
         
         <BuyerPostcode />
-        <h2 className=' text-lg font-bold '>Description</h2>
+        <h2 className=' text-center text-lg font-bold '>Description</h2>
         <input
           {...register('description', {required: true})}
           type='text'
-          size={30}
-          className='border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
+          
+          className='w-full mx-auto border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
           value={robot.description}
         />
-
-        <h2 className=' text-lg font-bold mr-2'>Price</h2>
-        <input 
-          {...register('price', {required: true})}
-          type='number'
-          size={30}
-          className='flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'  
-          defaultValue={robot.price}
-          placeholder="We will strive to adust to a more reasonable price "
-        />
-        {/*전역에서 가져오고 그래서 클릭하면 전역 변수 값을 가져오고 */}
-        {maintenanceYN? (
-          <>  
-            <h2 className=' text-lg font-bold mr-2'>Maintenance Cost</h2>
+        <MantenanceOption className=" mt-10 mb-5">
+          <div className="flex ml-2">
+            <h2 className="text-center text-xl font-bold mr-2">Do you need maintenance?</h2>
+            <div
+              className={`py-2 px-4 mr-2 rounded-lg text-white font-semibold cursor-pointer ${
+                maintenanceYN === true  ? 'bg-red-500' : 'bg-gray-300'
+              }`}
+              onClick={() => handleOptionSelect(true)}
+            >
+              Yes
+            </div>
+            <div
+              className={`py-2 px-4 rounded-lg text-white font-semibold cursor-pointer ${
+                maintenanceYN === false ? 'bg-red-500' : 'bg-gray-300'
+              }`}
+              onClick={() => handleOptionSelect(false)}
+            >
+              No
+            </div>
+          </div>
+        </MantenanceOption>
+        <hr className=' border border-solid border-gray-300 shadow-lg mb-1  '/>
+        <div className=' flex justify-around'>
+          <h2 className='text-lg  text-center font-bold '>Price</h2>
+          <h2 className=' text-lg text-gray-400 text-center font-semibold '>Maintenance Cost</h2>
+          <h2 className=' text-lg text-center font-bold  '>{"Total"}</h2>
+        </div>
+        <div className=' flex w-full'>
+          <div className=' flex-col flex w-full'>
             <input 
-              {...register('maintenance_cost')}
-              type='number'
-              size={30}
-              className='flex-1 border-4 rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-pink-400'  
-              defaultValue={robot.maintenance_cost}
+              {...register('price', {required: true})}
+              //type='number'
+              className=' w-full  border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'  
+              defaultValue={robot.price}
               placeholder="We will strive to adust to a more reasonable price "
             />
-          </>  
-        ): null}
-        <h2 className=' text-lg font-bold mr-2 '>{"Total"}</h2>
-        <input 
-          {...register('total', {required: true})}
-          className='flex-1 border-4 rounded px-2 py-1 mt-2 focus:outline-none  focus:border-pink-400'  
-          size={30}                      
-          value={robot.price + (maintenanceYN === false ? 0 : parseFloat(robot.maintenance_cost))}
-          placeholder="We will strive to adust to a more reasonable price "
-        />
+          </div>
+          <div className=' flex-col  w-full'>
+            {maintenanceYN? (
+              <>
+              <div className=' flex w-full'>
+                <PlusSvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                 <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344V280H168c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H280v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/>
+                </PlusSvg>
+                <input 
+                  {...register('maintenance_cost')}
+                  //type='number'
+                  //size={30}
+                  className=' w-full  border-4 rounded px-2 py-1  focus:outline-none  focus:border-pink-400 '  
+                  defaultValue={robot.maintenance_cost}
+                  placeholder="We will strive to adust to a more reasonable price "
+                />
+              </div>    
+              </>  
+            ): null}
+          </div>
+          <div className=' flex-col w-full'>
+            <div className=' flex w-full'>
+              <Equalsvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path d="M48 128c-17.7 0-32 14.3-32 32s14.3 32 32 32H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H48zm0 192c-17.7 0-32 14.3-32 32s14.3 32 32 32H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H48z"/>
+              </Equalsvg>
+              <input 
+                {...register('total', {required: true})}
+                className= ' w-full text-lg  border-4 rounded px-2 py-1  focus:outline-none  focus:border-pink-400'                   
+                value={robot.price + (maintenanceYN === false ? 0 : parseFloat(robot.maintenance_cost))}
+                placeholder="We will strive to adust to a more reasonable price "
+              />
+            </div>
+          </div>
+        </div>
       </form>
       <div className="flex ml-2">
         
