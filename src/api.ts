@@ -32,9 +32,9 @@ export async function getMyOrder(token:string) {
   return myOrder;
 }
 
-export async function takeOrders(token:string) {
+export async function takeOrders(token:string, page: number) {
   const takingOrders = await (
-    await fetch(`${BASE_PATH}/order/takeorders`,{
+    await fetch(`${BASE_PATH}/order/takeorders/${page}`,{
       headers:{
         'Content-Type': 'application/json; charset=utf-8',
         'x-jwt': token,
@@ -45,9 +45,9 @@ export async function takeOrders(token:string) {
   return takingOrders;
 }
 
-export async function storedGoods(token:string) {
+export async function storedGoods(token:string, page:number) {
   const storedGoods = await (
-    await fetch(`${BASE_PATH}/order/getstoredgoods`, {
+    await fetch(`${BASE_PATH}/order/getstoredgoods/${page}`, {
       headers:{
         'Content-Type': 'application/json; charset=utf-8',
         'x-jwt': token

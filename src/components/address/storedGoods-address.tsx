@@ -2,8 +2,8 @@ import React,{useState} from "react";
 import DaumPostcode from "react-daum-postcode";
 import Modal from "react-modal";
 import styled from "styled-components";
-import { storedGoodsAddress } from "../../recoil/atom_address";
-import { useSetRecoilState } from "recoil";
+import { storedGoodsAddress, storedGoodsPostal, storedGoodsRoad } from "../../recoil/atom_address";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 const CloseSVG = styled.svg`
     position: absolute;
@@ -34,16 +34,16 @@ const SearchSVG = styled.svg`
         fill: #d10849;
     }
 `
-const FullAddress = styled.div`
+export const FullAddress = styled.div`
     display:flex;
 `
 const StoredGoodsPostcode: React.FC = () =>{
-    const [zipCode, setZipcode] = useState<string>("");
-    const [roadAddress, setRoadAddress] = useState<string>("");
     const [detailAddress, setDetailAddress] = useState<string>("");
     const [isOpen, setIsOpen] = useState<boolean>(false); 
     const setFullAddress = useSetRecoilState(storedGoodsAddress);
-    
+    const [storedProductPostal, setStoredProductPostal ] = useRecoilState(storedGoodsPostal);
+    const [storedProductRoad, setStoredProductRoad  ] = useRecoilState(storedGoodsRoad);
+
     // Modal 스타일
     const customStyles = {
         overlay: {
@@ -65,21 +65,22 @@ const StoredGoodsPostcode: React.FC = () =>{
     }
     
     const completeHandler = (data:any) =>{
-        setZipcode(data.zonecode);
-        setRoadAddress(data.roadAddress);
-        setIsOpen(false);
+      setStoredProductPostal(data.zonecode);
+      setStoredProductRoad(data.roadAddress);
+      setIsOpen(false);
     }
     // 상세 주소검색 event
     const changeHandler = (e:React.ChangeEvent<HTMLInputElement>) =>{
         setDetailAddress(e.target.value);
-        setFullAddress(zipCode + " " + roadAddress +" "+ e.target.value)
+        setFullAddress(storedProductPostal + " " + storedProductRoad +" "+ e.target.value);
     }
     const onClose = () =>  {
         setIsOpen((prev) => !prev)
     }
     return(
       <div className=" mt-2">
-        <input className="border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300" value={zipCode} readOnly placeholder="POSTAL CODE" />
+        {/* border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300*/} 
+        <input className="w-2/4 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none" value={storedProductPostal} readOnly placeholder="POSTAL CODE" />
         <SearchSvgContainer onClick={toggle}>
           <SearchSVG
             onClick={toggle}
@@ -91,9 +92,9 @@ const StoredGoodsPostcode: React.FC = () =>{
             />
           </SearchSVG>
         </SearchSvgContainer>
-        <FullAddress>
-            <input className="border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300" value={roadAddress} readOnly placeholder="Street address" />
-            <input className="border rounded px-2 py-1 ml-2 mt-2 focus:outline-none focus:ring focus:border-blue-300" type="text" onChange={changeHandler} value={detailAddress} placeholder="detailed address"/>
+        <FullAddress className=" mt-2 ">
+            <input className="w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2" value={storedProductRoad} readOnly placeholder="Street address" />
+            <input className="w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2" type="text" onChange={changeHandler} value={detailAddress} placeholder="detailed address"/>
         </FullAddress>
         <Modal isOpen={isOpen} ariaHideApp={false} style={customStyles}>
           <button onClick={onClose}>

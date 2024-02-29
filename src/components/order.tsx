@@ -5,8 +5,8 @@ import { IDeal, IRobot } from '../pages/TradePlatform';
 import { useRecoilValue } from 'recoil';
 import { tokenState } from '../recoil/atom_token';
 import { userIdState } from '../recoil/atom_user';
-import BuyerPostcode from './address/buyer-postalcode';
-import { buyerAddress } from '../recoil/atom_address';
+import BuyerPostcode from './address/buyer-address';
+import { buyerAddress, buyerDetail, buyerPostal, buyerRoad } from '../recoil/atom_address';
 import { ButttonContainer } from '../pages/storedGoods';
 
 const PlusSvg = styled.svg`
@@ -22,9 +22,6 @@ const Equalsvg = styled.svg`
   margin: 0 5px;
 `;
 
-
-
-
 const MantenanceOption = styled.div``;
 const Robot = styled.div``;
 
@@ -37,25 +34,45 @@ const BASE_PATH = process.env.NODE_ENV === "production"
  : "http://localhost:3000";
 
 export const Order = ({robot, deal}:OrderProps) => {
-  const token = useRecoilValue(tokenState);
-  const userId = useRecoilValue(userIdState);
-  const customerAddress = useRecoilValue(buyerAddress); 
+  const token = useRecoilValue<string>(tokenState);
+  const userId = useRecoilValue<string>(userIdState);
+  const customerFullAddress = useRecoilValue<string>(buyerAddress); 
+  const roadAddress = useRecoilValue<string>(buyerRoad);
+  const postalCode = useRecoilValue<string>(buyerPostal);
+  const DetailedAdd = useRecoilValue<string>(buyerDetail);
   const [maintenanceYN, setMaintenanceYN] = useState(false);
+  const {register, getValues} = useForm();
 
   const handleOptionSelect = (option:boolean) => {
     setMaintenanceYN(option);
   };
- 
-  const {register, getValues} = useForm();
   const onSave = async () => {
   const { customer, price , maintenance_cost } = getValues();
+  try {
+    if(customer === ''){
+      alert('로그인 후 이용해 주세요!💛')
+      return;
+    } else if (!(/^\d{5}$/.test(postalCode.toString()) || /^\d{3,5}-\d{3,5}$/.test(postalCode.toString()))) {
+      alert('우편번호가 올바른 지 확인 해주세요!💛');
+      return;
+    }  else if(roadAddress === "") {
+      alert('도로 주소가 올바른 지 확인해 주세요!💛');
+      return;
+    } else if(DetailedAdd.length < 5){
+      alert('상세 주솟값이 올바른 지 확인해 주세요!💛');
+      return;
+    } else if(customerFullAddress === "") {
+      alert('전체 주솟값 올바른 지 확인해 주세요!💛')
+    }
+  } catch (e) {
+    console.error(e);
+  }
   const numPrice = parseFloat(price);
   const numManitenance = maintenance_cost === undefined ? 0 : parseFloat(maintenance_cost);
   const numTotal = numPrice + numManitenance;
     
   const isStored = await(
     //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
-
     await fetch(`${BASE_PATH}/order/storegoods`, {
       headers:{
         'x-jwt':token,
@@ -78,7 +95,6 @@ export const Order = ({robot, deal}:OrderProps) => {
   console.log(isStored);
 }
 
-
  const onOrder = async() => {
     //판매자 추가
     const {seller, customer, price , maintenance_cost } = getValues()
@@ -90,7 +106,6 @@ export const Order = ({robot, deal}:OrderProps) => {
     
     const newOrder = await(
     //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
-
       await fetch('http://localhost:3000/order/make', {
         headers:{
           'x-jwt':token,
@@ -101,7 +116,7 @@ export const Order = ({robot, deal}:OrderProps) => {
           dealId: deal.id,
           seller,
           customer,
-          address:customerAddress,
+          address:customerFullAddress,
           items:{
             robot: robot,   //relation으로 price 여기에 포함되어있고 가져오면됨  
             options:{
@@ -110,7 +125,6 @@ export const Order = ({robot, deal}:OrderProps) => {
             }
           },
           total:  numTotal , //문제: total: ''  빈값 + string 값 
-          
         })
       })
     ).json();
@@ -126,9 +140,6 @@ export const Order = ({robot, deal}:OrderProps) => {
 
   */
   }
-   
-  
-
   return (
     <div className=' w-2/4'>
       
@@ -248,7 +259,7 @@ export const Order = ({robot, deal}:OrderProps) => {
         </button>  
         <button 
           onClick={onOrder} 
-          className=' text-2xl font-semibold w-full mx-auto mt-2 mb-4 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-green-200 transition-colors'
+          className=' text-2xl font-semibold w-full mx-auto mt-2 mb-4 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-green-200 transition'
         > Order
         </button>
       </ButttonContainer>

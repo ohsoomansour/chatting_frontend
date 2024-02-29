@@ -9,8 +9,8 @@ import { userIdState } from "../recoil/atom_user";
 import { CompaImg } from "../components/CompaImg";
 import { compaImgState } from "../recoil/atom_compaImg";
 import { FormError } from "../components/form-error";
-import { sellerAddress } from "../recoil/atom_address";
-import SellerPostcode from "../components/address/seller-postalcode";
+import { sellerAddress, sellerPostal, sellerRoad } from "../recoil/atom_address";
+import SellerPostcode from "../components/address/seller-address";
 import { Helmet } from "react-helmet";
 import { BASE_PATH } from "./logIn";
 
@@ -36,14 +36,42 @@ export const SellerPage = () => {
   const userId = useRecoilValue(userIdState);
   const compaImg = useRecoilValue(compaImgState);
   const [threeDFile, setThreeDFile] = useState([]);
-  const {getValues, register, formState:{errors}} = useForm<ISellerForm>({ mode: "onChange" })
+  const sellerZipcode = useRecoilValue<string>(sellerPostal);
+  const sellerDoro = useRecoilValue(sellerRoad);
   const selAddress = useRecoilValue(sellerAddress);
+  const {getValues, register, formState:{errors}} = useForm<ISellerForm>({ mode: "all" })
   // s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업 
   
   let rbURL = "";
   let coImgURL = "";
   const onRegister = async() => {
-    
+    if(  !(/^\d{5}$/.test(sellerZipcode.toString()) || /^\d{3,5}-\d{3,5}$/.test(sellerZipcode.toString())) ){
+      alert('우편 번호가 정상 코드가 아닙니다!💛');
+      return;
+    } else if(sellerDoro === "") {
+      alert("도로 주솟값이 없습니다!💛");
+      return;
+    } else if(selAddress.length < 5) {
+      alert('5자 이상 작성해주세요!💛');
+      return;
+    }
+    const {company, sellerId, rbName, price ,maintenance_cost, description } = getValues();
+    if(company.length < 1){
+      alert("회사 이름을 입력하세요!💛");
+      return;
+    } else if(sellerId === "") {
+      alert("회원님의 이메일 아이디를 확인해 주세요!💛");
+      return;
+    }  else if(rbName === "") {
+      alert("로봇의 이름을 입력해 주세요!💛");
+      return;
+    }  else if(price <= 0) {
+      alert("상품의 가격을 0원 보다 큰 값을 입력하세요!💛");
+      return;
+    } else if(maintenance_cost < 0) {
+      alert("유지 보수 비용을 0 또는 0 보다 큰 값을 입력하세요!💛");
+      return;
+    } 
     try {
       //회사 이미지 업로드
       if(compaImg.length !==0 ) {
@@ -75,8 +103,7 @@ export const SellerPage = () => {
         ).json();
         rbURL = RobotURL;
         // deal 생성
-        const {company, sellerId, rbName, price ,maintenance_cost, description } = getValues();
-
+        
         
         const headers = new Headers({
           'Content-Type':'application/json; charset=utf-8',  // 'application/json; charset=utf-8', //'multipart/form-data',  
@@ -131,13 +158,13 @@ export const SellerPage = () => {
   return (
   <Wrapper>
     <Helmet>
-         <title>Trader | Seller Page </title>       
+      <title>Trader | Seller Page </title>       
     </Helmet>  
     <UI className=' w-2/4 border-4 border-gray-100 p-4 shadow-lg rounded-lg'>
     <h2 className=" text-lg font-bold ">Private or Company</h2> 
       <input
           {...register('company', { required: "What is the manufacturing company? " })}
-          className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
+          className='w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2'
           placeholder="A manufacturing company (en) entreprise de fabrication(français)"
           type="text"
           size={10}
@@ -151,7 +178,7 @@ export const SellerPage = () => {
         {required:true,
           pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
         })}
-        className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
+        className='w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2'
         value={userId}
         placeholder="Your Email address!"
         type="email"
@@ -162,35 +189,39 @@ export const SellerPage = () => {
 
       <h2 className=" text-lg font-bold ">Product</h2>  
       <input
-        {...register('rbName', {required:"Please write a product name"})}
-        className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
+        {...register('rbName', {required:"Please write a product name."})}
+        className='w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2 mb-2'
         type="text"
         placeholder="The robot name"
         size={10}
       />
-      {errors.rbName?.message && (<FormError errorMessage={errors.rbName.message}/>)}
+      {errors.rbName?.type === 'required' && (<FormError errorMessage={errors.rbName.message}/>)}
       <input
-        {...register('price')}
-        className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
+        {...register('price', {required:"Please Write the price."})}
+        className='w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2 mb-2'
         placeholder="The selling price"
         type="number"
         size={10}
       />
+      {errors.price?.type === 'required' && (<FormError errorMessage={errors.price.message}/>)}
       <input
-        {...register('maintenance_cost')}
-        className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
+        {...register('maintenance_cost', {required:"Please write the maintenance_costs."})}
+        className='w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2 mb-2'
         placeholder="Maintenace Cost"
         type="number"
+        defaultValue={0}
         size={10}
       />
-
+      {errors.maintenance_cost?.type === 'required' && (<FormError errorMessage={errors.maintenance_cost.message}/>)}
       <input
-        {...register('description')}
-        className='flex-1 border rounded px-2 py-1 mt-2 focus:outline-none focus:ring focus:border-blue-300'
+        {...register('description', {required:"Please write descriptions."})}
+        className='w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2 mb-2'
+        
         placeholder="Explain your product about the robot"
         type="text"
         size={10}
-      />          
+      />
+      {errors.description?.type === 'required' && (<FormError errorMessage={errors.description.message}/>)}          
       <div 
         {...getRootProps()}
         className="flex items-center justify-center w-full  mt-2 ">
@@ -211,7 +242,7 @@ export const SellerPage = () => {
           
       </div>
           
-      <button onClick={onRegister} className='min-w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md'>Register</button>
+      <button onClick={onRegister} className=' font-semibold w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md hover:bg-slate-300 transition duration-500'>Register</button>
       </UI>
     </Wrapper>    
   )

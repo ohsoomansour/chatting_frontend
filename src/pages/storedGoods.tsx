@@ -6,12 +6,10 @@ import { Loading } from "../components/loading";
 import styled from "styled-components";
 import { IRobot } from "./takeordersInfo";
 import { userIdState } from "../recoil/atom_user";
-import StoredGoodsPostcode from "../components/address/storedGoods-postalcode";
+import StoredGoodsPostcode from "../components/address/storedGoods-address";
 import { storedGoodsAddress } from "../recoil/atom_address";
 import { Helmet } from "react-helmet";
 import { BASE_PATH } from "./logIn";
-
-
 
 interface ISeller {
   address:string;
@@ -33,6 +31,15 @@ interface IStoredDeal {
   seller_address:string;
   updatedAt:string;
 }
+interface IMember{
+  address: string;
+  createdAt:string;
+  id:number;
+  lastActivityAt: string;
+  memberRole: string;
+  name:string;
+  userId:string;
+}
 
 interface IPayment{
   maintenanceYN:boolean;
@@ -42,17 +49,15 @@ interface IPayment{
 }
 
 interface IStore {
-  id:number;
   deal:IStoredDeal;
+  id:number;
+  member:IMember;
   payment:IPayment;
 }
 
 interface IMyStoredDeals {
-  id:number;
-  userId:string;
-  name:string;
-  address:string;
-  store:IStore[];
+  mySavings:IStore[];
+  totalPage:number;
 }
 
 const Wrapper = styled.div``;
@@ -67,21 +72,23 @@ const CompaName = styled.span`
 export const ButttonContainer = styled.div`
   display:flex;
 `
-
+let page:number = 1; 
 export const StoredGoods = () => {
+  const onNextPage = () => { page = page + 1 ;  refetch(); }
+  const onPrevPage = () => { page = page - 1 ; refetch(); }
   const addressYo = useRecoilValue(storedGoodsAddress)
   const token = useRecoilValue(tokenState);
   const me = useRecoilValue(userIdState);
   const {data: mystoredDeals, isLoading, refetch } = useQuery<IMyStoredDeals>(
-    ["getStoredGoods","ORDER"], () => storedGoods(token)
+    ["getStoredGoods","ORDER"], () => storedGoods(token, page)
   )
   console.log("storedDeals:")
   console.log(mystoredDeals)
 
   const stores = isLoading 
     ? []
-    : mystoredDeals?.store
-    ? mystoredDeals.store
+    : mystoredDeals
+    ? mystoredDeals.mySavings
     : [];
 
   const onDelete = async (storageId:number) => {
@@ -98,7 +105,7 @@ export const StoredGoods = () => {
     console.log(isDel);
   }
   const onOrder = async(store:IStore) => {
-  //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
+  //결제 서비스 추가: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 모듈 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
     const newOrder = await(
       await fetch(`${BASE_PATH}/order/make`, {
         headers:{
@@ -132,14 +139,14 @@ export const StoredGoods = () => {
       <Helmet>
         <title>Stored Goods</title>
       </Helmet>
-      <h1 className=" text-2xl text-center font-semibold mb-4" > {mystoredDeals?.store? mystoredDeals?.name + "님 안녕하세요" : null }</h1>
+      <h1 className=" text-2xl text-center font-semibold mb-4" > {me+ "님 안녕하세요" }</h1>
       <p className=" text-xl text-center font-semibold">{"아래의 로봇 제품들은 고객님께서 미리 담기를 선택하신 목록입니다. "}</p>
       {isLoading 
         ? <Loading /> 
         : (stores.map((store, index) => (
           <DealContainer key={index} className="mb-2 max-w-md mx-auto p-6 bg-white rounded-lg shadow-md"> 
             <CompaWrapper >
-              <img alt='company logo' src={store.deal.compaBrand_ImgURL} width={"20%"} height={"20%"} className=" inline-block"></img>
+              <img alt='company logo' src={store.deal.compaBrand_ImgURL} width={"23%"} height={"20%"} className=" inline-block"></img>
               <CompaName className="text-lg font-semibold ">{store.deal.compa_name} Co., Ltd</CompaName>
             </CompaWrapper>
             <hr className="my-6" />
@@ -163,14 +170,35 @@ export const StoredGoods = () => {
               <p className="text-lg font-semibold">${store.payment.total}</p>
             </div>
             <ButttonContainer>
-              <button onClick={() => onOrder(store)} className=' font-semibold w-full mx-auto mt-6 mb-2 mr-2 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-green-200 transition-colors'>Order</button>
-              <button onClick={() => onDelete(store.id)} className=' font-semibold w-full mx-auto mt-6 mb-2 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-red-400 transition-colors'>Delete</button>
+              <button onClick={() => onOrder(store)} className=' font-semibold w-full mx-auto mt-6 mb-2 mr-2 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-green-200 transition duration-500'>Order</button>
+              <button onClick={() => onDelete(store.id)} className=' font-semibold w-full mx-auto mt-6 mb-2 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-red-400 transition duration-500'>Delete</button>
             </ButttonContainer>
           </DealContainer>
         ))
 
       )}
-
+      <div className=" grid grid-cols-3 text-center max-w-xs items-center mx-auto">
+          {page > 1 ? (<button
+            onClick={onPrevPage}
+            className=" focus:outline-none font-bold text-3xl">
+            &larr;
+          </button>
+          ) : (
+          <div></div>  
+          )}
+          <span>
+            Page {page} of {mystoredDeals?.totalPage}
+          </span>
+          {page !== mystoredDeals?.totalPage ? (
+            <button
+              onClick={onNextPage}
+              className=" focus:outline-none font-bold text-3xl">
+              &rarr;
+            </button>
+          ) : (
+            <div></div>  
+          )}
+        </div>
     </Wrapper>
   )
 
