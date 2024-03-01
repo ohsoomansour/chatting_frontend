@@ -97,9 +97,10 @@ export interface IDeal{
   compa_name:string;
   compaBrand_ImgURL:string;
   sellerId:number;
+  seller:IMember;
+  salesManager_mobilephone:number;
   robotId:number;
   robot:IRobot;
-  seller:IMember;
 }
 
 
@@ -131,14 +132,12 @@ export const TradePlatform = () => {
         <div className=" flex">
           <CompaBrandImg  alt='company logo' src={deal.compaBrand_ImgURL} width={"15%"} height={"15%"}></CompaBrandImg>
         </div>
-        <h1 className=" text-lg font-semibold text-center">{deal.robot.name}</h1>
+        <h1 className=" text-2xl font-semibold text-center ">{deal.robot.name}</h1>
         {deal.robot.rbURL.includes('.glb') ? (
-          
           <Canvas camera={{ position: [0, 3, 7], fov:75 }} style={{ width: '50%', height: '35vh' }}>
             <OrbitControls 
               autoRotate={true}
-              
-              />
+            />
             <group 
               rotation-y={-Math.PI / 2}
               scale={[1.2, 1.2, 1.2]}

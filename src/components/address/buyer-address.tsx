@@ -29,6 +29,8 @@ const SearchSvgContainer = styled.span`
 `
 
 const SearchSVG = styled.svg`
+    position:relative;
+    bottom:10px;
     width: 26px;
     height: 26px;
     fill: black;
@@ -83,14 +85,6 @@ const BuyerPostcode: React.FC = () =>{
     }
     // 상세 주소검색 event
     const changeHandler = (e:React.ChangeEvent<HTMLInputElement>) =>{
-        try {
-            if(e.target.value === ''){
-                alert('상세 주소 값이 없습니다!')
-                return;
-            }
-        } catch (e) {
-            console.error(e);
-        }
         setDetailAddress(e.target.value);
         setFullAddress(postalCode + " " + roadAddress +" "+ e.target.value)
     }

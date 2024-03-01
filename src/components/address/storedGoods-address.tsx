@@ -26,6 +26,8 @@ const SearchSvgContainer = styled.span`
 `
 
 const SearchSVG = styled.svg`
+    position:relative;
+    bottom:5px;
     width: 20px;
     height: 20px;
     fill: black;
@@ -36,6 +38,7 @@ const SearchSVG = styled.svg`
 `
 export const FullAddress = styled.div`
     display:flex;
+    flex-direction:column;
 `
 const StoredGoodsPostcode: React.FC = () =>{
     const [detailAddress, setDetailAddress] = useState<string>("");

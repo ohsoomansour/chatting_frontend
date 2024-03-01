@@ -6,6 +6,7 @@ import { userIdState } from "../recoil/atom_user";
 import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 import { getMyinfo } from "../api";
+import { useHistory } from "react-router-dom";
 
 interface IeditUserInfo{
   email:string;
@@ -19,6 +20,7 @@ export interface IuserInfo{
   password:string;
   name:string;
   address: string;
+  mobile_phone:number;
   memberRole:string;
   lastActivityAt: Date;
   isDormant: boolean;
@@ -27,7 +29,7 @@ export const EditUserInfo  = () => {
   const {register, getValues, formState:{errors} } = useForm<IeditUserInfo>({"mode": "onChange"})
   const token = useRecoilValue(tokenState);
   const [userId, setUserId] = useRecoilState<string>(userIdState);
-
+  const history = useHistory();
   const { data:whoamI, isLoading } = useQuery<IuserInfo>(
     ["me", "Member"], () => getMyinfo(token)
   );
@@ -42,6 +44,17 @@ export const EditUserInfo  = () => {
   const onModify = async (e: any) => {
     e.preventDefault(); //새로고침 방지
     const {email, password, address } = getValues() //이건 변경된 email 
+    if(!(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email))){
+      alert('이메일 형식이 아닙니다!💛');
+      return;
+    } else if(password.length < 10) {
+      alert('패스워드의 길이가 10자 이상이 아닙니다!💛');
+      return;
+    } else if(address.length < 5) {
+      alert('주소의 길이는 5자 이상이어야 합니다!💛')
+      return;
+    }
+
     setUserId(email);  
     const result = await (
       await fetch(`http://localhost:3000/member/update/${whoamI?.id}`, {
@@ -50,30 +63,31 @@ export const EditUserInfo  = () => {
         body: JSON.stringify({
           userId:email,
           password:password,
-          address:address
+          address:address,
         })
       })
     ).json(); 
+    history.push("/login")
   }
   return (
-    <div className="fixed w-full h-full flex flex-col items-center justify-center">
+    <div className="fixed w-full h-full flex flex-col items-center justify-center shadow-lg">
       <Helmet>
         <title>Trader | Edit Profile</title>
       </Helmet>
       <form
-        
+        className= " w-2/4"
         > 
-        <div className="flex flex-col bg-slate-400 max-w-md p-8 rounded shadow-lg ">
-          <h1 className=" text-lg text-white text-center font-bold mb-4">Edit Profile</h1>
-          <h4 className="text-lg text-center font-bold mb-2">Email</h4>
+        <div className="flex flex-col w-full bg-slate-400  p-8 rounded shadow-2xl">
+          <h1 className=" text-2xl text-white text-center font-bold mb-4">Edit Profile</h1>
+          <h4 className="ml-4 text-lg text-white text-left font-bold mb-2">Email</h4>
           <input
             {...register("email", {
               pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
             
             })} 
-            className="input mb-2" 
+            className="input text-lg text-center font-semibold mb-2  rounded"
             type="email" 
-            placeholder="Email"
+            placeholder="Please Enter the Email you want to change."
             autoComplete="on"
           />
           {errors?.email?.message && (
@@ -82,11 +96,12 @@ export const EditUserInfo  = () => {
           {errors?.email?.type === 'pattern'&& (
             <FormError errorMessage={"Please Insert a valid Email that you would like to change!"} />
           )}
-          <h4 className="text-lg text-center font-bold mb-2 mt-2">Password</h4>
+          <h4 className="ml-4 text-white text-lg text-left font-bold mb-2 mt-2">Password</h4>
           <input
             {...register("password", {required: "Password is required", minLength:10})} 
             type="password" 
-            className="input mb-2"
+            placeholder="Please Enter the password you want to change."
+            className="input mb-2 text-center font-semibold rounded"
           />
           {errors?.password?.message && (
             <FormError errorMessage={errors.password.message}/>
@@ -94,18 +109,22 @@ export const EditUserInfo  = () => {
           {errors?.password?.type === 'minLength' && (
             <FormError errorMessage={"Password must be at least 10 chars!"} />
           )}
-          <h4 className="text-lg text-center font-bold mt-2 mb-2">Address</h4>
+          <h4 className="ml-4 text-white text-lg text-left font-bold mt-2 mb-2">Address</h4>
           <input
-            {...register("address", {required: "Please insert a valid Email you would like to change!"})} 
+            {...register("address", {required: "Please insert a valid Email you would like to change!" , minLength:5})} 
             type="text" 
-            className="input mb-2"
+            className="input mb-2 text-center font-semibold rounded"
+            placeholder="Please Enter the address you want to change."
           />
           {errors?.address?.message && (
             <FormError errorMessage={errors.address.message}/>
           )}
+          {errors?.address?.type === 'minLength' && (
+            <FormError errorMessage={"Address must be at least 5"}/>
+          )}
         <button
          onClick={(e) => onModify(e)}
-         className="text-white font-semibold py-3 px-4 mt-5 border-4 border-white rounded hover:bg-slate-600">Submit</button>
+         className="text-white font-semibold py-3 px-4 mt-5 border-4 border-white rounded hover:bg-slate-600 transition duration-500">Submit</button>
         </div>
       </form>
 

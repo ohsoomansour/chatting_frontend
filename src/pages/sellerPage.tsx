@@ -24,6 +24,7 @@ const Wrapper = styled.div`
 interface ISellerForm {
   company: string;
   sellerId: string;
+  phoneNumber:number;
   rbName: string;
   price:number;
   maintenance_cost: number;
@@ -55,13 +56,16 @@ export const SellerPage = () => {
       alert('5자 이상 작성해주세요!💛');
       return;
     }
-    const {company, sellerId, rbName, price ,maintenance_cost, description } = getValues();
+
+    const {company, sellerId, phoneNumber, rbName, price ,maintenance_cost, description } = getValues();
     if(company.length < 1){
       alert("회사 이름을 입력하세요!💛");
       return;
     } else if(sellerId === "") {
       alert("회원님의 이메일 아이디를 확인해 주세요!💛");
-      return;
+      return; 
+    } else if(!(/^\d{10,11}$/.test(phoneNumber.toString()))) {
+      alert("회원님의 휴대폰 번호가 10자리 또는 11자리가 아닙니다!💛")
     }  else if(rbName === "") {
       alert("로봇의 이름을 입력해 주세요!💛");
       return;
@@ -86,7 +90,6 @@ export const SellerPage = () => {
         ).json()
         coImgURL = compaImgURL;
       }
-
 
       // robot 3d model 또는 mp4 영상
       if(threeDFile.length !== 0 && compaImg.length !== 0){
@@ -120,6 +123,7 @@ export const SellerPage = () => {
               compaBrand_ImgURL: coImgURL,
               seller_address: selAddress,
               seller: sellerId,
+              mobile_phone:phoneNumber,
               name: rbName,
               price,
               maintenance_cost,
@@ -156,37 +160,52 @@ export const SellerPage = () => {
   });
 
   return (
-  <Wrapper>
+  <Wrapper className= "">
     <Helmet>
       <title>Trader | Seller Page </title>       
     </Helmet>  
-    <UI className=' w-2/4 border-4 border-gray-100 p-4 shadow-lg rounded-lg'>
-    <h2 className=" text-lg font-bold ">Private or Company</h2> 
-      <input
-          {...register('company', { required: "What is the manufacturing company? " })}
-          className='w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2'
-          placeholder="A manufacturing company (en) entreprise de fabrication(français)"
-          type="text"
-          size={10}
-        />
-      {errors.company?.message && <FormError errorMessage={errors.company.message}/>}
-      <h3 className="text-center">Add your robot Brand Image</h3>
-      <CompaImg />
-      <h2 className=" text-lg font-bold ">Seller</h2> 
-      <input
-        {...register('sellerId',
-        {required:true,
-          pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
-        })}
-        className='w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2'
-        value={userId}
-        placeholder="Your Email address!"
-        type="email"
-        size={10} 
-      />
-      {errors.sellerId?.type === "pattern" && (<FormError errorMessage="You need to log in!"/>)}
-      <SellerPostcode />
-
+    <UI className='max-w-full  max-h-full border-4 border-gray-100 p-4 shadow-lg rounded-lg'>
+      <div className=" flex max-h-full">
+        <CompaImg />
+        <div className=" w-full flex-col">
+          <h2 className=" text-lg text-center font-bold ">Private or Company</h2> 
+          <input
+              {...register('company', { required: "What is the manufacturing company? " })}
+              className='w-full mb-2 border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2'
+              placeholder="A manufacturing company (en)"
+              type="text"
+              size={10}
+            />
+          {errors.company?.message && <FormError errorMessage={errors.company.message}/>}
+          <h2 className=" text-lg text-center font-bold relative t-20">Sales Manager</h2> 
+          <input
+            {...register('sellerId',
+            {required:true,
+              pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
+            })}
+            className='w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2'
+            value={userId}
+            placeholder="Your Email address!"
+            type="email"
+            size={10} 
+          />
+          {errors.sellerId?.type === "pattern" && (<FormError errorMessage="You need to log in!"/>)}
+          <input
+              {...register('phoneNumber', { required: "What is the manufacturing company? ", minLength:10 })}
+              className='w-full mb-2 mt-1 border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2'
+              placeholder="Enter your smart phone number!"
+             
+            />
+          {errors.phoneNumber?.message && (
+            <FormError errorMessage={errors.phoneNumber.message}/>
+          )}
+          {errors.phoneNumber?.type === 'minLength' && (
+            <FormError errorMessage={"Mobile Phone Number must be more than 10."}/>
+          )}
+          <SellerPostcode />
+        </div>
+      </div>
+      <div className="max-h-full">   
       <h2 className=" text-lg font-bold ">Product</h2>  
       <input
         {...register('rbName', {required:"Please write a product name."})}
@@ -224,7 +243,7 @@ export const SellerPage = () => {
       {errors.description?.type === 'required' && (<FormError errorMessage={errors.description.message}/>)}          
       <div 
         {...getRootProps()}
-        className="flex items-center justify-center w-full  mt-2 ">
+        className="flex items-center justify-center  mt-2 ">
         <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-50 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
           <div className="flex flex-col items-center justify-center pt-5 pb-6">
             <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
@@ -243,7 +262,8 @@ export const SellerPage = () => {
       </div>
           
       <button onClick={onRegister} className=' font-semibold w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md hover:bg-slate-300 transition duration-500'>Register</button>
-      </UI>
+      </div>      
+    </UI>
     </Wrapper>    
   )
 }

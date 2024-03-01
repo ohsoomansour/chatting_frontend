@@ -23,6 +23,7 @@ const CloseSVG = styled.svg`
     }
 `;
 const SearchSVG = styled.svg`
+    position:relative;
     width: 20px;
     height: 20px;
     fill: black;
@@ -78,15 +79,6 @@ const SellerPostcode: React.FC = () =>{
     }
     // 상세 주소검색 event
     const changeHandler = (e:React.ChangeEvent<HTMLInputElement>) =>{
-        try {
-            if(e.target.value === ''){
-                alert('상세 주소 값이 없습니다!')
-                return;
-            }
-        } catch (e) {
-            console.error(e);
-        }
-        
         setDetailAddress(e.target.value);
         setFullAddress(postalCode + " " + roadAddress +" "+ e.target.value);
     }
@@ -100,7 +92,7 @@ const SellerPostcode: React.FC = () =>{
             <div className="mb-1">
                 <input
                     {...register("postalcode", {required:'POSTAL CODE is required.',})} 
-                    className="w-2/4 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none" 
+                    className="w-2/4 mb-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none" 
                     value={postalCode} 
                     readOnly placeholder="POSTAL CODE" />
                 <button onClick={toggle}>
@@ -116,7 +108,7 @@ const SellerPostcode: React.FC = () =>{
             </div>
             {errors.postalcode?.type === 'required' &&  <FormError errorMessage={errors.postalcode.message} /> }
             <FullAddress>
-                <div className="w-2/4 mr-1">
+                <div className="w-full mb-1">
                     <input
                         {...register("roadAddress", {
                             required:"Road address is required. ",
@@ -128,7 +120,7 @@ const SellerPostcode: React.FC = () =>{
                     />
                     {errors.roadAddress?.type === 'required' && <FormError errorMessage={errors.roadAddress.message}/>}
                 </div>
-                <div className="w-2/4">
+                <div className="w-full ">
                     <input
                         {...register("detailedAddress", {required:true, minLength: 5})} 
                         className="w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2" 
