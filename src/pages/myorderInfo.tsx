@@ -5,7 +5,9 @@ import { useRecoilValue } from "recoil";
 import { tokenState } from "../recoil/atom_token";
 import { Loading } from "../components/loading";
 import { Helmet } from "react-helmet";
+import { useState } from "react";
 
+const Wrapper = styled.div``;
 export enum OrderStatus  {
   Pending = "Pending",
   OrderCompleted = "OrderComplete",
@@ -37,38 +39,55 @@ interface Iitems{
     maintenance_cost:number;
   }
 }
+interface ISeller{
+  address:string;
+  id: number;
+  memberRole:string;
+  mobile_phone:string; 
+  name:string;  
+  userId:string;
+}
+interface ICustomer{
+  address:string;
+  id:number;
+  memberRole:string;
+  mobile_phone:string;
+  name:string;
+  userId:string;
+}
 
-interface IOrder{
+interface IMyOrder {
   address:string; 
   createdAt:string;
   id:number;
   items:Iitems;
+  customer:ICustomer;
+  seller:ISeller;
   status:string;
   total:number;  
 }
-
-interface IMyOrders {
-  address:string; //판매자 주소
-  id:number;  //판매자 id
-  memberRole:string; //사이트에서 판매자는 client 
-  name:string; // 판매자 이름 
-  order:IOrder[] //판매자가 받은 주문 리스트들
+interface MyOrderInfos{
+  myOrders:IMyOrder[];
+  totalPages:number;
 }
-const Wrapper = styled.div``;
 
+let page:number = 1;
 export const OrderInfo = () => {
   const token = useRecoilValue(tokenState);
-  const { data: myOrderInfo, isLoading }  = useQuery<IMyOrders>(
-    ["customerOrderInfo", "ORDER"], () => getMyOrder(token)
-  )
+  const { data: myOrderInfo, isLoading, refetch }  = useQuery<MyOrderInfos>(
+    ["customerOrderInfo", "ORDER"], () => getMyOrder(token, page)
+    )
 
-  const myOrderInfos = isLoading 
+
+  const myOrders = isLoading 
     ? []
     : myOrderInfo
-    ? myOrderInfo.order
-    : [];
+    ? myOrderInfo.myOrders
+    : []
 
-
+  console.log("myOrderInfo:",myOrders);
+  const onNextPage = () => { page = page + 1 ;  refetch(); }
+  const onPrevPage = () => { page = page - 1 ; refetch(); }   
   return (
     <Wrapper className="mt-6">
       <Helmet>
@@ -76,20 +95,34 @@ export const OrderInfo = () => {
       </Helmet>
       {isLoading 
       ? <Loading /> 
-      :(myOrderInfos.map((order, index) => (
+      :(myOrders.map((order, index) => (
         <div key={index} className="mb-2 max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold mb-4">Electronic Receipt</h2>
+          <h2 className="text-2xl text-center font-semibold mb-4">Electronic Receipt</h2>
           <div className="flex justify-between mb-4">
             <p className="text-sm text-gray-600">Date: {order.createdAt}</p>
-            <p className="text-sm text-gray-600">Address: {order.address} </p>
+            <p className="text-sm ">Order Number: {order.id}</p>
           </div>
-          <div className="mb-4">
-            <p className="text-sm text-gray-600">Order Number:</p>
-            <p className="text-lg font-semibold">{order.id}</p>
+          <div className="flex justify-between mb-4">
+            <p className="text-sm text-gray-600">Sales Manager:</p>
+            <p className="text-sm text-gray-600">{order.seller.name}</p>
           </div>
-          <div className="mb-4">
-            <p className="text-sm text-gray-600">Customer Name:</p>
-            <p className="text-lg font-semibold">{myOrderInfo?.name}</p>
+          <div className="flex justify-between mb-4">
+            <p className="text-sm text-gray-600">Sales Manager mobile phone:</p>
+            <p className="text-sm text-gray-600">{order.seller.mobile_phone}</p>
+          </div>
+            
+          <hr className="my-6" />
+          <div className="flex justify-between mb-4 ">
+            <p className="text-sm text-gray-600">Buyer Address:</p>
+            <p className="text-sm text-gray-600">{order.address} </p>
+          </div>
+          <div className="flex justify-between mb-4">
+            <p className="text-sm text-gray-600">Buyer Name:</p>
+            <p className="text-sm ">{order.customer.name}</p>
+          </div>
+          <div className="flex justify-between mb-4">
+            <p className="text-sm text-gray-600">Buyer mobile phone:</p>
+            <p className="text-lg font-semibold">{order.customer.mobile_phone}</p>
           </div>
           <hr className="my-6" />
           <h3 className="text-lg font-semibold mb-2">Items Ordered</h3>
@@ -114,7 +147,28 @@ export const OrderInfo = () => {
         )))
       }
 
-      <div className="border border-black w-48 h-24"></div>  
+      <div className=" grid grid-cols-3 text-center max-w-xs items-center mx-auto">
+          {page > 1 ? (<button
+            onClick={onPrevPage}
+            className=" focus:outline-none font-bold text-3xl">
+            &larr;
+          </button>
+          ) : (
+          <div></div>  
+          )}
+          <span>
+            Page {page} of {myOrderInfo?.totalPages}
+          </span>
+          {page !== myOrderInfo?.totalPages ? (
+            <button
+              onClick={onNextPage}
+              className=" focus:outline-none font-bold text-3xl">
+              &rarr;
+            </button>
+          ) : (
+            <div></div>  
+          )}
+        </div>  
     </Wrapper>
   );
 }

@@ -19,9 +19,9 @@ export async function getallDeals() {
   return allDeals;
 }
 
-export async function getMyOrder(token:string) {
+export async function getMyOrder(token:string, page:number) {
   const myOrder = await (
-    await fetch(`${BASE_PATH}/order/info/`, {
+    await fetch(`${BASE_PATH}/order/info/${page}`, {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'x-jwt': token,

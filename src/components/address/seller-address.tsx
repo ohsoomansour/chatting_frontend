@@ -127,7 +127,7 @@ const SellerPostcode: React.FC = () =>{
                         type="text" 
                         onChange={changeHandler} value={detailAddress} placeholder="detailed address"
                     />
-                     {errors.detailedAddress?.type === 'minLength' && <FormError  errorMessage="Detailed address must be more than 5"/>}
+                    {errors.detailedAddress?.type === 'minLength' && <FormError  errorMessage="Detailed address must be more than 5"/>}
                 </div>
             </FullAddress>
             

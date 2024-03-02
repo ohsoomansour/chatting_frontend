@@ -123,7 +123,7 @@ export const Order = ({robot, deal}:OrderProps) => {
 
  const onOrder = async() => {
     //판매자 추가
-    const {seller,sellerPhone,  customer, customerPhone, price , maintenance_cost } = getValues()
+    const {seller,sellerPhone,  customer, price , maintenance_cost } = getValues()
     console.log("seller:")
     console.log(seller);
     const numPrice = parseFloat(price);
@@ -187,7 +187,7 @@ export const Order = ({robot, deal}:OrderProps) => {
             {...register('sellerPhone', {required: true})}
             value={deal.salesManager_mobilephone}
             className='w-full  flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
-            placeholder='Please write your name'
+            placeholder='Please write your phone number'
           /> 
 
           </div>

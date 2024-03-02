@@ -44,3 +44,9 @@ export const storedGoodsRoad = atom({
   key: "buyerStoringRoadRoad",
   default:""
 })
+
+export const storedGoddsDetailed = atom({
+  key: "buyerStoringDetailed",
+  default:""
+})
+

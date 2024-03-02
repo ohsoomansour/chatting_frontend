@@ -7,9 +7,10 @@ import styled from "styled-components";
 import { IRobot } from "./takeordersInfo";
 import { userIdState } from "../recoil/atom_user";
 import StoredGoodsPostcode from "../components/address/storedGoods-address";
-import { storedGoodsAddress } from "../recoil/atom_address";
+import { storedGoddsDetailed, storedGoodsAddress, storedGoodsPostal, storedGoodsRoad } from "../recoil/atom_address";
 import { Helmet } from "react-helmet";
 import { BASE_PATH } from "./logIn";
+import { useForm } from "react-hook-form";
 
 interface ISeller {
   address:string;
@@ -26,8 +27,9 @@ interface IStoredDeal {
   id:number;
   robot:IRobot;
   robotId:number;
-  sellerId:number;
+  salesManager_mobilephone:string;
   seller:ISeller;
+  sellerId:number;
   seller_address:string;
   updatedAt:string;
 }
@@ -76,9 +78,13 @@ let page:number = 1;
 export const StoredGoods = () => {
   const onNextPage = () => { page = page + 1 ;  refetch(); }
   const onPrevPage = () => { page = page - 1 ; refetch(); }
-  const addressYo = useRecoilValue(storedGoodsAddress)
   const token = useRecoilValue(tokenState);
   const me = useRecoilValue(userIdState);
+  const addressYo = useRecoilValue(storedGoodsAddress)
+  const postalCode = useRecoilValue(storedGoodsPostal);
+  const streetAddress = useRecoilValue(storedGoodsRoad);
+  const detailedAddress = useRecoilValue(storedGoddsDetailed);
+
   const {data: mystoredDeals, isLoading, refetch } = useQuery<IMyStoredDeals>(
     ["getStoredGoods","ORDER"], () => storedGoods(token, page)
   )
@@ -106,6 +112,17 @@ export const StoredGoods = () => {
   }
   const onOrder = async(store:IStore) => {
   //결제 서비스 추가: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 모듈 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
+    if(  !(/^\d{5}$/.test(postalCode.toString()) || /^\d{3,5}-\d{3,5}$/.test(postalCode.toString())) ){
+      alert('우편 번호가 정상 코드가 아닙니다!💛');
+      return;
+    } else if(streetAddress === "") {
+      alert("도로 주솟값이 없습니다!💛");
+      return;
+    } else if(detailedAddress.length < 5) {
+      alert('상세 주솟값을 5자 이상 작성해 주세요!💛');
+      return;
+    }
+  
     const newOrder = await(
       await fetch(`${BASE_PATH}/order/make`, {
         headers:{
@@ -116,6 +133,7 @@ export const StoredGoods = () => {
         body:JSON.stringify({
           dealId: store.deal.id,
           seller: store.deal.seller.userId,
+          salesManager_mobile_phone: store.deal.salesManager_mobilephone,
           customer: me,
           address: addressYo,
           items:{
@@ -130,6 +148,7 @@ export const StoredGoods = () => {
         })
       })
     ).json();
+    onDelete(store.id);
     console.log('newOrder:')
     console.log(newOrder);
     
@@ -149,13 +168,21 @@ export const StoredGoods = () => {
               <img alt='company logo' src={store.deal.compaBrand_ImgURL} width={"23%"} height={"20%"} className=" inline-block"></img>
               <CompaName className="text-lg font-semibold ">{store.deal.compa_name} Co., Ltd</CompaName>
             </CompaWrapper>
+
+            <div className="flex justify-between mt-2 mb-2">
+              <p className="text-sm">{'Sales Manager'}</p>
+              <p className="text-sm font-semibold">{store.deal.seller.name}</p>
+            </div>
+            <div className="flex justify-between mb-2">
+              <p className="text-sm">{"Sales Manager Moible Phone"}</p>
+              <p className="text-sm font-semibold">{store.deal.salesManager_mobilephone}</p>
+            </div>
             <hr className="my-6" />
             <StoredGoodsPostcode />
             <div className="flex justify-between mb-2">
               <p className="text-sm">{store.deal.robot.name}</p>
               <p className="text-sm font-semibold">${store.payment.price}</p>
             </div>
-
             <div className="flex justify-between mb-2">
               <p className="text-sm">Your Selection of the Maintenance:</p>
               <p className="text-sm font-semibold">({store.payment.maintenanceYN ? 'selected' : 'deselected'})</p>

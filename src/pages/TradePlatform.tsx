@@ -103,8 +103,6 @@ export interface IDeal{
   robot:IRobot;
 }
 
-
-
 export const TradePlatform = () => {
   const {data:Deals, isLoading} = useQuery<IDeal[]>(
     ["getDeals", "Deal"], () => getallDeals() 
