@@ -61,6 +61,7 @@ interface IMyOrder {
   createdAt:string;
   id:number;
   items:Iitems;
+  salesManager_mobile_phone:string;
   customer:ICustomer;
   seller:ISeller;
   status:string;
@@ -85,7 +86,7 @@ export const OrderInfo = () => {
     ? myOrderInfo.myOrders
     : []
 
-  console.log("myOrderInfo:",myOrders);
+  console.log("myOrderInfo:",myOrderInfo);
   const onNextPage = () => { page = page + 1 ;  refetch(); }
   const onPrevPage = () => { page = page - 1 ; refetch(); }   
   return (
@@ -108,7 +109,7 @@ export const OrderInfo = () => {
           </div>
           <div className="flex justify-between mb-4">
             <p className="text-sm text-gray-600">Sales Manager mobile phone:</p>
-            <p className="text-sm text-gray-600">{order.seller.mobile_phone}</p>
+            <p className="text-sm text-gray-600">{order.salesManager_mobile_phone}</p>
           </div>
             
           <hr className="my-6" />
@@ -122,7 +123,7 @@ export const OrderInfo = () => {
           </div>
           <div className="flex justify-between mb-4">
             <p className="text-sm text-gray-600">Buyer mobile phone:</p>
-            <p className="text-lg font-semibold">{order.customer.mobile_phone}</p>
+            <p className="text-sm ">{order.customer.mobile_phone}</p>
           </div>
           <hr className="my-6" />
           <h3 className="text-lg font-semibold mb-2">Items Ordered</h3>
@@ -156,7 +157,7 @@ export const OrderInfo = () => {
           ) : (
           <div></div>  
           )}
-          <span>
+          <span className=" text-black">
             Page {page} of {myOrderInfo?.totalPages}
           </span>
           {page !== myOrderInfo?.totalPages ? (

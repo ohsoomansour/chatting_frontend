@@ -59,7 +59,7 @@ interface IStore {
 
 interface IMyStoredDeals {
   mySavings:IStore[];
-  totalPage:number;
+  totalPages:number;
 }
 
 const Wrapper = styled.div``;
@@ -214,9 +214,9 @@ export const StoredGoods = () => {
           <div></div>  
           )}
           <span>
-            Page {page} of {mystoredDeals?.totalPage}
+            Page {page} of {mystoredDeals?.totalPages}
           </span>
-          {page !== mystoredDeals?.totalPage ? (
+          {page !== mystoredDeals?.totalPages? (
             <button
               onClick={onNextPage}
               className=" focus:outline-none font-bold text-3xl">

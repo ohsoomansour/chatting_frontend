@@ -123,7 +123,7 @@ export const Order = ({robot, deal}:OrderProps) => {
 
  const onOrder = async() => {
     //판매자 추가
-    const {seller,sellerPhone,  customer, price , maintenance_cost } = getValues()
+    const {seller,sellerPhone, customer, customerPhone, price , maintenance_cost } = getValues()
     console.log("seller:")
     console.log(seller);
     const numPrice = parseFloat(price);
@@ -143,6 +143,7 @@ export const Order = ({robot, deal}:OrderProps) => {
           seller,
           salesManager_mobile_phone: sellerPhone ,
           customer,
+          //customer_mobile_phone: customerPhone,
           address:customerFullAddress,
           items:{
             robot: robot,   //relation으로 price 여기에 포함되어있고 가져오면됨  

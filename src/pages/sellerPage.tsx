@@ -13,6 +13,8 @@ import { sellerAddress, sellerPostal, sellerRoad } from "../recoil/atom_address"
 import SellerPostcode from "../components/address/seller-address";
 import { Helmet } from "react-helmet";
 import { BASE_PATH } from "./logIn";
+import { Loading } from "../components/loading";
+import { useHistory } from "react-router-dom";
 
 const Wrapper = styled.div`
   display:flex;
@@ -40,12 +42,15 @@ export const SellerPage = () => {
   const sellerZipcode = useRecoilValue<string>(sellerPostal);
   const sellerDoro = useRecoilValue(sellerRoad);
   const selAddress = useRecoilValue(sellerAddress);
-  const {getValues, register, formState:{errors}} = useForm<ISellerForm>({ mode: "all" })
+  const {getValues, register, formState:{errors}} = useForm<ISellerForm>({ mode: "all" });
+  const [isLoading, setIsLoading] = useState(false);
+  const history = useHistory();
   // s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업 
   
   let rbURL = "";
   let coImgURL = "";
   const onRegister = async() => {
+    setIsLoading(prev => !prev);
     if(  !(/^\d{5}$/.test(sellerZipcode.toString()) || /^\d{3,5}-\d{3,5}$/.test(sellerZipcode.toString())) ){
       alert('우편 번호가 정상 코드가 아닙니다!💛');
       return;
@@ -105,16 +110,14 @@ export const SellerPage = () => {
           })
         ).json();
         rbURL = RobotURL;
-        // deal 생성
-        
-        
+  
         const headers = new Headers({
           'Content-Type':'application/json; charset=utf-8',  // 'application/json; charset=utf-8', //'multipart/form-data',  
           'x-jwt': `${token}`,
         });
         console.log('threeDFile 들어오나?')
         console.log(threeDFile[0])
-        await (
+        const isReg = await (
           await fetch(`${BASE_PATH}/seller/make-deal`, {
             headers:headers,
             method: 'POST',
@@ -123,7 +126,7 @@ export const SellerPage = () => {
               compaBrand_ImgURL: coImgURL,
               seller_address: selAddress,
               seller: sellerId,
-              mobile_phone:phoneNumber,
+              salesManager_mobilephone:phoneNumber,
               name: rbName,
               price,
               maintenance_cost,
@@ -131,9 +134,10 @@ export const SellerPage = () => {
               rbURL
             })
           })
-        ).json()
-        window.location.href = '/trade'
-        
+        ).ok 
+        isReg ? window.location.href = '/trade'  : history.go(0);
+        setIsLoading(false);
+
       }
     } catch (e) {
 
@@ -163,7 +167,12 @@ export const SellerPage = () => {
   <Wrapper className= "">
     <Helmet>
       <title>Trader | Seller Page </title>       
-    </Helmet>  
+    </Helmet>
+    {isLoading 
+      ? 
+    <Loading /> 
+      : 
+    (
     <UI className='max-w-full  max-h-full border-4 border-gray-100 p-4 shadow-lg rounded-lg'>
       <div className=" flex max-h-full">
         <CompaImg />
@@ -264,6 +273,7 @@ export const SellerPage = () => {
       <button onClick={onRegister} className=' font-semibold w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md hover:bg-slate-300 transition duration-500'>Register</button>
       </div>      
     </UI>
+    )}
     </Wrapper>    
   )
 }

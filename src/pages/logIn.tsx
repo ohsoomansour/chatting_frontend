@@ -40,7 +40,7 @@ import { useRecoilState} from 'recoil';
 import { FormError } from "../components/form-error";
 import { userIdState } from "../recoil/atom_user";
 import { IuserInfo } from "./editUserInfo";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface ILoginForm {
   email: string;
@@ -59,6 +59,7 @@ const Login:React.FC = () => {
   const { register, formState:{ errors },handleSubmit, formState, getValues } = useForm<ILoginForm>({mode: "onChange"});
   const [token, setToken] = useRecoilState(tokenState)
   const [user, setUserId] = useRecoilState(userIdState)
+  
   useEffect(() => {
 
   })
@@ -69,7 +70,7 @@ const Login:React.FC = () => {
         await fetch(`${BASE_PATH}/member/login`, {
         headers : {"Content-Type":"application/json; charset=utf-8"},
         method: 'POST',
-        mode:'cors',
+        credentials: 'same-origin',
         body: JSON.stringify({
           userId: email, // or data.email
           password: password, // or data.password
@@ -80,7 +81,15 @@ const Login:React.FC = () => {
       setToken(response.token)
       setUserId(email);
       if(response.token !== ''){
+        if(user.isDormant === true ){
+          window.location.href= '/member/activate';
+        } else {
+          window.location.href= "/";
+          console.log(response);
+          
+        }
       //@Explain: 로그인된 유저의 isDormant가 true의 경우, 활성화 페이지 vs false의 경우 홈으로 이동
+      /* 
         const user:IuserInfo = await (
           await fetch(`${BASE_PATH}/member/getuser`, {
             headers: {
@@ -88,18 +97,13 @@ const Login:React.FC = () => {
               'x-jwt': `${token}`,
             },
             method: 'POST',
-            mode:'cors', //Preflignt 요청을 보낼 수 있도록한다. 
             body: JSON.stringify({
               userId: email,
             })
           })
         ).json();
-        if(user.isDormant === true ){
-          // '/member/activate'
-          window.location.href= '/member/activate';
-        } else {
-          window.location.href= "/";
-        }
+      */
+        
       
       }     
     } catch (e) {}
