@@ -7,7 +7,13 @@ import { Loading } from "../components/loading";
 import { Helmet } from "react-helmet";
 
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+`;
+const TotalSales = styled.div``;
 
 interface ICustomer{
   address:string;
@@ -57,6 +63,8 @@ interface ITakingOrders {
 interface ISellerTakingOrders {
   takingOrders:ITakingOrders[];
   totalPages:number;
+  salesCount:number;
+  totalSales:number;
 }
 
 
@@ -78,6 +86,12 @@ export const TakingOrderInfo = () => {
     : takingOrderInfos
     ? takingOrderInfos.takingOrders
     : [];
+    const totalSales = takingOrderInfos?.totalSales!;
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    });
+   
   
   //주문 정보에 카카오 PAY의 결제 승인 response -> 존재하면 주문 정보 보여준다. 
 
@@ -86,32 +100,45 @@ export const TakingOrderInfo = () => {
       <Helmet>
         <title>Trader | My Sales</title>
       </Helmet>
+      <TotalSales className=" w-2/4 border-4 border-gray-100 p-4 shadow-lg rounded-lg">
+        <h1 className=" text-xl text-center font-semibold">Sales Status</h1>
+        <hr className="my-4" />
+        <div className="flex justify-between ">
+          <p className="text-lg">Total number of orders:</p>
+          <p className="text-lg font-semibold">{takingOrderInfos?.salesCount}</p>
+        </div>
+        <div className="flex justify-between">
+          <p className="text-lg">Total Sales:</p>
+          <p className="text-lg font-semibold">{ formatter.format(totalSales)}</p>
+        </div>
+      </TotalSales>
       <div className=" grid grid-cols-3 mt-10 gap-x-5 gap-y-10">
         {isLoading 
           ? <Loading /> 
           :  ( takeOrderInfos.map((order, index) => (
             //<div key={index} className="mb-2 max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">  
             <div key={index} className=" mb-2 max-w-md mx-auto p-6 bg-white rounded-lg shadow-md ">  
-              <h2 className="text-2xl font-semibold mb-4">Electronic Receipt</h2>
+              <h2 className="text-2xl text-center font-semibold mb-4">Electronic Receipt</h2>
               <div className="flex justify-between mb-4">
                 <p className="text-sm text-gray-600">Date: {order.createdAt}</p>
-                <p className="text-sm text-gray-600">Address: {order.address}</p>
+                <p className="text-sm text-gray-600">Order Number:{order.id}</p>
               </div>
-              <div className="">
-                <p className="text-sm text-gray-600">Order Number:</p>
-                <p className="text-lg font-semibold">{order.id}</p>
+              <div className="flex justify-between mb-4">
+              <p className="text-sm text-gray-600">Address: {order.address}</p>
               </div>
-              <div className="">
-                <p className="text-sm text-gray-600">Customer Name:</p>
-                <p className="text-lg font-semibold">{order.customer.name}</p>
-                <p className="text-sm text-gray-600">Customer id:</p>
-                <p className="text-lg font-semibold">{order.customer.userId}</p>
+              <div className="flex justify-between mb-4">
+                <p className="text-sm text-gray-600">Customer name:</p>
+                <p className="text-sm font-semibold">{order.customer.name}</p>
+              </div>
+              <div className="flex justify-between mb-4">
+                <p className="text-sm text-gray-600">Customer Email:</p>
+                <p className="text-sm font-semibold">{order.customer.userId}</p>
               </div>
               <hr className="my-6" />
               <h3 className="text-lg font-semibold mb-2">Items Ordered</h3>
               <div className="flex justify-between ">
                 <p className="text-sm">{order.items.robot.name}</p>
-                <p className="text-sm font-semibold">${order.items.robot.price}</p>
+                <p className="text-sm font-semibold">{formatter.format(order.items.robot.price)}</p>
               </div>
               <div className="flex justify-between ">
                 <p className="text-sm">Your Selection of the Maintenance:</p>
@@ -119,12 +146,12 @@ export const TakingOrderInfo = () => {
               </div>
               <div className="flex justify-between ">
                 <p className="text-sm">Maintenance Cost</p>
-                <p className="text-sm font-semibold">${order.items.options.maintenance_cost}</p>
+                <p className="text-sm font-semibold">{formatter.format(order.items.options.maintenance_cost)}</p>
               </div>
               <hr className="my-6" />
               <div className="flex justify-between">
                 <p className="text-lg">Total Amount:</p>
-                <p className="text-lg font-semibold">${order.total}</p>
+                <p className="text-lg font-semibold">{formatter.format(order.total)}</p>
               </div>
               
             </div>

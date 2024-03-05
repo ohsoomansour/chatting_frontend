@@ -79,7 +79,7 @@ export interface IRobot{
   id:number;
   name:number;
   price:number;
-  maintenance_cost:string;
+  maintenance_cost:number;
   description:string;
   rbURL:string;
 }

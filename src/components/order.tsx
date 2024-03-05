@@ -93,9 +93,8 @@ export const Order = ({robot, deal}:OrderProps) => {
   } catch (e) {
     console.error(e);
   }
-  const numPrice = parseFloat(price);
-  const numManitenance = maintenance_cost === undefined ? 0 : parseFloat(maintenance_cost);
-  const numTotal = numPrice + numManitenance;
+  const numSeletedManitenance = maintenance_cost === undefined ? 0 : robot.maintenance_cost;
+  const numTotal = robot.price + numSeletedManitenance;
     
   const isStored = await(
     //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
@@ -109,10 +108,10 @@ export const Order = ({robot, deal}:OrderProps) => {
         dealId: deal.id,
         customer,
         payment:{
-          price:numPrice,   //relation으로 price 여기에 포함되어있고 가져오면됨  
+          price:robot.price,   //relation으로 price 여기에 포함되어있고 가져오면됨  
           maintenanceYN,
-          maintenance_cost: numManitenance, //{ maintenanceYN: true, maintenance_cost: '100' }
-          total:numTotal , //문제: total: ''  빈값 + string 값
+          maintenance_cost: numSeletedManitenance, //{ maintenanceYN: true, maintenance_cost: '100' }
+          total: numTotal, //문제: total: ''  빈값 + string 값
         },
       })
     })
@@ -120,15 +119,18 @@ export const Order = ({robot, deal}:OrderProps) => {
   isStored ? alert('고객님이 선택하신 제품을 카트에 담았고 쇼핑을 계속하세요!💛') : alert('🚫고객님이 선택하신 제품의 저장을 실패 하였습니다. ')
   console.log(isStored);
 }
-
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD'
+});
  const onOrder = async() => {
     //판매자 추가
-    const {seller,sellerPhone, customer, customerPhone, price , maintenance_cost } = getValues()
+    const {seller,sellerPhone, customer , maintenance_cost } = getValues()
     console.log("seller:")
     console.log(seller);
-    const numPrice = parseFloat(price);
-    const numManitenance = maintenance_cost === undefined ? 0 : parseFloat(maintenance_cost);
-    const numTotal = numPrice + numManitenance;
+    const numPrice = robot.price;
+    const numSeletedManitenance = maintenance_cost === undefined ? 0 : robot.maintenance_cost;
+    const numTotal = numPrice + numSeletedManitenance;
     
     const newOrder = await(
     //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
@@ -149,7 +151,7 @@ export const Order = ({robot, deal}:OrderProps) => {
             robot: robot,   //relation으로 price 여기에 포함되어있고 가져오면됨  
             options:{
               maintenanceYN: maintenanceYN,
-              maintenance_cost: numManitenance, //{ maintenanceYN: true, maintenance_cost: '100' }
+              maintenance_cost: numSeletedManitenance, //{ maintenanceYN: true, maintenance_cost: '100' }
             }
           },
           total:  numTotal , //문제: total: ''  빈값 + string 값 
@@ -259,7 +261,7 @@ export const Order = ({robot, deal}:OrderProps) => {
               {...register('price', {required: true})}
               //type='number'
               className=' w-full  border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'  
-              defaultValue={robot.price}
+              defaultValue={formatter.format(robot.price)}
               placeholder="We will strive to adust to a more reasonable price "
             />
           </div>
@@ -275,7 +277,7 @@ export const Order = ({robot, deal}:OrderProps) => {
                   //type='number'
                   //size={30}
                   className=' w-full  border-4 rounded px-2 py-1  focus:outline-none  focus:border-pink-400 '  
-                  defaultValue={robot.maintenance_cost}
+                  defaultValue={formatter.format(robot.maintenance_cost)}
                   placeholder="We will strive to adust to a more reasonable price "
                 />
               </div>    
@@ -290,7 +292,7 @@ export const Order = ({robot, deal}:OrderProps) => {
               <input 
                 {...register('total', {required: true})}
                 className= ' w-full text-lg  border-4 rounded px-2 py-1  focus:outline-none  focus:border-pink-400'                   
-                value={robot.price + (maintenanceYN === false ? 0 : parseFloat(robot.maintenance_cost))}
+                value={formatter.format(robot.price + (maintenanceYN === false ? 0 : robot.maintenance_cost) )}
                 placeholder="We will strive to adust to a more reasonable price "
               />
             </div>

@@ -96,7 +96,10 @@ export const StoredGoods = () => {
     : mystoredDeals
     ? mystoredDeals.mySavings
     : [];
-
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+  });
   const onDelete = async (storageId:number) => {
     const isDel = 
     await fetch(`${BASE_PATH}/order/deletestoredgoods/${storageId}`, {
@@ -159,7 +162,7 @@ export const StoredGoods = () => {
         <title>Stored Goods</title>
       </Helmet>
       <h1 className=" text-2xl text-center font-semibold mb-4" > {me+ "님 안녕하세요" }</h1>
-      <p className=" text-xl text-center font-semibold">{"아래의 로봇 제품들은 고객님께서 미리 담기를 선택하신 목록입니다. "}</p>
+      <p className=" mb-6 text-xl text-center font-semibold">{"아래의 로봇 제품들은 고객님께서 미리 담기를 선택하신 목록입니다. "}</p>
       {isLoading 
         ? <Loading /> 
         : (stores.map((store, index) => (
@@ -181,7 +184,7 @@ export const StoredGoods = () => {
             <StoredGoodsPostcode />
             <div className="flex justify-between mb-2">
               <p className="text-sm">{store.deal.robot.name}</p>
-              <p className="text-sm font-semibold">${store.payment.price}</p>
+              <p className="text-sm font-semibold">{formatter.format(store.payment.price)}</p>
             </div>
             <div className="flex justify-between mb-2">
               <p className="text-sm">Your Selection of the Maintenance:</p>
@@ -189,12 +192,12 @@ export const StoredGoods = () => {
             </div>
             <div className="flex justify-between mb-2">
               <p className="text-sm">{"Maintenance Cost"}</p>
-              <p className="text-sm font-semibold">${store.payment.maintenance_cost}</p>
+              <p className="text-sm font-semibold">{formatter.format(store.payment.maintenance_cost)}</p>
             </div>
             <hr className="my-6" />
             <div className="flex justify-between">
               <p className="text-lg">Total Amount:</p>
-              <p className="text-lg font-semibold">${store.payment.total}</p>
+              <p className="text-lg font-semibold">{formatter.format(store.payment.total)}</p>
             </div>
             <ButttonContainer>
               <button onClick={() => onOrder(store)} className=' font-semibold w-full mx-auto mt-6 mb-2 mr-2 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-green-200 transition duration-500'>Order</button>
