@@ -63,7 +63,7 @@ export const Order = ({robot, deal}:OrderProps) => {
   const DetailedAdd = useRecoilValue<string>(buyerDetail);
   const [maintenanceYN, setMaintenanceYN] = useState(false);
   const {register, getValues} = useForm();
-  const { data: buyerInfo, isLoading }  = useQuery<IuserInfo>(
+  const { data: buyerInfo, isLoading }  = useQuery<IBuyerInfo>(
     ["buyerInfo", "MEMBER"], () => getMyinfo(token)
   )
 

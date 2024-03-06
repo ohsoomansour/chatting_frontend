@@ -9,11 +9,11 @@ import { Helmet } from "react-helmet";
 
 const Wrapper = styled.div``;
 export enum OrderStatus  {
-  Pending = "Pending",
-  OrderCompleted = "OrderComplete",
-  OrderApproval = "OrderApproval",
   PaymentApproval = "PaymentApproval",
+  OrderCompleted = "OrderComplete",
+  Pending = "Pending",
   ReadyForDelivery = "ReadyForDelivery",
+  OrderCancel = "OrderCancel",
   InDelivery = "InDelivery", 
   DeliveryCompleted = "DeliveryCompleted",
   TransactionCompleted = "TransactionCompleted"
@@ -89,7 +89,7 @@ export const OrderInfo = () => {
       style: 'currency',
       currency: 'USD'
     });
-  // 2024-03-05T02:40:52.993Z
+
   console.log(new Date('2024-03-05T02:40:52.993Z'))
   const onNextPage = () => { page = page + 1 ;  refetch(); }
   const onPrevPage = () => { page = page - 1 ; refetch(); }   
@@ -104,13 +104,24 @@ export const OrderInfo = () => {
       :(myOrders.map((order, index) => (
         <div key={index} className="mb-2 max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
           <h2 className="text-2xl text-center font-semibold mb-4">Electronic Receipt</h2>
+          <hr className="my-6" />
+          <h3 className="text-lg font-semibold mb-2">Order status: </h3>
           <div className="text-right mb-4">
             <p className="text-sm text-gray-600">Order Number: {order.id}</p>
+          </div>
+          <div className=" mb-4">
+          {order.status === OrderStatus.Pending ?
+            <div className="bg-white rounded-xl shadow-md overflow-hidden p-1">
+              <div className="relative h-6 flex items-center justify-center">
+                <div className="absolute top-0 bottom-0 left-0 rounded-lg w-[37.5%] bg-indigo-200"></div>
+                <div className="relative text-red-900 font-medium text-sm">Pending</div>
+              </div>
+            </div>
+          : null}
           </div>
           <h3 className="text-lg font-semibold mb-2">Seller Info</h3>
           <div className="flex justify-between mb-4">
             <p className="text-sm text-gray-600">Date:</p>
-  
             <p className="text-sm ">{`${new Date(order.createdAt)}`}</p>
           </div>
           <div className="flex justify-between mb-4">
@@ -137,6 +148,8 @@ export const OrderInfo = () => {
             <p className="text-sm ">{order.customer.mobile_phone}</p>
           </div>
           <hr className="my-6" />
+          
+
           <h3 className="text-lg font-semibold mb-2">Items Ordered</h3>
           <div className="flex justify-between mb-2">
             <p className="text-sm">{order.items.robot.name}</p>
