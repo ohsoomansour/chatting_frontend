@@ -2,7 +2,7 @@ import { IDeal } from "./pages/TradePlatform";
 import { IuserInfo } from "./pages/editUserInfo";
 
 //  https://trade-2507d8197825.herokuapp.com/
-const BASE_PATH = process.env.NODE_ENV === "production" 
+export const BASE_PATH = process.env.NODE_ENV === "production" 
  ? "https://trade-2507d8197825.herokuapp.com"
  : "http://localhost:3000";
 export const headers = new Headers({

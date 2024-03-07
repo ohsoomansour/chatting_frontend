@@ -16,7 +16,6 @@ export enum OrderStatus  {
   OrderCancel = "OrderCancel",
   InDelivery = "InDelivery", 
   DeliveryCompleted = "DeliveryCompleted",
-  TransactionCompleted = "TransactionCompleted"
 }
 
 
@@ -109,16 +108,33 @@ export const OrderInfo = () => {
           <div className="text-right mb-4">
             <p className="text-sm text-gray-600">Order Number: {order.id}</p>
           </div>
-          <div className=" mb-4">
-          {order.status === OrderStatus.Pending ?
-            <div className="bg-white rounded-xl shadow-md overflow-hidden p-1">
+          <div className="bg-white rounded-xl shadow-md overflow-hidden p-1 mb-4">
+            {order.status === OrderStatus.Pending ?
               <div className="relative h-6 flex items-center justify-center">
-                <div className="absolute top-0 bottom-0 left-0 rounded-lg w-[37.5%] bg-indigo-200"></div>
+                <div className="absolute top-0 bottom-0 left-0 rounded-lg w-[50%] bg-indigo-200"></div>
                 <div className="relative text-red-900 font-medium text-sm">Pending</div>
               </div>
-            </div>
-          : null}
+            : null}
+            {order.status === OrderStatus.ReadyForDelivery ? 
+              <div className="relative h-6 flex items-center justify-center">
+                <div className="absolute top-0 bottom-0 left-0 rounded-lg w-[66.67%] bg-indigo-200"></div>
+                <div className="relative text-red-900 font-medium text-sm">ReadyForDelivery</div>
+              </div>
+            :null}
+            {order.status === OrderStatus.InDelivery ? 
+              <div className="relative h-6 flex items-center justify-center">
+                <div className="absolute top-0 bottom-0 left-0 rounded-lg w-[83.34%] bg-indigo-200"></div>
+                <div className="relative text-red-900 font-medium text-sm">InDelivery</div>
+              </div>
+            :null}
+            {order.status === OrderStatus.DeliveryCompleted? 
+              <div className="relative h-6 flex items-center justify-center">
+                <div className="absolute top-0 bottom-0 left-0 rounded-lg w-[100%] bg-indigo-200"></div>
+                <div className="relative text-red-900 font-medium text-sm">DeliveryCompleted</div>
+            </div>            
+            :null}
           </div>
+
           <h3 className="text-lg font-semibold mb-2">Seller Info</h3>
           <div className="flex justify-between mb-4">
             <p className="text-sm text-gray-600">Date:</p>

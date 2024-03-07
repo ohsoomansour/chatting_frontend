@@ -1,11 +1,10 @@
 import { useQuery } from "react-query";
-import { takeOrders } from "../api";
+import { BASE_PATH, takeOrders } from "../api";
 import { useRecoilValue } from "recoil";
 import { tokenState } from "../recoil/atom_token";
 import styled from "styled-components";
 import { Loading } from "../components/loading";
 import { Helmet } from "react-helmet";
-
 
 const Wrapper = styled.div`
   display:flex;
@@ -67,8 +66,6 @@ interface ISellerTakingOrders {
   totalSales:number;
 }
 
-
-
 let page:number = 1; 
 export const TakingOrderInfo = () => {
   const token = useRecoilValue(tokenState);
@@ -92,9 +89,17 @@ export const TakingOrderInfo = () => {
       currency: 'USD'
     });
    
-  
+    const  onUpdateStats = async(orderId:number) => {
+      await fetch(`${BASE_PATH}/order/update_orderstatus/${orderId}`, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'PATCH',
+      })
+      refetch();
+    }
   //주문 정보에 카카오 PAY의 결제 승인 response -> 존재하면 주문 정보 보여준다. 
-
+  
   return (
     <Wrapper className="mt-6 ">
       <Helmet>
@@ -123,6 +128,11 @@ export const TakingOrderInfo = () => {
                 <p className="text-sm text-gray-600">Date: {order.createdAt}</p>
                 <p className="text-sm text-gray-600">Order Number:{order.id}</p>
               </div>
+              <div className="flex justify-between mb-4">
+                <p className="text-sm text-gray-600">Order Status:</p>
+                <button onClick={() => onUpdateStats(order.id)}>{order.status}</button>
+              </div>
+              <hr className="my-6" />
               <div className="flex justify-between mb-4">
               <p className="text-sm text-gray-600">Address: {order.address}</p>
               </div>
