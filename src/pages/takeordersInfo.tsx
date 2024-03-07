@@ -95,8 +95,7 @@ export const TakingOrderInfo = () => {
           'Content-Type': 'application/json'
         },
         method: 'PATCH',
-      })
-      refetch();
+      }).then(response => response.ok ? refetch() : null)
     }
   //주문 정보에 카카오 PAY의 결제 승인 response -> 존재하면 주문 정보 보여준다. 
   
@@ -130,7 +129,12 @@ export const TakingOrderInfo = () => {
               </div>
               <div className="flex justify-between mb-4">
                 <p className="text-sm text-gray-600">Order Status:</p>
-                <button onClick={() => onUpdateStats(order.id)}>{order.status}</button>
+                <button
+                  className="font-semibold w-2/4 mx-auto mt-6 mb-2 mr-2 border-2 border-gray-100 bg-white p-2 rounded-md shadow-lg hover:bg-indigo-200 transition duration-500" 
+                  onClick={() => onUpdateStats(order.id)}
+                >
+                  {order.status}
+                </button>
               </div>
               <hr className="my-6" />
               <div className="flex justify-between mb-4">

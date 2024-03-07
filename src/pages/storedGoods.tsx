@@ -101,7 +101,6 @@ export const StoredGoods = () => {
     currency: 'USD'
   });
   const onDelete = async (storageId:number) => {
-    const isDel = 
     await fetch(`${BASE_PATH}/order/deletestoredgoods/${storageId}`, {
       method: 'DELETE',
       headers:{
@@ -110,8 +109,6 @@ export const StoredGoods = () => {
       },
     }).then(response => response.ok ? refetch() : null );
     
-    console.log('isDel');
-    console.log(isDel);
   }
   const onOrder = async(store:IStore) => {
   //결제 서비스 추가: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 모듈 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
