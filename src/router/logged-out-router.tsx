@@ -14,7 +14,7 @@ const logOutRoutes = [
 export const LoggedOutRouter = () => {
   const token = useRecoilValue(tokenState)
   return (
-    <BrowserRouter>
+    
     <React.StrictMode>
       <Switch>
       {token ===  '' ? logOutRoutes.map((route, index) => (
@@ -24,6 +24,6 @@ export const LoggedOutRouter = () => {
       )): null}  
       </Switch>
     </React.StrictMode>  
-    </BrowserRouter>
+    
   )
 }

@@ -8,7 +8,7 @@ import { Helmet } from "react-helmet";
 
 
 const Wrapper = styled.div``;
-const CancelSVG = styled.svg`
+export const CancelSVG = styled.svg`
   position:relative;
   top:3px;
   width:20px;
@@ -75,7 +75,8 @@ interface IMyOrder {
   customer:ICustomer;
   seller:ISeller;
   status:string;
-  total:number;  
+  total:number;
+  deliveryCompleted_date:string;  
 }
 interface MyOrderInfos{
   myOrders:IMyOrder[];
@@ -110,6 +111,13 @@ export const OrderInfo = () => {
       method:'DELETE'
     }).then(response => response.ok? refetch() : null )
   }
+  const currentDate = new Date();
+
+  const year = currentDate.getFullYear(); // 연도
+  const month = currentDate.getMonth() + 1; // 월 (0부터 시작하므로 1을 더해줌)
+  const day = currentDate.getDate(); // 일
+  const hours = currentDate.getHours(); // 
+  const minutes = currentDate.getMinutes(); // 분
   return (
     <Wrapper className="mt-6">
       <Helmet>
@@ -125,6 +133,10 @@ export const OrderInfo = () => {
           <div className="text-right mb-4">
             <p className="text-sm text-gray-600">Order Number: {order.id}</p>
           </div>
+          <div className="flex justify-between mb-4">
+            <p className="text-sm text-gray-600">O/Date:</p>
+            <p className="text-sm ">{`${new Date(order.createdAt)}`}</p>
+          </div>
           <div className="flex flex-col items-center">
             <div className="w-full bg-white rounded-xl shadow-md overflow-hidden p-1 mb-4">
               {order.status === OrderStatus.Pending ?
@@ -136,7 +148,7 @@ export const OrderInfo = () => {
               {order.status === OrderStatus.ReadyForDelivery ? 
                 <div className="relative h-6 flex items-center justify-center">
                   <div className="absolute top-0 bottom-0 left-0 rounded-lg w-[66.67%] bg-indigo-200"></div>
-                  <div className="relative text-red-900 font-medium text-sm">ReadyForDelivery</div>
+                  <div className="relative text-red-900 font-medium text-sm">Ready For Delivery</div>
                 </div>
               :null}
               {order.status === OrderStatus.InDelivery ? 
@@ -146,10 +158,13 @@ export const OrderInfo = () => {
                 </div>
               :null}
               {order.status === OrderStatus.DeliveryCompleted? 
+              <div>
                 <div className="relative h-6 flex items-center justify-center">
                   <div className="absolute top-0 bottom-0 left-0 rounded-lg w-[100%] bg-indigo-200"></div>
-                  <div className="relative text-red-900 font-medium text-sm">DeliveryCompleted</div>
-              </div>            
+                  <div className="relative text-red-900 font-medium text-sm">Delivery Completed ({`${order.deliveryCompleted_date}`}) </div>
+                </div>            
+                <div className=" text-xs text-center"></div>
+              </div>
               :null}
             </div>
             <button onClick={() => onCancel(order.id)} className=" flex mx-auto p-2 bg-white rounded-lg shadow-md hover:bg-red-400 transition duration-500">
@@ -162,7 +177,7 @@ export const OrderInfo = () => {
           </div>    
           <h3 className="text-lg font-semibold mb-2">Seller Info</h3>
           <div className="flex justify-between mb-4">
-            <p className="text-sm text-gray-600">Date:</p>
+            <p className="text-sm text-gray-600">O/Date:</p>
             <p className="text-sm ">{`${new Date(order.createdAt)}`}</p>
           </div>
           <div className="flex justify-between mb-4">

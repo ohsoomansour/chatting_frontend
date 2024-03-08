@@ -123,34 +123,29 @@ export const StoredGoods = () => {
       return;
     }
   
-    const newOrder = await(
-      await fetch(`${BASE_PATH}/order/make`, {
-        headers:{
-          'x-jwt':token,
-          'Content-Type': 'application/json; charset=utf-8',
+    await fetch(`${BASE_PATH}/order/make`, {
+      headers:{
+        'x-jwt':token,
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      method:'POST',
+      body:JSON.stringify({
+        dealId: store.deal.id,
+        seller: store.deal.seller.userId,
+        salesManager_mobile_phone: store.deal.salesManager_mobilephone,
+        customer: me,
+        address: addressYo,
+        items:{
+          robot: store.deal.robot,   //relation으로 price 여기에 포함되어있고 가져오면됨  
+          options:{
+            maintenanceYN: store.payment.maintenanceYN,
+            maintenance_cost: store.payment.maintenance_cost, //{ maintenanceYN: true, maintenance_cost: '100' }
+          }
         },
-        method:'POST',
-        body:JSON.stringify({
-          dealId: store.deal.id,
-          seller: store.deal.seller.userId,
-          salesManager_mobile_phone: store.deal.salesManager_mobilephone,
-          customer: me,
-          address: addressYo,
-          items:{
-            robot: store.deal.robot,   //relation으로 price 여기에 포함되어있고 가져오면됨  
-            options:{
-              maintenanceYN: store.payment.maintenanceYN,
-              maintenance_cost: store.payment.maintenance_cost, //{ maintenanceYN: true, maintenance_cost: '100' }
-            }
-          },
-          total: store.payment.total , //문제: total: ''  빈값 + string 값 
-          
-        })
+        total: store.payment.total , //문제: total: ''  빈값 + string 값 
+        
       })
-    ).json();
-    onDelete(store.id);
-    console.log('newOrder:')
-    console.log(newOrder);
+    }).then(response => response.ok ? onDelete(store.id) : null )
     
   }
   return (

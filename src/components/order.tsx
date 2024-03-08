@@ -10,7 +10,6 @@ import { buyerAddress, buyerDetail, buyerPostal, buyerRoad } from '../recoil/ato
 import { ButttonContainer } from '../pages/storedGoods';
 import { useQuery } from 'react-query';
 import { getMyinfo } from '../api';
-import { IuserInfo } from '../pages/editUserInfo';
 
 const PlusSvg = styled.svg`
   fill:red;

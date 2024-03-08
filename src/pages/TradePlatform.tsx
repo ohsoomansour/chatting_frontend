@@ -96,6 +96,7 @@ export interface IDeal{
   id: number;
   compa_name:string;
   compaBrand_ImgURL:string;
+  createdAt:Date;
   sellerId:number;
   seller:IMember;
   salesManager_mobilephone:number;

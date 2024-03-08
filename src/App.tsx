@@ -5,6 +5,8 @@ import { isDarkAtom } from './recoil/atom_Theme';
 import { darkTheme, lightTheme } from './theme.t';
 import { LoggedOutRouter } from './router/logged-out-router';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { BrowserRouter } from 'react-router-dom';
+import { MyPage } from './pages/MyPage';
 
 
 
@@ -27,9 +29,12 @@ export default function App() {
   return (
     <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
       <QueryClientProvider client={queryClent}>
+      <BrowserRouter>
         <LoggedInRouter />
         <LoggedOutRouter />
-      </QueryClientProvider> 
+        
+      </BrowserRouter> 
+      </QueryClientProvider>
     </ThemeProvider>
   );
 }

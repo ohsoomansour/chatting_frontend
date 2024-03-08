@@ -6,8 +6,11 @@ import { userIdState } from "../recoil/atom_user";
 import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 import { getMyinfo } from "../api";
-import { useHistory } from "react-router-dom";
-
+import { useHistory, useRouteMatch } from "react-router-dom";
+import styled from "styled-components";
+const EditProfileWrapper = styled.div`
+  background-color:${props => props.theme.bgColor}
+`;
 interface IeditUserInfo{
   email:string;
   password:string;
@@ -27,16 +30,15 @@ export interface IuserInfo{
 }
 export const EditUserInfo  = () => {
   const {register, getValues, formState:{errors} } = useForm<IeditUserInfo>({"mode": "onChange"})
+  const privateInfoMatch = useRouteMatch("/myInfo/privateInfo"); 
+  console.log(privateInfoMatch);
   const token = useRecoilValue(tokenState);
   const [userId, setUserId] = useRecoilState<string>(userIdState);
   const history = useHistory();
   const { data:whoamI, isLoading } = useQuery<IuserInfo>(
     ["me", "Member"], () => getMyinfo(token)
   );
-  console.log('whoamI?');
-  console.log(whoamI);
 
-  
   const headers = new Headers({
     'Content-Type':'application/json; charset=utf-8',
     'x-jwt': `${token}`,
@@ -56,36 +58,34 @@ export const EditUserInfo  = () => {
     }
 
     setUserId(email);  
-    const result = await (
-      await fetch(`http://localhost:3000/member/update/${whoamI?.id}`, {
-        headers: headers,
-        method: 'PATCH',
-        body: JSON.stringify({
-          userId:email,
-          password:password,
-          address:address,
-        })
+    
+    await fetch(`http://localhost:3000/member/update/${whoamI?.id}`, {
+      headers: headers,
+      method: 'PATCH',
+      body: JSON.stringify({
+        userId:email,
+        password:password,
+        address:address,
       })
-    ).json(); 
-    history.push("/login")
+    }).then(response => response.ok ? history.push("/login") : null)
   }
   return (
-    <div className="fixed w-full h-full flex flex-col items-center justify-center shadow-lg">
+    <div className="fixed w-full h-2/4 flex flex-col items-center justify-center shadow-lg">
       <Helmet>
         <title>Trader | Edit Profile</title>
       </Helmet>
       <form
         className= " w-2/4"
         > 
-        <div className="flex flex-col w-full bg-slate-400  p-8 rounded shadow-2xl">
-          <h1 className=" text-2xl text-white text-center font-bold mb-4">Edit Profile</h1>
-          <h4 className="ml-4 text-lg text-white text-left font-bold mb-2">Email</h4>
+        <EditProfileWrapper className="flex flex-col w-full bg-slate-400  p-8 rounded shadow-2xl">
+          <h1 className=" text-2xl text-black text-center font-bold mb-4">Edit Profile</h1>
+          <h4 className="ml-4 text-lg text-black text-left font-bold mb-2">Email</h4>
           <input
             {...register("email", {
               pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
             
             })} 
-            className="input text-lg text-center font-semibold mb-2  rounded"
+            className="input text-black text-lg text-center font-semibold mb-2  rounded"
             type="email" 
             placeholder="Please Enter the Email you want to change."
             autoComplete="on"
@@ -96,7 +96,7 @@ export const EditUserInfo  = () => {
           {errors?.email?.type === 'pattern'&& (
             <FormError errorMessage={"Please Insert a valid Email that you would like to change!"} />
           )}
-          <h4 className="ml-4 text-white text-lg text-left font-bold mb-2 mt-2">Password</h4>
+          <h4 className="ml-4 text-black text-lg text-left font-bold mb-2 mt-2">Password</h4>
           <input
             {...register("password", {required: "Password is required", minLength:10})} 
             type="password" 
@@ -109,7 +109,7 @@ export const EditUserInfo  = () => {
           {errors?.password?.type === 'minLength' && (
             <FormError errorMessage={"Password must be at least 10 chars!"} />
           )}
-          <h4 className="ml-4 text-white text-lg text-left font-bold mt-2 mb-2">Address</h4>
+          <h4 className="ml-4 text-black text-lg text-left font-bold mt-2 mb-2">Address</h4>
           <input
             {...register("address", {required: "Please insert a valid Email you would like to change!" , minLength:5})} 
             type="text" 
@@ -122,10 +122,10 @@ export const EditUserInfo  = () => {
           {errors?.address?.type === 'minLength' && (
             <FormError errorMessage={"Address must be at least 5"}/>
           )}
-        <button
-         onClick={(e) => onModify(e)}
-         className="text-white font-semibold py-3 px-4 mt-5 border-4 border-white rounded hover:bg-slate-600 transition duration-500">Submit</button>
-        </div>
+          <button
+            onClick={(e) => onModify(e)}
+            className="text-white font-semibold py-3 px-4 mt-5 border-4 border-white rounded hover:bg-indigo-200 transition duration-500">Submit</button>
+        </EditProfileWrapper>
       </form>
 
     </div>

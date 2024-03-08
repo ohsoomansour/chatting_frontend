@@ -1,5 +1,5 @@
 import { IDeal } from "./pages/TradePlatform";
-import { IuserInfo } from "./pages/editUserInfo";
+import { IuserInfo } from "./pages/EditUserInfo";
 
 //  https://trade-2507d8197825.herokuapp.com/
 export const BASE_PATH = process.env.NODE_ENV === "production" 
@@ -80,6 +80,25 @@ export async function getMyinfo(token:string) {
     throw error;
   }
   
+}
+
+export async function getMyDeals(token:string) {
+  try {
+    const res = await fetch(`${BASE_PATH}/seller/getMyDeals`,{
+      headers: {
+        'Content-Type':'application/json; charset=utf-8',
+        'x-jwt': token,
+      },
+      method: 'GET',
+    })
+    if(!res.ok){
+      throw new Error('Failed to fetch myDeals information');
+    }
+    const myDeals = await res.json();
+    return myDeals;
+  } catch(e) {
+    console.error(e);
+  }
 }
 
 
