@@ -57,7 +57,7 @@ export const EditUserInfo  = () => {
       return;
     }
 
-    setUserId(email);  
+    setUserId(email);
     
     await fetch(`http://localhost:3000/member/update/${whoamI?.id}`, {
       headers: headers,
@@ -70,7 +70,7 @@ export const EditUserInfo  = () => {
     }).then(response => response.ok ? history.push("/login") : null)
   }
   return (
-    <div className="fixed w-full h-2/4 flex flex-col items-center justify-center shadow-lg">
+    <div className=" w-full h-2/4 flex flex-col items-center justify-center shadow-lg">
       <Helmet>
         <title>Trader | Edit Profile</title>
       </Helmet>

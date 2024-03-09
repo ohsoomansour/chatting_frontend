@@ -50,38 +50,45 @@ export const SellerPage = () => {
   let rbURL = "";
   let coImgURL = "";
   const onRegister = async() => {
+    try {
     setIsLoading(prev => !prev);
-    if(  !(/^\d{5}$/.test(sellerZipcode.toString()) || /^\d{3,5}-\d{3,5}$/.test(sellerZipcode.toString())) ){
-      alert('우편 번호가 정상 코드가 아닙니다!💛');
-      return;
+    const {company, sellerId, phoneNumber, rbName, price , maintenance_cost, description} = getValues();
+    console.log(sellerId)
+    if(compaImg  === "") {
+      alert('회사 로고 이미지를 넣어주세요!💛')
+      history.go(0);
+    } else if(company.length < 1){
+      alert("회사 이름을 입력하세요!💛");
+      history.go(0);
+    } 
+      else if(sellerId === undefined){
+      alert("판매자 아이디가 없습니다!")
+      history.go(0);
     } else if(sellerDoro === "") {
       alert("도로 주솟값이 없습니다!💛");
-      return;
+      history.go(0);
     } else if(selAddress.length < 5) {
       alert('5자 이상 작성해주세요!💛');
-      return;
-    }
-
-    const {company, sellerId, phoneNumber, rbName, price ,maintenance_cost, description } = getValues();
-    if(company.length < 1){
-      alert("회사 이름을 입력하세요!💛");
-      return;
+      history.go(0);
+    } else if(  !(/^\d{5}$/.test(sellerZipcode.toString()) || /^\d{3,5}-\d{3,5}$/.test(sellerZipcode.toString())) ){
+      alert('우편 번호가 정상 코드가 아닙니다!💛');
+      history.go(0);
     } else if(sellerId === "") {
       alert("회원님의 이메일 아이디를 확인해 주세요!💛");
-      return; 
+      history.go(0); 
     } else if(!(/^\d{10,11}$/.test(phoneNumber.toString()))) {
       alert("회원님의 휴대폰 번호가 10자리 또는 11자리가 아닙니다!💛")
     }  else if(rbName === "") {
       alert("로봇의 이름을 입력해 주세요!💛");
-      return;
+      history.go(0);
     }  else if(price <= 0) {
       alert("상품의 가격을 0원 보다 큰 값을 입력하세요!💛");
-      return;
+      history.go(0);
     } else if(maintenance_cost < 0) {
       alert("유지 보수 비용을 0 또는 0 보다 큰 값을 입력하세요!💛");
-      return;
+      history.go(0);
     } 
-    try {
+    
       //회사 이미지 업로드
       if(compaImg.length !==0 ) {
         const imgForm = new FormData();
@@ -117,27 +124,25 @@ export const SellerPage = () => {
         });
         console.log('threeDFile 들어오나?')
         console.log(threeDFile[0])
-        const isReg = await (
-          await fetch(`${BASE_PATH}/seller/make-deal`, {
-            headers:headers,
-            method: 'POST',
-            body: JSON.stringify({
-              compa_name: company,
-              compaBrand_ImgURL: coImgURL,
-              seller_address: selAddress,
-              seller: sellerId,
-              salesManager_mobilephone:phoneNumber,
-              name: rbName,
-              price,
-              maintenance_cost,
-              description: description,
-              rbURL
-            })
+        
+        await fetch(`${BASE_PATH}/seller/make-deal`, {
+          headers:headers,
+          method: 'POST',
+          body: JSON.stringify({
+            compa_name: company,
+            compaBrand_ImgURL: coImgURL,
+            seller_address: selAddress,
+            sellerId: sellerId,
+            salesManager_mobilephone:phoneNumber,
+            name: rbName,
+            price,
+            maintenance_cost,
+            description: description,
+            rbURL
           })
-        ).ok 
-        isReg ? window.location.href = '/trade'  : history.go(0);
+        }).then(response => response.ok ? window.location.href = '/trade'  : history.go(0) )
+      
         setIsLoading(false);
-
       }
     } catch (e) {
 
