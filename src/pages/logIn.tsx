@@ -117,7 +117,7 @@ const Login:React.FC = () => {
       </Helmet>
     </HelmetProvider>
       <h4 className="w-full font-medium text-left text-3xl mb-5">
-        Welcom to GGL Entertainment
+        Welcom to Trade
       </h4>
       <form
         //className="grid gap-2 mt-5 w-full mb-3 " 
@@ -130,7 +130,7 @@ const Login:React.FC = () => {
               pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
             })}
             placeholder="Email"
-            className="input mb-3 "
+            className="input mb-3 focus:border-pink-400"
             type="email"
 
           />
@@ -144,7 +144,7 @@ const Login:React.FC = () => {
           {...register("password", {required: "Password is required", minLength:10})} 
           type="password"
           placeholder="Password" 
-          className="input"
+          className="input focus:border-pink-400"
         />
         {errors.password?.message && (
           <FormError errorMessage={errors.password.message}/>

@@ -102,3 +102,16 @@ export async function getMyDeals(token:string) {
 }
 
 
+export async function validateMyPhoneNumber() {
+  const res = await (
+    await fetch(`${BASE_PATH}/phones/validation`,{
+      headers: {
+        'Content-Type':'application/json; charset=utf-8',
+      },
+      method: 'POST',
+    })
+  ).json();
+  return res;
+  
+}
+

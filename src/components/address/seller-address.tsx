@@ -92,7 +92,7 @@ const SellerPostcode: React.FC = () =>{
             <div className="mb-1">
                 <input
                     {...register("postalcode", {required:'POSTAL CODE is required.',})} 
-                    className="w-2/4 mb-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none" 
+                    className="w-2/4 mb-1 border-4 rounded-md focus:border-pink-400    border-gray-300  px-2 py-1 outline-none" 
                     value={postalCode} 
                     readOnly placeholder="POSTAL CODE" />
                 <button onClick={toggle}>
@@ -108,13 +108,13 @@ const SellerPostcode: React.FC = () =>{
             </div>
             {errors.postalcode?.type === 'required' &&  <FormError errorMessage={errors.postalcode.message} /> }
             <FullAddress>
-                <div className="w-full mb-1">
+                <div className="w-full mb-2">
                     <input
                         {...register("roadAddress", {
                             required:"Road address is required. ",
                             minLength: 5 
                         })} 
-                        className="w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2" 
+                        className="w-full border-4 rounded-md focus:border-pink-400  border-gray-300  px-2 py-1 outline-none mr-2" 
                         value={roadAddress} 
                         readOnly placeholder="Street address" 
                     />
@@ -123,7 +123,7 @@ const SellerPostcode: React.FC = () =>{
                 <div className="w-full ">
                     <input
                         {...register("detailedAddress", {required:true, minLength: 5})} 
-                        className="w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2" 
+                        className="w-full border-4 rounded-md focus:border-pink-400  border-gray-300  px-2 py-1 outline-none mr-2" 
                         type="text" 
                         onChange={changeHandler} value={detailAddress} placeholder="detailed address"
                     />

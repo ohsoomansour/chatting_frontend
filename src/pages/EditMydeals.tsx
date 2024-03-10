@@ -58,13 +58,13 @@ const PrevButton = styled(motion.button)`
 
 const dealRowVariants = {
   hidden:(increasing:boolean) => ({
-    x: increasing? +65 : -65
+    x: increasing? +50 : -50
   }),
   animate:{
     x: 0
   },
   exit:(increasing:boolean) => ({
-    x: increasing? -65 : +65
+    x: increasing? -50 : +50
   })
 }
 const offset = 2;
@@ -121,8 +121,6 @@ function EditMyDeals(){
   }
   
 
-  //<p className=" mt-4 text-lg font-semibold text-center"> 현재 고객님이 '주문 완료 후 배송 완료 전 까지' 이거나 '미리 담기가 진행 중'일 경우 등록하신 거래가 삭제되지 않습니다!💛</p>
-  //
   return (
     <div className="flex flex-col h-full">
 
@@ -169,9 +167,7 @@ function EditMyDeals(){
           </PrevButton>
         </SliderWrapper>
       </AnimatePresence>
-
-      
-      
+      <p className=" mt-10 text-lg font-semibold text-center"> 현재 고객님이 '주문 완료 후 배송 완료 전 까지' 또는 '미리 담기가 진행 중'일 경우 등록하신 거래가 삭제되지 않습니다!💛</p>
     </div>
   )
 }

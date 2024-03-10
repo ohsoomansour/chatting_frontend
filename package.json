@@ -23,6 +23,7 @@
     "buffer": "^6.0.3",
     "cross-env": "^7.0.3",
     "framer-motion": "^8.5.5",
+    "google-libphonenumber": "^3.2.34",
     "google-map-react": "^2.2.0",
     "graphql": "^16.6.0",
     "graphql-ws": "^5.11.2",
