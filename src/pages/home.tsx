@@ -12,7 +12,7 @@ export const Home = () => {
       <Helmet>
          <title>Trader | Home </title>       
       </Helmet>
-      <h1 className=" text-lg font-bold text-center mt-6">Welcome to Robot Trader </h1>
+      <h1 className=" text-2xl font-bold text-center mt-6">Welcome to Robot Trader </h1>
       <div className=" flex flex-col items-center"> 
         <Canvas camera={{ position: [0, 3, 7], fov:75 }} style={{ width: '50%', height: '35vh' }}>
           <OrbitControls autoRotate={true}/>
