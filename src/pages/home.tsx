@@ -2,7 +2,7 @@ import { OrbitControls } from "@react-three/drei"
 import { Canvas } from "@react-three/fiber"
 import { MoveRobot } from "../components/robots/MoveRobot"
 import { HexaRbot } from "../components/robots/hexahedronRobot"
-import { CuteRobot } from "../components/robots/CuteRobot"
+import { CuteRobot } from "../components/robots/cuteRobot"
 
 import { Helmet } from "react-helmet"
 import { CooperativeRobot } from "../components/robots/BoxArmRobot"
