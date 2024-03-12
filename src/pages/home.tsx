@@ -2,8 +2,12 @@ import { OrbitControls } from "@react-three/drei"
 import { Canvas } from "@react-three/fiber"
 import { MoveRobot } from "../components/robots/MoveRobot"
 import { HexaRbot } from "../components/robots/hexahedronRobot"
-import { CuteRobot } from "../components/robots/cuteRobot"
+import { CuteRobot } from "../components/robots/CuteRobot"
+
 import { Helmet } from "react-helmet"
+import { CooperativeRobot } from "../components/robots/BoxArmRobot"
+import { DeliveryRobot } from "../components/robots/DeliveryRobot"
+import { ManufacturingRobot } from "../components/robots/ManufacturingRobot"
 
 export const Home = () => {
 
@@ -14,6 +18,20 @@ export const Home = () => {
       </Helmet>
       <h1 className=" text-2xl font-bold text-center mt-6">Welcome to Robot Trader </h1>
       <div className=" flex flex-col items-center"> 
+        <Canvas camera={{ position: [0, 4, 7], fov:55}} style={{ width: '100%', height: '45vh' }}>
+          <OrbitControls autoRotate={true}/>
+          <group rotation-y={Math.PI / 2} scale={[0.6, 0.6, 0.6]} >
+            <mesh
+            castShadow
+            receiveShadow
+              >
+              <ManufacturingRobot />
+            </mesh>
+          </group>
+          <ambientLight intensity={1} />
+          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
+            
+        </Canvas>
         <Canvas camera={{ position: [0, 3, 7], fov:75 }} style={{ width: '50%', height: '35vh' }}>
           <OrbitControls autoRotate={true}/>
           <group rotation-y={-Math.PI / 2}>
@@ -30,9 +48,39 @@ export const Home = () => {
           <ambientLight intensity={1} />
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
         </Canvas>
-        <Canvas camera={{ position: [0, 4, 7], fov:75 }} style={{ width: '50%', height: '40vh' }}>
+
+        <Canvas camera={{ position: [0, 3, 7], fov:35 }} style={{ width: '70%', height: '55vh' }}>
           <OrbitControls autoRotate={true}/>
-          <group rotation-y={-Math.PI / 2} scale={[0.6, 0.6, 0.6]} >
+          <group rotation-y={-Math.PI / 2} scale={[1.1, 1.1, 1.2]} >
+            <mesh
+              castShadow
+              receiveShadow
+            >  
+              <CooperativeRobot />
+            </mesh>
+            </group>
+          <ambientLight intensity={1} />
+          <spotLight position={[1, 1, 1]} angle={Math.PI / 3}  />
+            
+        </Canvas>
+        <Canvas camera={{ position: [7, 8, 3], fov:35 }} style={{ width: '70%', height: '45vh' }}>
+          <OrbitControls autoRotate={true}/>
+          <group rotation-y={-Math.PI / 2} scale={[1.1, 1.1, 1.2]} >
+            <mesh
+              castShadow
+              receiveShadow
+            >  
+              <DeliveryRobot />
+            </mesh>  
+          </group>
+          <ambientLight intensity={1} />
+          <spotLight position={[10, 2, 5]} angle={0.15}  penumbra={1}/>
+            
+        </Canvas>
+
+        <Canvas camera={{ position: [0, 4, 7], fov:75 }} style={{ width: '50%', height: '30vh' }}>
+          <OrbitControls autoRotate={true}/>
+          <group rotation-y={Math.PI / 2} scale={[0.6, 0.6, 0.6]} >
             <mesh
             castShadow
             receiveShadow
@@ -41,9 +89,12 @@ export const Home = () => {
             </mesh>
           </group>
           <ambientLight intensity={1} />
-          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={2} />
+          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
             
         </Canvas>
+        
+
+        
       </div>
     </div>
   )

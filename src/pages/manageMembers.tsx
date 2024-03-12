@@ -123,7 +123,7 @@ export const ManageMembers:React.FC = () => {
   }
   return (
     <div>
-      <div className=" max-w-md mx-auto bg-white p-6 rounded-md shadow-md">
+      <div className=" mt-4 max-w-md mx-auto bg-white p-6 rounded-md shadow-md">
         {errors.searchedName?.type === "minLength" && (
           <FormError errorMessage={"keyword must be more at least 2 characters long."} />
         )}

@@ -1,6 +1,29 @@
-# Getting Started with Create React App
+https://blog.naver.com/jooeun0502/221956294941 문법 참조
+https://backendcode.tistory.com/165 예시 참조 
+# 영상을 통해서 설명  
+<img src="URL ">
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 프로젝트 소개 
+ 미래에는 ROBOT가 사람과 더 친화적인 환경으로 변화 될 것을 예상해서 만든 'ROBOT Trader' 플랫폼 사이트 입니다.
+## 프로젝트 개발 기간
+ 2023년 12월 18일 ~ 2024년 3월 21일
+
+## 개발 환경
+ + Typescript 4.7.1
+ + Node.js 18.12.1
+ + **library:**React 18.2.0
+ + **Framework:**Nestjs 10.2.10
+ + **ORM:** TypeORM 
+ + **Database:** Postgresql
+
+
+
+
+
+
+
+
+
 
 ## Available Scripts
 
