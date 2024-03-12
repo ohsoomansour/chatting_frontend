@@ -7,7 +7,7 @@ import { BrowserRouter, Route, Switch, useHistory } from "react-router-dom";
 import Streaming from "../pages/Streaming";
 import React from "react";
 import {ManageMembers} from "../pages/manageMembers";
-import { EditUserInfo, IuserInfo } from "../pages/EditUserInfo";
+import { EditUserInfo, IuserInfo } from "../pages/editUserInfo";
 import { ActiveAccount } from "../components/activeAccount";
 import { Home } from "../pages/home";
 import { Header, MemberRole } from "../components/header";

@@ -1,6 +1,6 @@
 import {  Link, Route, Switch, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
-import { EditUserInfo } from "./EditUserInfo";
+import { EditUserInfo } from "./editUserInfo";
 import EditMyDeals from "./EditMydeals";
 const Tab  = styled.span<{ isActive: boolean }>`
   text-align: center;

@@ -39,7 +39,7 @@ import {  tokenState } from "../recoil/atom_token";
 import { useRecoilState} from 'recoil';
 import { FormError } from "../components/form-error";
 import { userIdState } from "../recoil/atom_user";
-import { IuserInfo } from "./EditUserInfo";
+import { IuserInfo } from "./editUserInfo";
 import { useEffect, useState } from "react";
 
 interface ILoginForm {

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { useQuery } from "react-query";
 import { tokenState } from "../recoil/atom_token";
-import { IuserInfo } from "../pages/EditUserInfo";
+import { IuserInfo } from "../pages/editUserInfo";
 import { getMyinfo } from "../api";
 
 const Wrapper = styled(motion.div)`

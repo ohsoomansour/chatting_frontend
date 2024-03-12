@@ -1,5 +1,5 @@
 import { IDeal } from "./pages/TradePlatform";
-import { IuserInfo } from "./pages/EditUserInfo";
+import { IuserInfo } from "./pages/editUserInfo";
 
 //  https://trade-2507d8197825.herokuapp.com/
 export const BASE_PATH = process.env.NODE_ENV === "production" 
