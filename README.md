@@ -1,3 +1,4 @@
+
 https://blog.naver.com/jooeun0502/221956294941 문법 참조
 https://backendcode.tistory.com/165 예시 참조 
 # 영상을 통해서 설명  
@@ -15,14 +16,6 @@ https://backendcode.tistory.com/165 예시 참조
  + **Framework:**Nestjs 10.2.10
  + **ORM:** TypeORM 
  + **Database:** Postgresql
-
-
-
-
-
-
-
-
 
 
 ## Available Scripts
