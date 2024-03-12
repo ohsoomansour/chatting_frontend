@@ -1,5 +1,7 @@
 # Getting Started with Create React App
-<img src="https://github.com/ohsoomansour/Trader/assets/98678172/31436678-e09d-4f36-8f98-287086cff4e1" >
+<img src="https://github.com/ohsoomansour/Trader/assets/98678172/09542ac6-acf3-41b5-b599-327549bac8d4" >
+
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
