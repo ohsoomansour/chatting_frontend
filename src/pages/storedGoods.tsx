@@ -129,7 +129,7 @@ export const StoredGoods = () => {
       headers:{
         'x-jwt':token,
         'Content-Type': 'application/json; charset=utf-8',
-        'Authorization': `Bearer ${token}` 
+        
       },
       method:'POST',
       body:JSON.stringify({

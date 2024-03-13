@@ -99,8 +99,10 @@ export const Order = ({robot, deal}:OrderProps) => {
   //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
   await fetch(`${BASE_PATH}/order/storegoods`, {
     headers:{
+      'Access-Control-Allow-Origin': '*',
       'x-jwt':token,
       'Content-Type': 'application/json; charset=utf-8',
+      
     },
     method:'POST',
     body:JSON.stringify({
