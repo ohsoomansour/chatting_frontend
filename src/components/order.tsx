@@ -100,6 +100,7 @@ export const Order = ({robot, deal}:OrderProps) => {
   await fetch(`${BASE_PATH}/order/storegoods`, {
     headers:{
       'Access-Control-Allow-Origin': '*',
+      'Authorization': 'Bearer ' + token,
       'x-jwt':token,
       'Content-Type': 'application/json; charset=utf-8',
       
