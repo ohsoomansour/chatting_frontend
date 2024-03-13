@@ -4,9 +4,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
 
 export const ManufacturingRobot = () =>{
   let mixer;
+
   const gray_robot_arm = useLoader(GLTFLoader, '/models/manufacturingRobot.glb');
-  console.log('gray_robot_arm:');
-  console.log(gray_robot_arm);
+  console.log('gray_robot_arm',gray_robot_arm )
   if(gray_robot_arm.animations.length){
     mixer = new THREE.AnimationMixer(gray_robot_arm.scene)
     gray_robot_arm.animations.forEach(clip => {
@@ -14,13 +14,14 @@ export const ManufacturingRobot = () =>{
       action.play()
     })
   }
+  
   useFrame((state, delta) => {
     mixer?.update(delta)
   })
   
   return (
     <primitive 
-      object={gray_robot_arm.scene}  
+      object={gray_robot_arm.scene}
     />
   )
 } 

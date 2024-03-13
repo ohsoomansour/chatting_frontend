@@ -13,7 +13,7 @@ module.exports = {
         },
       },
       animation: {
-        load: "load 1.5s ease-in-out infinite",
+        load: "load 1.2s ease-in-out infinite",
       },
     },
   },

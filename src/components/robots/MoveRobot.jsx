@@ -1,4 +1,3 @@
-import React, { useRef } from 'react'
 import * as THREE from 'three';
 import {  useFrame, useLoader } from '@react-three/fiber'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';

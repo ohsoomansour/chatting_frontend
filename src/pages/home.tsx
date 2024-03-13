@@ -12,11 +12,15 @@ import { useEffect, useState } from "react"
 import { Loading } from "../components/loading"
 
 export const Home = () => {
-  const [isLoading, setLoading] = useState(true)
+  const [isLoading, setLoading] = useState(true);
   useEffect(()=> {
+    const timer = setTimeout(() => {
       setLoading(false)
-  }, [isLoading]);
-  
+    }, 6000)
+    return () => {
+      clearTimeout(timer);
+    }
+  }, []);
   
   return(
     <div className=" ">
@@ -24,9 +28,7 @@ export const Home = () => {
          <title>Trader | Home </title>       
       </Helmet>
       <h1 className=" text-2xl font-bold text-center mt-6">Welcome to Robot Trader </h1>
-      {isLoading
-        ? <Loading />  
-        : 
+      {isLoading ? <Loading /> : null}
       <div className=" flex flex-col items-center"> 
         <Canvas camera={{ position: [0, 4, 7], fov:55}} style={{ width: '100%', height: '45vh' }}>
           <OrbitControls autoRotate={true}/>
@@ -102,7 +104,7 @@ export const Home = () => {
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
             
         </Canvas>
-      </div>}
+      </div>
       
     </div>
   )

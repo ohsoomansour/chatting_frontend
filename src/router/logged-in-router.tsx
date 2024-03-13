@@ -5,7 +5,7 @@
 */
 import { BrowserRouter, Route, Switch, useHistory } from "react-router-dom";
 import Streaming from "../pages/Streaming";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {ManageMembers} from "../pages/manageMembers";
 import { EditUserInfo, IuserInfo } from "../pages/editUserInfo";
 import { ActiveAccount } from "../components/activeAccount";
@@ -24,6 +24,7 @@ import Chatting from "../pages/chatting";
 import { Conference } from "../pages/conference";
 import EditMyDeals from "../pages/EditMydeals";
 import { MyPage } from "../pages/MyPage";
+
 
 const userRoutes = [
   {path: "/", component: <Home />},
@@ -44,10 +45,13 @@ const adminRoutes = [
 
 export const LoggedInRouter = () => {
   const token = useRecoilValue(tokenState)
-  const {data:me, isLoading} = useQuery<IuserInfo>(
+  const {data:me} = useQuery<IuserInfo>(
     ["me", "Member"], () => getMyinfo(token)
   );
-
+  const [isLoading, setLoading] = useState(true)
+  useEffect(()=> {
+    setLoading(false)
+  }, []);
   return (
     <div>
       <Header />
@@ -60,12 +64,14 @@ export const LoggedInRouter = () => {
           </Route>
         ))
         : null}
+        
+      
 
       { userRoutes.map((route, index) => (
         <Route key={index} exact path={route.path}>
           {route.component }
         </Route>
-      ))}
+      ))} 
         <Route path={'/myInfo'}>
           <MyPage/>
         </Route>
