@@ -22,7 +22,6 @@ import { useQuery } from "react-query";
 import { getMyinfo } from "../api";
 import Chatting from "../pages/chatting";
 import { Conference } from "../pages/conference";
-import EditMyDeals from "../pages/EditMydeals";
 import { MyPage } from "../pages/MyPage";
 
 

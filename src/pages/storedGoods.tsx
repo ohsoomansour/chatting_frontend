@@ -10,7 +10,8 @@ import StoredGoodsPostcode from "../components/address/storedGoods-address";
 import { storedGoddsDetailed, storedGoodsAddress, storedGoodsPostal, storedGoodsRoad } from "../recoil/atom_address";
 import { Helmet } from "react-helmet";
 import { BASE_PATH } from "./logIn";
-import { useForm } from "react-hook-form";
+import { useHistory } from "react-router-dom";
+
 
 interface ISeller {
   address:string;
@@ -84,11 +85,11 @@ export const StoredGoods = () => {
   const postalCode = useRecoilValue(storedGoodsPostal);
   const streetAddress = useRecoilValue(storedGoodsRoad);
   const detailedAddress = useRecoilValue(storedGoddsDetailed);
-
+  const history = useHistory()
   const {data: mystoredDeals, isLoading, refetch } = useQuery<IMyStoredDeals>(
     ["getStoredGoods","ORDER"], () => storedGoods(token, page)
   )
-  console.log("storedDeals:")
+  console.log("mystoredDeals:")
   console.log(mystoredDeals)
 
   const stores = isLoading 
@@ -96,6 +97,7 @@ export const StoredGoods = () => {
     : mystoredDeals
     ? mystoredDeals.mySavings
     : [];
+  // alert('미리 담기 상품이 없습니다.')
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD'
@@ -127,6 +129,7 @@ export const StoredGoods = () => {
       headers:{
         'x-jwt':token,
         'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': `Bearer ${token}` 
       },
       method:'POST',
       body:JSON.stringify({
@@ -155,9 +158,11 @@ export const StoredGoods = () => {
       </Helmet>
       <h1 className=" text-2xl text-center font-semibold mb-4" > {me+ "님 안녕하세요" }</h1>
       <p className=" mb-6 text-xl text-center font-semibold">{"아래의 로봇 제품들은 고객님께서 미리 담기를 선택하신 목록입니다. "}</p>
+
       {isLoading 
         ? <Loading /> 
-        : (stores.map((store, index) => (
+        : stores === undefined ? (<div className=" text-center text-red-300">(미리 담기 상품이 없습니다.)</div>) :
+        (stores.map((store, index) => (
           <DealContainer key={index} className="mb-2 max-w-md mx-auto p-6 bg-white rounded-lg shadow-md"> 
             <CompaWrapper >
               <img alt='company logo' src={store.deal.compaBrand_ImgURL} width={"23%"} height={"20%"} className=" inline-block"></img>
@@ -196,9 +201,9 @@ export const StoredGoods = () => {
               <button onClick={() => onDelete(store.id)} className=' font-semibold w-full mx-auto mt-6 mb-2 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-red-400 transition duration-500'>Delete</button>
             </ButttonContainer>
           </DealContainer>
-        ))
+        )))
+      }
 
-      )}
       <div className=" grid grid-cols-3 text-center max-w-xs items-center mx-auto">
           {page > 1 ? (<button
             onClick={onPrevPage}
