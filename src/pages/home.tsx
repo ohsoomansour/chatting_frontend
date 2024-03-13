@@ -8,15 +8,25 @@ import { Helmet } from "react-helmet"
 import { CooperativeRobot } from "../components/robots/BoxArmRobot"
 import { DeliveryRobot } from "../components/robots/DeliveryRobot"
 import { ManufacturingRobot } from "../components/robots/ManufacturingRobot"
+import { useEffect, useState } from "react"
+import { Loading } from "../components/loading"
 
 export const Home = () => {
-
+  const [isLoading, setLoading] = useState(true)
+  useEffect(()=> {
+      setLoading(false)
+  }, [isLoading]);
+  
+  
   return(
     <div className=" ">
       <Helmet>
          <title>Trader | Home </title>       
       </Helmet>
       <h1 className=" text-2xl font-bold text-center mt-6">Welcome to Robot Trader </h1>
+      {isLoading
+        ? <Loading />  
+        : 
       <div className=" flex flex-col items-center"> 
         <Canvas camera={{ position: [0, 4, 7], fov:55}} style={{ width: '100%', height: '45vh' }}>
           <OrbitControls autoRotate={true}/>
@@ -92,10 +102,8 @@ export const Home = () => {
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
             
         </Canvas>
-        
-
-        
-      </div>
+      </div>}
+      
     </div>
   )
 }
