@@ -46,10 +46,23 @@ const PeerMessageWrapper = styled.div`
   display: flex;
   flex-direction:column;
 `;
+const MyImg = styled.div`
+  display: flex;
+  flex-direction: row-reverse;
+  margin-right:200px;
+`;
+const PeerImg = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin-left:200px;
+`;
+
+
 const RoomBtnContainer = styled.div`
   display:flex;
   flex-direction:row;
-`
+`;
+
 
 
 interface ImsgObj{
@@ -65,6 +78,10 @@ interface IProps {
   time: string;
   myEmaiId:string;
 }
+interface IUserExited{
+  userId:string;
+  time:string;
+}
 //"wss://trade-2507d8197825.herokuapp.com:8080/(네임스페이스)"  
 //git add  -> git commit -m 
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
@@ -79,7 +96,7 @@ export default function Chatting() {
   const [roomName, setRoomName] = useState('');
   const [joinedUserList, setJoinedUserList] = useState<string[]>(['']);
   const [particapants, setParticapants] = useState<string[]>(['']);
-  const [userExited, setUserExited ] = useState("");
+  const [userExited, setUserExited ] = useState<IUserExited>();
   const {register, getValues} = useForm({mode: "onChange"})
   const [sc, setSocket] = useState<Socket>();
   const [messages, setMessages] = useState<IProps[]>([{msg:'', url: '', time: '',  myEmaiId: ""}]);
@@ -89,12 +106,6 @@ export default function Chatting() {
   const [isUserJoined, setUserJoined] = useState(false);
   const [isJoined, setIsJoined] = useState(false);
   const history = useHistory();
-  const currentDate = new Date();
-  const year = currentDate.getFullYear(); // 연도
-  const month = currentDate.getMonth() + 1; // 월 (0부터 시작하므로 1을 더해줌)
-  const day = currentDate.getDate(); // 일
-  const hours = currentDate.getHours(); // 
-  const minutes = currentDate.getMinutes(); // 분
 
   useEffect(() => {
     // ✅https://socket.io/docs/v4/client-options/ 참조
@@ -110,9 +121,9 @@ export default function Chatting() {
     ) 
     setSocket(sc)
     sc.on('message', (msgObj:ImsgObj) => {
-      //⭐ 보낼때 isMe: false 추가
-      setMessages((prev) => [...prev, msgObj]);    //{msg:'', url: '', time: '', isMe: true}
-      setLoading(isLoading)
+      //⭐ msgObj:{msg:'', url: '', time: '', isMe: true}
+      setMessages((prev) => [...prev, msgObj]);
+      setLoading(isLoading);
     });
     sc.on('userJoined', (userInfo) => {
       setJoinedUserList(userInfo.userList);
@@ -121,10 +132,11 @@ export default function Chatting() {
       setParticapants(p.participant);
     })
     sc.on('exit', (userInfos) => {
-      setUserExited(userInfos.userId);
+      setUserExited({
+        userId:userInfos.userId,
+        time:userInfos.time
+      });
       setJoinedUserList(userInfos.userList);
-      console.log("Exit userInfo" ,userInfos.userId);
-      console.log("Exit joinedUserList" ,userInfos.userList);
     })
 
     return () => {
@@ -152,7 +164,7 @@ export default function Chatting() {
         transition:{duration: 0.5 }
       })
     }
-
+    //message 비우기
     setIsJoined(true); 
     setUserJoined(true)
     const {chattingRoomId} =  getValues()
@@ -189,7 +201,7 @@ export default function Chatting() {
       // 서버로 메시지 전송: 메세지 + 이미지를 같이 보낸다.
        let isMe = true;
        // 보낼때 id값으로 구분해주자! message. === useId ? 그렇지 않으면 반대 !  
-       sc!.emit('message', [`${userId}:` + "  " + inputMessage, fileUrl, chattingRoomId, userId]); 
+       sc!.emit('message', [inputMessage, fileUrl, chattingRoomId, userId]); 
        setInputMessage('');
        fileUrl = String('');
        console.log("메세지가 있는 경우 fileUrl 값 확인:")
@@ -316,7 +328,7 @@ export default function Chatting() {
           </div>
           : null
         }
-        {userExited ? <p className=' text text-red-300'> {userExited}님이 퇴장하였습니다. <span className=' text-sm'>{`${month}월 ${day}일 ${hours}:${minutes} `}</span></p> : null}
+        {userExited ? <p className=' text text-red-300'> {userExited.userId}님이 퇴장하였습니다. <span className=' text-sm'>{userExited.time}</span></p> : null}
       </div>
 
         <ChatContent className='shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll'>
@@ -328,13 +340,17 @@ export default function Chatting() {
             <MyMessageWrapper>
               <Mymessage key={index}>
                 <div>
-                  <p className='mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' >{message.msg}</p>
+                  <p className='mt-4 text-left' >{message.myEmaiId}</p>
+                  <p className='mr-4 ml-4 bg-white p-2 shadow-lg rounded-md' >{message.msg}</p>
                   <p className='text text-right text-sm mr-4' key={message.time}>{message.time}</p>
                 </div>
-                {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
-                  <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className=' ml-4 mt-1 rounded-md' />  
-                ): null}
+                
               </Mymessage>
+              <MyImg>
+                  {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
+                    <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className=' ml-4 mt-1 rounded-md' />  
+                  ): null}
+              </MyImg>
               <RplayerWrapper>  
                 {(message.url.includes('.mp4') || message.url.includes('.MP4') )? (
                     <ReactPlayer 
@@ -358,13 +374,16 @@ export default function Chatting() {
             <PeerMessageWrapper>
               <PeerMessage key={index}>
                 <div>
-                  <p className='mr-4 ml-4 mt-4 bg-white p-2 shadow-md rounded-md' key={index}>{message.msg}</p>
+                  <p className='mt-4' >{message.myEmaiId}</p>
+                  <p className='mr-4 ml-4 bg-white p-2 shadow-lg rounded-md' key={index}>{message.msg}</p>
                   <p className='text text-sm text-right' key={message.time}>{message.time}</p>
                 </div>
+              </PeerMessage>
+              <PeerImg>
                 {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
                   <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className=' ml-4 mt-1 rounded-md' />  
                 ): null}
-              </PeerMessage>
+              </PeerImg>
               <RplayerWrapper>  
                 {(message.url.includes('.mp4') || message.url.includes('.MP4') )? (
                     <ReactPlayer 
@@ -379,13 +398,11 @@ export default function Chatting() {
                       volume={0}
                       //autoPlay={false}
                   />
-                  
                   ) : null}
                   
               </RplayerWrapper>
             </PeerMessageWrapper>
             )
-
         ))}
           
         </ChatContent>
@@ -393,9 +410,7 @@ export default function Chatting() {
       <UI className=' w-2/4'>
         <form onSubmit={sendMessage}>
           <div className='mt-1 mb-2 flex justify-center'>
-            
           </div>
-
           <input  
             className='w-full  focus:border-pink-400 border-4 rounded-md shadow-md border-gray-300  px-4 py-2 outline-none'
             type="text"

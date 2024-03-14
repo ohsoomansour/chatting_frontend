@@ -101,7 +101,6 @@ export async function getMyDeals(token:string) {
   }
 }
 
-
 export async function validateMyPhoneNumber() {
   const res = await (
     await fetch(`${BASE_PATH}/phones/validation`,{

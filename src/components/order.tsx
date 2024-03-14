@@ -18,6 +18,7 @@ const PlusSvg = styled.svg`
   height:30px;
   margin: 0 5px;
 `;
+
 const Equalsvg = styled.svg`
   fill:red;
   width:30px;

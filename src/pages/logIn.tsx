@@ -51,8 +51,6 @@ export const BASE_PATH = process.env.NODE_ENV === "production"
  : "http://localhost:3000";
 
 
-
-
 const Login:React.FC = () => {
 //Validation is triggered on the changeevent for each input, leading to multiple re-renders. Warning: this often comes with a significant impact on performance.
   const { register, formState:{ errors },handleSubmit, formState, getValues } = useForm<ILoginForm>({mode: "onChange"});
@@ -71,8 +69,8 @@ const Login:React.FC = () => {
         method: 'POST',
         credentials: 'same-origin',
         body: JSON.stringify({
-          userId: email, // or data.email
-          password: password, // or data.password
+          userId: email, 
+          password: password, 
         })
       })
       ).json();

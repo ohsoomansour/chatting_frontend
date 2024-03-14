@@ -95,10 +95,10 @@ export const TakingOrderInfo = () => {
           'Content-Type': 'application/json'
         },
         method: 'PATCH',
-      }).then(response => response.ok ? refetch() : null)
+      }).then(response => response.ok ? refetch() : null);
+      //
     }
   //주문 정보에 카카오 PAY의 결제 승인 response -> 존재하면 주문 정보 보여준다. 
-  //필터 또는 선택해서 개별적으로 볼 수 있는 
   return (
     <Wrapper className="mt-6 ">
       <Helmet>

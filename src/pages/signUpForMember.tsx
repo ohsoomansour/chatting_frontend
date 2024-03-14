@@ -8,7 +8,6 @@ import styled from "styled-components";
 import { useState } from "react";
 export const PhoneValidation = styled.div`
   cursor:pointer;
- 
 `;
 interface ISignUpForMemberForm {
   email: string;
@@ -30,7 +29,7 @@ export const SignUpForMember = () => {
   const history = useHistory();
   const [phoneEvent, setPhoneEvent] = useState<boolean>(false);
   const [mphoneValid, setMphoneValid] = useState(false);
-  const [formattedMPnumber, setFormattedMPnumber] = useState<string>()
+  const [formattedMPnumber, setFormattedMPnumber] = useState<string>();
   const onPhoneValid = async() => {
     setPhoneEvent(true)
     const {regionCode, mobilePhone_number} = getValues();
@@ -50,17 +49,16 @@ export const SignUpForMember = () => {
     setFormattedMPnumber(formattedNumber);
   }
 
-  const onValid = async (data:ISignUpForMemberForm) => {
+  const onValid = async () => {
     try {
       if(!phoneEvent){
-        alert('휴대폰 번호 유효성 확인을 해주세요!💛')
+        alert('휴대폰 번호 유효성 확인을 해주세요!💛');
         return;
       } else if(!mphoneValid){
-        alert('휴대폰 번호의 값이 유효하지 않습니다!💛')
+        alert('휴대폰 번호의 값이 유효하지 않습니다!💛');
         return;
       }
       const {email, password, name, address, mobilePhone_number, memberRole} = getValues();
-      
       const result = await fetch(`${BASE_PATH}/member/join`, {
         headers : {"Content-Type":"application/json; charset=utf-8"},
         method: 'POST',
@@ -72,10 +70,11 @@ export const SignUpForMember = () => {
           mobile_phone:mobilePhone_number,
           memberRole,
         })
-      })
-      
+      });
+      console.log('result', result)
       if(result.redirected){
-        history.push('/login')
+        console.log('result', result)
+        history.push('/login');
       }
     } catch(e) {
       console.error(e);
@@ -83,7 +82,7 @@ export const SignUpForMember = () => {
     
   }
   
-  return (//rem: 16px 배수 > 2.5rem = 40px     text-lime-600 hover:underline
+  return (//rem: 16px 배수 > 2.5rem = 40px
   <div className="h-screen flex items-center flex-col mt-10 lg:mt-28"> 
    <HelmetProvider>
     <Helmet>

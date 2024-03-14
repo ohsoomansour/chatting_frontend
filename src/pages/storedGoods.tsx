@@ -139,18 +139,19 @@ export const StoredGoods = () => {
         customer: me,
         address: addressYo,
         items:{
-          robot: store.deal.robot,   //relation으로 price 여기에 포함되어있고 가져오면됨  
+          robot: store.deal.robot,  
           options:{
             maintenanceYN: store.payment.maintenanceYN,
-            maintenance_cost: store.payment.maintenance_cost, //{ maintenanceYN: true, maintenance_cost: '100' }
+            maintenance_cost: store.payment.maintenance_cost, 
           }
         },
-        total: store.payment.total , //문제: total: ''  빈값 + string 값 
+        total: store.payment.total , 
         
       })
-    }).then(response => response.ok ? onDelete(store.id) : null )
-    
-  }
+    }).then(response => response.ok ? onDelete(store.id) : null );
+    window.location.href = "/order/info"; //주문 완료 후 '나의 주문 정보'로 이동
+  };
+  
   return (
     <Wrapper className=" mt-6">
       <Helmet>

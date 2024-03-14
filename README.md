@@ -24,12 +24,16 @@ https://backendcode.tistory.com/165 예시 참조
 ## 📌주요 기능 
 
 ### 로그인 
- 
+ <img src=" 로그인 설명 URL ">
+
  - DB에서 id 및 password 값 검증
  - 로그인 시 jwt 발급: Session storage에 저장하고 이용
+   Token의 값은 있지만 isDormant 속성 값이 true의 경우 활성화 페이지로 이동 
  - 로그아웃 또는 브라우저 창을 닫으면 Sessiong storage에서 제거된다. 
 
 ### 회원관리 
+  <img src=" 회원관리 URL ">
+
  - 회원가입 시 Admin으로 가입 가능(제한적 가입)
  - 회원 역할이 Admin의 경우
 
@@ -38,15 +42,16 @@ https://backendcode.tistory.com/165 예시 참조
 
  - camera 설정: cam_config.png를 참조하여 **구글 크롬에서 카메라 연결 설정** 을 알려준다. 
  - droid cam(window/Mac os 가능)을 검색해서 다운로드 후 보조 캠 용도로 사용이 가능하다.   
- -  DataChanne를 통한 메세지 기능: **상대방 peer에게 메세지 전달**이 가능하고 카메라를 보면서 채팅도 가능하다.   
+ - DataChanne를 통한 메세지 기능: **상대방 peer에게 메세지 전달**이 가능하고 카메라를 보면서 채팅도 가능하다.   
 
-### 채팅창 
-   <img src=" 채팅 설명 URL ">
-
+### 고객센터 (채팅창) 
+   <img src=" 채팅 설명 URL "> 채팅창 욕하는 거 추가 
+ 
+ 
  - 우선 채팅방의 이름을 입력(숫자, 문자 가능)하고 입장한다. 
  - **메세지**뿐만 아니라 **사진 및 동영상도** 업로드가 가능합니다.
  - 대화 참가자가 채팅방을 Exit 버튼을 누르고 퇴장하면 Home 으로 이동하고 **(아이디)님이 퇴장하였습니다** 메세지가 나옵니다.
-
+ 
 
 ### 로봇 판매/구매 매칭 기능 
   <img src=" 등록/구매/판매/배송 설명 URL ">
