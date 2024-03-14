@@ -111,13 +111,9 @@ export const OrderInfo = () => {
       method:'DELETE'
     }).then(response => response.ok? refetch() : null )
   }
-  const currentDate = new Date();
+  
 
-  const year = currentDate.getFullYear(); // 연도
-  const month = currentDate.getMonth() + 1; // 월 (0부터 시작하므로 1을 더해줌)
-  const day = currentDate.getDate(); // 일
-  const hours = currentDate.getHours(); // 
-  const minutes = currentDate.getMinutes(); // 분
+
   return (
     <Wrapper className="mt-6">
       <Helmet>

@@ -58,7 +58,7 @@ export const SellerPage = () => {
   const [formattedMPnumber, setFormattedMPnumber] = useState<string>()
 
   // s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업 
-  const {maintenance_cost, description} = getValues();
+  const {maintenance_cost} = getValues();
       console.log("maintenance_cost" , maintenance_cost)
   let rbURL = "";
   let coImgURL = "";
@@ -115,7 +115,7 @@ export const SellerPage = () => {
         const actualImgFile = compaImg[0];
         imgForm.append('file', actualImgFile);
         const { url: compaImgURL} = await (
-          await fetch("http://localhost:3000/upload", {
+          await fetch(`${BASE_PATH}/upload`, {
             method:'POST',
             body: imgForm
           })
@@ -131,7 +131,7 @@ export const SellerPage = () => {
   
         formBody.append('file', actualFile);
         const { url: RobotURL} = await (
-          await fetch("http://localhost:3000/upload", {
+          await fetch(`${BASE_PATH}/upload`, {
             method: 'POST',
             body: formBody
           })
@@ -171,10 +171,7 @@ export const SellerPage = () => {
 
   const onDrop = useCallback( (acceptedFiles:any) => {
     // 파일이 드롭됐을 때의 로직을 처리합니다.
-    console.log("sellerPage file:")
-    console.log(acceptedFiles);
     setThreeDFile(acceptedFiles)
-
   }, []);
   const onPhoneValid = async() => {
     setPhoneEvent(true)

@@ -11,10 +11,11 @@ import { Loading } from '../components/loading';
 import { Helmet } from 'react-helmet';
 import { useForm } from 'react-hook-form';
 import { BASE_PATH } from './logIn';
-import {Mymessage, PeerMessage, RoomContainer } from './conference';
+import { Mymessage, PeerMessage, RoomContainer } from './conference';
 import { useHistory } from 'react-router-dom';
+import { useAnimation, motion } from 'framer-motion';
 
-const ChattingWrapper=styled.div`
+const ChattingWrapper=styled(motion.div)`
   background-color: ${(props) => props.theme.bgColor};
 `;
 const ChatContent=styled.div`
@@ -25,7 +26,7 @@ export const UI = styled.div`
   display:flex;
   flex-direction: column;
 `;
-const ChatContainer = styled.div``;
+const ChatContainer = styled(motion.div)``;
 
 export const RplayerWrapper = styled.div`
   display:flex;
@@ -86,12 +87,17 @@ export default function Chatting() {
   const [DraggedFile, setDragFile] = useState([])
   const [isLoading, setLoading] = useState(false);
   const [isUserJoined, setUserJoined] = useState(false);
-  const [isJoined, setIsJoined] = useState(false)
-  
+  const [isJoined, setIsJoined] = useState(false);
   const history = useHistory();
+  const currentDate = new Date();
+  const year = currentDate.getFullYear(); // 연도
+  const month = currentDate.getMonth() + 1; // 월 (0부터 시작하므로 1을 더해줌)
+  const day = currentDate.getDate(); // 일
+  const hours = currentDate.getHours(); // 
+  const minutes = currentDate.getMinutes(); // 분
 
   useEffect(() => {
-    // ✅https://socket.io/docs/v4/client-options/
+    // ✅https://socket.io/docs/v4/client-options/ 참조
     let sc = io(`${WS_BASE_PATH}`, {
       /*
       withCredentials:true,
@@ -126,14 +132,32 @@ export default function Chatting() {
     };
   
   }, [])
-
-  const setUName = (event:any) => {                  //✅사용자의 아이디 고객과 상담 채팅 구현
+  const chatViewAnimation = useAnimation();
+  const [joining, setJoining] = useState(false);
+  const onJoining = (event:any) => {                  //✅사용자의 아이디 고객과 상담 채팅 구현
     event.preventDefault();
+    //아이디가 없을 경우의 validation 적시 
+    if(userId === ''){
+      alert('로그인이 필요합니다!💛');
+      return;
+    }
+    if(joining){
+      chatViewAnimation.start({
+        height:0,
+        transition:{duration: 0.5 }
+      })
+    } else {
+      chatViewAnimation.start({
+        height:280,
+        transition:{duration: 0.5 }
+      })
+    }
+
     setIsJoined(true); 
     setUserJoined(true)
     const {chattingRoomId} =  getValues()
     setRoomName(chattingRoomId)
-    console.log(chattingRoomId)
+
     sc!.emit('joinRoom', { userName: userId, roomId: chattingRoomId } )
   }
   let fileUrl: string = '';
@@ -203,23 +227,33 @@ export default function Chatting() {
       'video/mp4': ['.mp4', '.MP4'],
     }
   });
-  
+  //퇴장을 안하고 홈으로 이동하면 참가자에는 남아있다 
   const onExit = (e:any) => {
     e.preventDefault();
     console.log("joinedUserList", joinedUserList);
     const afterExitUsers = joinedUserList.filter((joinUser) => joinUser !== userId );
     console.log("afterExitUsers", afterExitUsers);
+    setJoinedUserList(afterExitUsers);
+    
     sc!.emit("exit", {userId: userId, roomId: roomName });
     history.push("/");
 
   }
   return (
-  <ChattingWrapper className=''>
+  <ChattingWrapper 
+    className=''
+
+  >
     <Helmet>
       <title>Trader | A/S </title>       
     </Helmet>
-    {/*w-2/4 mx-auto flex justify-center  bg-white p-6 rounded-md shadow-md */}
-    <RoomContainer id="welcom" className="max-w-md mx-auto flex justify-center  bg-white p-6 rounded-md shadow-md">
+
+    <RoomContainer 
+      id="welcom" 
+      className="max-w-md mx-auto flex justify-center  bg-white p-6 rounded-md shadow-lg mt-1"
+      animate={chatViewAnimation}
+      transition={{ type: "tween"}}
+    >
       <label className="relative flex justify-between items-center group p-2 text-xl">
         <input
           type="checkbox" 
@@ -229,7 +263,7 @@ export default function Chatting() {
         <span className="flex-grow"></span> 
         <span className="w-16 h-10 flex items-center flex-shrink-0 ml-4 p-1 bg-gray-300 rounded-full duration-300 ease-in-out peer-checked:bg-green-400 after:w-8 after:h-8 after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-6 group-hover:after:translate-x-1"></span>
       </label>
-      <form className=" flex flex-col " onSubmit={setUName}>
+      <form className=" flex flex-col " onSubmit={onJoining}>
         <input
             {...register("chattingRoomId")}
             type="text"
@@ -251,10 +285,13 @@ export default function Chatting() {
     </RoomContainer>
     {isJoined 
       ? 
-    <ChatContainer className='mx-auto p-4 flex-1 flex flex-col items-center justify-center'>
-      {/*w-2/4*/}
+    <ChatContainer 
+      className='mx-auto p-4 flex-1 flex flex-col items-center justify-center'
+
+    >
+     
       <div className="rounded-lg w-2/4 bg-gray-300 shadow-lg text-white p-4">
-        <h1 className="text-2xl text-left font-semibold">참가자</h1>
+        <h1 className="text-2xl text-left font-semibold">🙇‍♀️ 참가자</h1>
         {isUserJoined 
          ?
         <div className='bg-white p-2 shadow-lg rounded-md mb-2'>
@@ -266,7 +303,7 @@ export default function Chatting() {
         </div>    
       
         : null}
-        <h1 className="text-2xl text-left font-semibold ">📢안내</h1>
+        <h1 className="text-2xl text-left font-semibold ">📢 안내</h1>
         {isUserJoined
           ?
           <div className='bg-white p-2 shadow-lg rounded-md'>
@@ -279,7 +316,7 @@ export default function Chatting() {
           </div>
           : null
         }
-        {userExited ? <p className=' text text-red-300'> {userExited}님이 퇴장하였습니다.</p> : null}
+        {userExited ? <p className=' text text-red-300'> {userExited}님이 퇴장하였습니다. <span className=' text-sm'>{`${month}월 ${day}일 ${hours}:${minutes} `}</span></p> : null}
       </div>
 
         <ChatContent className='shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll'>
@@ -358,7 +395,7 @@ export default function Chatting() {
           <div className='mt-1 mb-2 flex justify-center'>
             
           </div>
-          {/*w-full border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300*/}
+
           <input  
             className='w-full  focus:border-pink-400 border-4 rounded-md shadow-md border-gray-300  px-4 py-2 outline-none'
             type="text"

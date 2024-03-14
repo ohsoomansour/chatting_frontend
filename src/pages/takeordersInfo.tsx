@@ -98,7 +98,7 @@ export const TakingOrderInfo = () => {
       }).then(response => response.ok ? refetch() : null)
     }
   //주문 정보에 카카오 PAY의 결제 승인 response -> 존재하면 주문 정보 보여준다. 
-  
+  //필터 또는 선택해서 개별적으로 볼 수 있는 
   return (
     <Wrapper className="mt-6 ">
       <Helmet>
@@ -115,6 +115,8 @@ export const TakingOrderInfo = () => {
           <p className="text-lg">Total Sales:</p>
           <p className="text-lg font-semibold">{ formatter.format(totalSales)}</p>
         </div>
+        
+        <div></div>
       </TotalSales>
       <div className=" grid grid-cols-3 mt-10 gap-x-5 gap-y-10">
         {isLoading 

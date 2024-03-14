@@ -7,8 +7,6 @@ import {Order} from "../components/order";
 import { useQuery } from "react-query";
 import { getallDeals } from "../api";
 import { Helmet } from "react-helmet";
-import { useRecoilState } from "recoil";
-import { isSoundAtom } from "../recoil/atom_sound";
 
 const Wrapper = styled.div`
   dispaly:flex;
@@ -41,25 +39,7 @@ export const PlayerWrapper = styled.div`
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.6);
   }
 `;
-const SoundBtn = styled.div`
-  display: flex;
-  justify-content: center; /* 수평 가운데 정렬 */
-  align-items: center; /* 수직 가운데 정렬 */
-  font-size: 15px;
-  height: 35px;
-  width:150px;
-  margin-top:10px;
-  border: none;
-  outline: none;
-  cursor:pointer;
-  color: #D0EE17;
-  background-color: gray;
-  transition: background-color 0.3s ease-in-out;
-  &:hover {
-    background-color: #696969;
-  }
-  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.4);
-`;
+
 const DownloadSVG = styled.svg`
   width: 30px;
   height: 30px;
@@ -112,14 +92,9 @@ export const TradePlatform = () => {
     ? []
     : Deals   
     ? Deals
-    : [];   // undefined의 경우 [] 반환
+    : [];   // Deals가 undefined의 경우 [] 반환
   console.log(allDeals);
-  const [isSound, setIsSound] = useRecoilState(isSoundAtom);
 
-  const handleChangeSound = () => {
-    setIsSound((prev) => !prev)
-  }
-  
   return ( 
     <Wrapper className=" max-w-full max-h-full border-4 border-gray-100 p-4 shadow-lg rounded-lg ">
       <Helmet>
@@ -158,19 +133,12 @@ export const TradePlatform = () => {
                 height="100%"
                 controls={true}
                 playing={true}
-                volume={isSound ? 1 : 0 }           
+                volume={0}
               >
               </ReactPlayer>
           ) : null}
           </PlayerWrapper>
-          {deal.robot.rbURL.includes('.mp4') || deal.robot.rbURL.includes('.MP4') ? 
-            (<SoundBtn 
-              className="text-center bg-blue-500  text-white font-bold rounded-md shadow-2xl"
-              onClick={() => handleChangeSound()}
-            >
-                {isSound ? "Turn OFF Sound " : "Turn ON Sound " }
-            </SoundBtn> ) 
-          : null}
+          
         </VideoContainer>
         {deal.robot.rbURL.includes('.png') || deal.robot.rbURL.includes('jpg') || deal.robot.rbURL.includes('JPG') ? (
           <img 

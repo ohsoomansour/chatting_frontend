@@ -4,7 +4,8 @@ import { useForm } from "react-hook-form";
 import { Socket, io } from "socket.io-client";
 import styled from 'styled-components';
 import { WS_BASE_PATH } from "./chatting";
-import SimplePeer from 'simple-peer';
+import {motion} from "framer-motion";
+
 const Btn = styled.button`
   display: flex;
   justify-content: center; 
@@ -24,7 +25,7 @@ const Btn = styled.button`
   }
   box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.3);
 `;
-export const RoomContainer = styled.div`
+export const RoomContainer = styled(motion.div)`
   display:flex;
   flex-direction:column;
 `

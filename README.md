@@ -1,62 +1,64 @@
 
 https://blog.naver.com/jooeun0502/221956294941 문법 참조
 https://backendcode.tistory.com/165 예시 참조 
-# 영상을 통해서 설명  
-<img src="URL ">
 
-# 프로젝트 소개 
- 미래에는 ROBOT가 사람과 더 친화적인 환경으로 변화 될 것을 예상해서 만든 'ROBOT Trader' 플랫폼 사이트 입니다.
-## 프로젝트 개발 기간
+
+
+## 프로젝트 소개 
+ 미래에는 ROBOT가 사람과 더 친화적인 환경으로 변화 될 것을 예상해서 만든 'ROBOT Trader 플랫폼'입니다.
+ 공급자가 거래를 등록하고 수요자는 
+ <br/>
+
+### ⏲️프로젝트 개발 기간
  2023년 12월 18일 ~ 2024년 3월 21일
 
-## 개발 환경
+### ⚙️개발 환경
  + Typescript 4.7.1
  + Node.js 18.12.1
  + **library:**React 18.2.0
  + **Framework:**Nestjs 10.2.10
  + **ORM:** TypeORM 
  + **Database:** Postgresql
+ 
+
+## 📌주요 기능 
+
+### 로그인 
+ 
+ - DB에서 id 및 password 값 검증
+ - 로그인 시 jwt 발급: Session storage에 저장하고 이용
+ - 로그아웃 또는 브라우저 창을 닫으면 Sessiong storage에서 제거된다. 
+
+### 회원관리 
+ - 회원가입 시 Admin으로 가입 가능(제한적 가입)
+ - 회원 역할이 Admin의 경우
+
+### 화상 채팅 기능 & 1:1 메세지 가능 
+  <img src=" 화상 채팅 설명 URL ">
+
+ - camera 설정: cam_config.png를 참조하여 **구글 크롬에서 카메라 연결 설정** 을 알려준다. 
+ - droid cam(window/Mac os 가능)을 검색해서 다운로드 후 보조 캠 용도로 사용이 가능하다.   
+ -  DataChanne를 통한 메세지 기능: **상대방 peer에게 메세지 전달**이 가능하고 카메라를 보면서 채팅도 가능하다.   
+
+### 채팅창 
+   <img src=" 채팅 설명 URL ">
+
+ - 우선 채팅방의 이름을 입력(숫자, 문자 가능)하고 입장한다. 
+ - **메세지**뿐만 아니라 **사진 및 동영상도** 업로드가 가능합니다.
+ - 대화 참가자가 채팅방을 Exit 버튼을 누르고 퇴장하면 Home 으로 이동하고 **(아이디)님이 퇴장하였습니다** 메세지가 나옵니다.
 
 
-## Available Scripts
+### 로봇 판매/구매 매칭 기능 
+  <img src=" 등록/구매/판매/배송 설명 URL ">
 
-In the project directory, you can run:
+ - 우선 판매자(공급자, 누구나 가능)가 회사 로고 사진 및 판매 가능한 로봇의 동영상 파일 또는 glb파일을 등록한다. 
+ - 판매자들이 등록해 놓은 곳(메뉴 바에서 로봇 이미지 클릭)거래 가능한 상품을 **미리 담기** 또는 **바로 주문**이 가능하다.
+ - **미리 담기**(메뉴 바에서 카트 모양 )에서 본인이 담은 상품 목록을 확인할 수 있고 여기에서 **주문**이 바로 가능하다.
+ - **결제 상품 보기**(메뉴 바에서 카드 모양)에서 본인이 결제했던 **전자 영수증** 확인이 가능하다.  
+ - 판매자가 등록한 판매 영수증과 **배송 상태**를 변경할 수 있다. 
 
-### `npm start`
+  <br/>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 배포
+ - **Front End:** Netlify 
+ - **Back End:** Heroku 
