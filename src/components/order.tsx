@@ -277,7 +277,7 @@ const formatter = new Intl.NumberFormat('en-US', {
         <button 
           onClick={onSave} 
           className=' text-2xl font-semibold w-full mx-auto mt-2 mr-6 mb-4 border-2 border-gray-100 bg-white p-6 rounded-md shadow-lg hover:bg-pink-300 transition duration-500'
-        > Store
+        > Pre-Save
         </button>  
         <button 
           onClick={onOrder} 

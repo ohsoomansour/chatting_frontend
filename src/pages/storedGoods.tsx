@@ -11,6 +11,7 @@ import { storedGoddsDetailed, storedGoodsAddress, storedGoodsPostal, storedGoods
 import { Helmet } from "react-helmet";
 import { BASE_PATH } from "./logIn";
 import { useHistory } from "react-router-dom";
+import { HandleScroll } from "../components/handleScroll";
 
 
 interface ISeller {
@@ -227,6 +228,7 @@ export const StoredGoods = () => {
             <div></div>  
           )}
         </div>
+        <HandleScroll />
     </Wrapper>
   )
 

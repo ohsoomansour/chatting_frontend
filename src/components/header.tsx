@@ -8,8 +8,6 @@ import { IuserInfo } from "../pages/editUserInfo";
 import { getMyinfo } from "../api";
 
 const Wrapper = styled(motion.div)`
-  display:flex;
-  flex-direction: column;
 `
 const Nav = styled(motion.nav)`
   display:flex;
@@ -109,14 +107,16 @@ const LogInSVG = styled.svg`
   }
 `;
 const UpSVG = styled.svg`
-  fill:#130f40;
+  position:relative;
+  top:10px;
+  fill:black;
   transition: fill 0.3s ease-in-out;
   &:hover {
     fill: #BFC8D7;
   }
 `;
 const DownSVG = styled.svg`
-  fill:#130f40;
+  fill:black;
   transition: fill 0.3s ease-in-out;
   &:hover {
     fill: #BFC8D7;
@@ -128,6 +128,10 @@ const CompanyName = styled.h1`
   font-size:30px;
   font-weight: 400;
   font-style: normal;
+`;
+
+const ButtonWrapper = styled.div`
+  background-color:${props => props.theme.bgColor};
 `;
 
 export enum MemberRole {
@@ -177,19 +181,18 @@ export const Header: React.FC = () => {
   }
   
   return(
-   <Wrapper //min-w-full mx-auto bg-white p-6 rounded-md shadow-md
-      className=" flex-col justify-center items-center "
+   <Wrapper 
+      className=" flex-col  "
    >
     <Nav 
       className=" flex-col justify-center  min-w-full mx-auto bg-white p-2 rounded-md shadow-md"
-      //animate={headerYAnimation}
-      //transition={{ type: "linear" }}
+      animate={headerAnimation}
     >
       
       <HeaderPart 
         className="flex justify-around items-center "
         initial={{ scaleY: 1}} //랜더링 되었을 때 값 
-        animate={headerAnimation}
+        
         transition={{ type: "linear" }}
       >
         <div><CompanyName >ROBOT Trader</CompanyName></div>
@@ -272,30 +275,30 @@ export const Header: React.FC = () => {
       </HeaderPart>
       
     </Nav>
-    <div className=" flex justify-center align-bottom">
-        {headerCLose ? 
-          <Button
-            className=""
+    <ButtonWrapper className=" flex justify-center items-center shadow-lg">
+      {headerCLose ? 
+        <Button
+          onClick={toggleSearch}
+          style={{cursor: "pointer"}}
+          className="flex justify-center items-center"
+        >
+          <DownSVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" height="50px" width="60px">
+            <path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"/>
+          </DownSVG> 
+        </Button>
+          : (
+        <Button
             onClick={toggleSearch}
             style={{cursor: "pointer"}}
+            className="flex justify-center items-center"
           >
-            <DownSVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" height="45px" width="45px">
-              <path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"/>
-             </DownSVG> 
-          </Button>
-            : (
-          <Button
-              className=""
-              onClick={toggleSearch}
-              style={{cursor: "pointer"}}
-            >
-            <UpSVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" height="45px" width="45px">
-              <path d="M182.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8H288c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z"/>
-            </UpSVG>
-          </Button>
-          )
-        }
-      </div> 
+          <UpSVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" height="50px" width="60px">
+            <path d="M182.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8H288c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z"/>
+          </UpSVG>
+        </Button>
+        )
+      }
+    </ButtonWrapper> 
   </Wrapper>
 
   )

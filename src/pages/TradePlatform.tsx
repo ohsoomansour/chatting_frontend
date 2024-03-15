@@ -8,6 +8,10 @@ import { useQuery } from "react-query";
 import { getallDeals } from "../api";
 import { Helmet } from "react-helmet";
 
+import ScrollToTopButton from "../components/ScrollToTop";
+import { useState } from "react";
+import { HandleScroll } from "../components/handleScroll";
+
 const Wrapper = styled.div`
   dispaly:flex;
   flex-direction:column;
@@ -85,6 +89,7 @@ export interface IDeal{
 }
 
 export const TradePlatform = () => {
+  const [isVisible, setIsVisible] = useState(false);
   const {data:Deals, isLoading} = useQuery<IDeal[]>(
     ["getDeals", "Deal"], () => getallDeals() 
   )
@@ -94,7 +99,13 @@ export const TradePlatform = () => {
     ? Deals
     : [];   // Deals가 undefined의 경우 [] 반환
   console.log(allDeals);
-
+  
+  function handleScroll(){
+    const scrollPosition = window.scrollY;
+    const triggerPosition = 200;
+    setIsVisible(scrollPosition > triggerPosition);
+  }
+  window.addEventListener('scroll', handleScroll);
   return ( 
     <Wrapper className=" max-w-full max-h-full border-4 border-gray-100 p-4 shadow-lg rounded-lg ">
       <Helmet>
@@ -156,7 +167,7 @@ export const TradePlatform = () => {
       </div>
 
       ))}
-      
+    <HandleScroll />
     </Wrapper>
   )
 }

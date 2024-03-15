@@ -5,6 +5,10 @@ import { useRecoilValue } from "recoil";
 import { tokenState } from "../recoil/atom_token";
 import { Loading } from "../components/loading";
 import { Helmet } from "react-helmet";
+import { useState } from "react";
+
+import ScrollToTopButton from "../components/ScrollToTop";
+import { HandleScroll } from "../components/handleScroll";
 
 
 const Wrapper = styled.div``;
@@ -85,6 +89,7 @@ interface MyOrderInfos{
 
 let page:number = 1;
 export const OrderInfo = () => {
+  const [isVisible, setIsVisible] = useState(false);
   const token = useRecoilValue(tokenState);
   const { data: myOrderInfo, isLoading, refetch }  = useQuery<MyOrderInfos>(
     ["customerOrderInfo", "ORDER"], () => getMyOrder(token, page)
@@ -245,7 +250,8 @@ export const OrderInfo = () => {
           ) : (
             <div></div>  
           )}
-        </div>  
+        </div>
+        <HandleScroll />
     </Wrapper>
   );
 }

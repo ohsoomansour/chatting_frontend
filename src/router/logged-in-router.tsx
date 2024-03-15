@@ -27,7 +27,7 @@ import { MyPage } from "../pages/MyPage";
 
 const userRoutes = [
   {path: "/", component: <Home />},
-  {path: "/streaming", component: <Streaming /> },
+  {path: "/conference", component: <Conference />},
   {path: "/member/activate", component: <ActiveAccount /> },
   {path: "/order/info/", component: <OrderInfo /> },
   {path: "/order/takeorders", component: <TakingOrderInfo />},
@@ -39,7 +39,7 @@ const userRoutes = [
 
 const adminRoutes = [
   {path: "/admin", component: <ManageMembers />},
-  {path: "/conference", component: <Conference />}
+  
 ]
 
 export const LoggedInRouter = () => {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
 import styled from 'styled-components';
 import {  useRecoilValue, useSetRecoilState } from 'recoil';
@@ -21,6 +21,7 @@ const ChattingWrapper=styled(motion.div)`
 const ChatContent=styled.div`
   color:${(props) => props.theme.textColor};
   background-color: whitesmoke;
+  
 `;
 export const UI = styled.div`
   display:flex;
@@ -82,6 +83,11 @@ interface IUserExited{
   userId:string;
   time:string;
 }
+interface IParticapant{
+  participant:string;
+  time:string;
+}
+
 //"wss://trade-2507d8197825.herokuapp.com:8080/(네임스페이스)"  
 //git add  -> git commit -m 
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
@@ -95,7 +101,7 @@ export default function Chatting() {
   const setDarkAtom = useSetRecoilState(isDarkAtom);
   const [roomName, setRoomName] = useState('');
   const [joinedUserList, setJoinedUserList] = useState<string[]>(['']);
-  const [particapants, setParticapants] = useState<string[]>(['']);
+  const [particapants, setParticapants] = useState<IParticapant>();
   const [userExited, setUserExited ] = useState<IUserExited>();
   const {register, getValues} = useForm({mode: "onChange"})
   const [sc, setSocket] = useState<Socket>();
@@ -106,7 +112,9 @@ export default function Chatting() {
   const [isUserJoined, setUserJoined] = useState(false);
   const [isJoined, setIsJoined] = useState(false);
   const history = useHistory();
-
+  
+  // 메시지가 업데이트될 때마다 스크롤을 가장 아래로 이동
+  
   useEffect(() => {
     // ✅https://socket.io/docs/v4/client-options/ 참조
     let sc = io(`${WS_BASE_PATH}`, {
@@ -129,7 +137,7 @@ export default function Chatting() {
       setJoinedUserList(userInfo.userList);
     })
     sc.on('participants', (p) => {
-      setParticapants(p.participant);
+      setParticapants(p);
     })
     sc.on('exit', (userInfos) => {
       setUserExited({
@@ -146,7 +154,9 @@ export default function Chatting() {
   }, [])
   const chatViewAnimation = useAnimation();
   const [joining, setJoining] = useState(false);
-  const onJoining = (event:any) => {                  //✅사용자의 아이디 고객과 상담 채팅 구현
+  const [init, setInit] = useState(true)
+ 
+  const onJoining = (event:any) => {     
     event.preventDefault();
     //아이디가 없을 경우의 validation 적시 
     if(userId === ''){
@@ -164,18 +174,30 @@ export default function Chatting() {
         transition:{duration: 0.5 }
       })
     }
-    //message 비우기
-    setIsJoined(true); 
-    setUserJoined(true)
-    const {chattingRoomId} =  getValues()
-    setRoomName(chattingRoomId)
-
-    sc!.emit('joinRoom', { userName: userId, roomId: chattingRoomId } )
+    const {chattingRoomId} =  getValues();
+    if(init){
+      setIsJoined(true); 
+      setUserJoined(true)
+      setRoomName(chattingRoomId);
+      setInit(false);
+      sc!.emit('joinRoom', { userName: userId, roomId: chattingRoomId } )
+    } else if(!init){
+      //이전 방에서 다른 방으로 변경하는 경우, 초기 랜더링 -> 감지 true -> 그 후 false  
+      if(roomName  !== chattingRoomId){
+        alert(`현재 room 이름${roomName} room에서 채팅방 나가기(Exit) 버튼을 누르고 참여 해주세요!💛`)
+        
+        return;
+      }
+      setIsJoined(true); 
+      setUserJoined(true);
+      setRoomName(chattingRoomId);
+      sc!.emit('joinRoom', { userName: userId, roomId: chattingRoomId } )
+    }
   }
+
   let fileUrl: string = '';
   const sendMessage = async (event:any) => {
     event.preventDefault();
-    const {chattingRoomId} =  getValues()
     try {
       if (DraggedFile.length !== 0) {
         setLoading(true);
@@ -198,13 +220,10 @@ export default function Chatting() {
          alert('로그인 또는 참가 닉네임을 설정하세요!')
          return new Error('닉네임 없음');
        } else {
-      // 서버로 메시지 전송: 메세지 + 이미지를 같이 보낸다.
-       let isMe = true;
-       // 보낼때 id값으로 구분해주자! message. === useId ? 그렇지 않으면 반대 !  
-       sc!.emit('message', [inputMessage, fileUrl, chattingRoomId, userId]); 
+       // 보낼때 id값으로 구분해주자!
+       sc!.emit('message', [inputMessage, fileUrl, roomName, userId]); 
        setInputMessage('');
        fileUrl = String('');
-       console.log("메세지가 있는 경우 fileUrl 값 확인:")
        setDragFile([]);
       }
        
@@ -213,9 +232,8 @@ export default function Chatting() {
          alert('로그인 또는 참가 닉네임을 설정하세요!')
          return new Error('닉네임 없음');
        } else if (fileUrl !== ''){
-        //⭐FE&BE에서 userId를 제거하고 '보낸 메세지를 바탕으로 컨텐츠' / '받는 메세지를 바탕으로 컨텐츠'  
-        //⭐ 보낼때 isMe: true 추가
-         sc!.emit('message', [`${userId}:`+ inputMessage, fileUrl, chattingRoomId, userId]); 
+
+         sc!.emit('message', [`${userId}:`+ inputMessage, fileUrl, roomName, userId]); 
          setInputMessage('');
          setDragFile([]);
        }
@@ -239,7 +257,7 @@ export default function Chatting() {
       'video/mp4': ['.mp4', '.MP4'],
     }
   });
-  //퇴장을 안하고 홈으로 이동하면 참가자에는 남아있다 
+
   const onExit = (e:any) => {
     e.preventDefault();
     console.log("joinedUserList", joinedUserList);
@@ -251,9 +269,22 @@ export default function Chatting() {
     history.push("/");
 
   }
+
+  // 스크롤 위치를 참조할 수 있는 함수
+  
+  /*if (chatContentRef.current) {
+      chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
+    }
+  }, [messages])  */
+  const chatContentRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if(chatContentRef.current){
+      chatContentRef.current.scrollTop  = chatContentRef.current.scrollHeight ;
+    }
+  }, [messages])
   return (
   <ChattingWrapper 
-    className=''
+    className=' p-2'
 
   >
     <Helmet>
@@ -262,7 +293,7 @@ export default function Chatting() {
 
     <RoomContainer 
       id="welcom" 
-      className="max-w-md mx-auto flex justify-center  bg-white p-6 rounded-md shadow-lg mt-1"
+      className="max-w-md mx-auto flex justify-center  bg-white p-6 rounded-md shadow-lg "
       animate={chatViewAnimation}
       transition={{ type: "tween"}}
     >
@@ -299,17 +330,17 @@ export default function Chatting() {
       ? 
     <ChatContainer 
       className='mx-auto p-4 flex-1 flex flex-col items-center justify-center'
-
+      
     >
      
-      <div className="rounded-lg w-2/4 bg-gray-300 shadow-lg text-white p-4">
+      <div className="rounded-lg w-2/4 bg-gray-300 shadow-lg text-white p-4"  >
         <h1 className="text-2xl text-left font-semibold">🙇‍♀️ 참가자</h1>
         {isUserJoined 
          ?
-        <div className='bg-white p-2 shadow-lg rounded-md mb-2'>
+        <div className='bg-white p-3 shadow-lg rounded-md mb-2'>
           <ul>
             {joinedUserList && joinedUserList!.map((user, index) => (
-              <span key={index} className="text text-black mb-2 font-semibold">{user}님 </span>
+              <span key={index} className="text text-black mb-2 ">{user}님 </span>
             ))}
           </ul>
         </div>    
@@ -318,11 +349,11 @@ export default function Chatting() {
         <h1 className="text-2xl text-left font-semibold ">📢 안내</h1>
         {isUserJoined
           ?
-          <div className='bg-white p-2 shadow-lg rounded-md'>
+          <div className='bg-white p-3 shadow-lg rounded-md'>
             <ul>
-              {joinedUserList && particapants!.map((userName, index) => (
-                  <li key={index} className='text text-black font-semibold'>{userName}</li>
-                ))}
+              {joinedUserList && 
+                <li className='text text-black '>{particapants?.participant} <span className=' text-sm'>{particapants?.time}</span></li>
+               }
             </ul>
               
           </div>
@@ -331,13 +362,13 @@ export default function Chatting() {
         {userExited ? <p className=' text text-red-300'> {userExited.userId}님이 퇴장하였습니다. <span className=' text-sm'>{userExited.time}</span></p> : null}
       </div>
 
-        <ChatContent className='shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll'>
+        <ChatContent ref={chatContentRef} className='shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll'>
           <h3 className='text-lg text-center mt-2 font-bold'>대화 내용</h3>
           {messages && messages.map((message, index ) => (
            message.myEmaiId === userId
             ? 
             (
-            <MyMessageWrapper>
+            <MyMessageWrapper >
               <Mymessage key={index}>
                 <div>
                   <p className='mt-4 text-left' >{message.myEmaiId}</p>
@@ -460,4 +491,9 @@ export default function Chatting() {
 
 
 
+
+
+function userRef(arg0: null) {
+  throw new Error('Function not implemented.');
+}
 
