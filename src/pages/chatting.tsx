@@ -93,7 +93,7 @@ interface IParticapant{
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
 //wss:// 스킴은 기본적으로 443 포트를 사용하므로 포트를 지정할 필요가 없습니다.
  ? `wss://trade-2507d8197825.herokuapp.com`    //12.24일, 11:25`wss://trade.herokuapp.com`
- : "http://localhost:8080"
+ : "http://localhost:8080";
 
 
 export default function Chatting() {
@@ -351,14 +351,14 @@ export default function Chatting() {
           <div className='bg-white p-3 shadow-lg rounded-md'>
             <ul>
               {joinedUserList && 
-                <li className='text text-black '>{particapants?.participant} <span className=' text-sm'>{`${new Date(particapants!.time)}`}</span></li>
+                <li className='text text-black '>{particapants?.participant} <span className=' text-sm'>{particapants?.time}</span></li>
                }
             </ul>
               
           </div>
           : null
         }
-        {userExited ? <p className=' text text-red-300'> {userExited.userId}님이 퇴장하였습니다. <span className=' text-sm'>{`${new Date(userExited.time)}`}</span></p> : null}
+        {userExited ? <p className=' text text-red-300'> {userExited.userId}님이 퇴장하였습니다. <span className=' text-sm'>{userExited.time}</span></p> : null}
       </div>
 
         <ChatContent ref={chatContentRef} className='shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll'>
