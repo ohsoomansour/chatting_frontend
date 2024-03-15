@@ -126,7 +126,7 @@ export const TakingOrderInfo = () => {
             <div key={index} className=" mb-2 max-w-md mx-auto p-6 bg-white rounded-lg shadow-md ">  
               <h2 className="text-2xl text-center font-semibold mb-4">Electronic Receipt</h2>
               <div className="flex justify-between mb-4">
-                <p className="text-sm text-gray-600">Date: {order.createdAt}</p>
+                <p className="text-sm text-gray-600">Date: {`${new Date(order.createdAt)}`}</p>
                 <p className="text-sm text-gray-600">Order Number:{order.id}</p>
               </div>
               <div className="flex justify-between mb-4">

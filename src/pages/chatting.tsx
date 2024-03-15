@@ -185,7 +185,6 @@ export default function Chatting() {
       //이전 방에서 다른 방으로 변경하는 경우, 초기 랜더링 -> 감지 true -> 그 후 false  
       if(roomName  !== chattingRoomId){
         alert(`현재 room name:${roomName} 에서 채팅방 나가기(Exit) 버튼을 누르고 참여 해주세요!💛`)
-        
         return;
       }
       setIsJoined(true); 
@@ -352,14 +351,14 @@ export default function Chatting() {
           <div className='bg-white p-3 shadow-lg rounded-md'>
             <ul>
               {joinedUserList && 
-                <li className='text text-black '>{particapants?.participant} <span className=' text-sm'>{particapants?.time}</span></li>
+                <li className='text text-black '>{particapants?.participant} <span className=' text-sm'>{`${new Date(particapants!.time)}`}</span></li>
                }
             </ul>
               
           </div>
           : null
         }
-        {userExited ? <p className=' text text-red-300'> {userExited.userId}님이 퇴장하였습니다. <span className=' text-sm'>{userExited.time}</span></p> : null}
+        {userExited ? <p className=' text text-red-300'> {userExited.userId}님이 퇴장하였습니다. <span className=' text-sm'>{`${new Date(userExited.time)}`}</span></p> : null}
       </div>
 
         <ChatContent ref={chatContentRef} className='shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll'>
@@ -392,6 +391,7 @@ export default function Chatting() {
                       height="30%"
                       controls={true}
                       playing={true}
+                      volume={0}
                   />
                    
                   ) : null}
