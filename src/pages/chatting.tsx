@@ -184,7 +184,7 @@ export default function Chatting() {
     } else if(!init){
       //이전 방에서 다른 방으로 변경하는 경우, 초기 랜더링 -> 감지 true -> 그 후 false  
       if(roomName  !== chattingRoomId){
-        alert(`현재 room 이름${roomName} room에서 채팅방 나가기(Exit) 버튼을 누르고 참여 해주세요!💛`)
+        alert(`현재 room name:${roomName} 에서 채팅방 나가기(Exit) 버튼을 누르고 참여 해주세요!💛`)
         
         return;
       }
