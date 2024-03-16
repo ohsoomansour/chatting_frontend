@@ -114,11 +114,11 @@ export function Conference() {
   const [cameraId, setCameraId] = useState<string>("")
   const [initCamera, setInitCamera] = useState<IcameraDevicesInfo>()
   const [socket, setSocket] = useState<Socket>();
-  const [roomId, setRoomId] = useState<string>("")
+  const [roomId, setRoomId] = useState<string>("");
   const [camON, setCamON] = useState(false);
   //const [sendMessage, setSendmessage] = useState<IChat[]>([{msg:"", isMe: true}]);
   const [messages, setMessages] = useState<IChat[]>([{msg:"", isMe: true}]);
-  const {register, getValues} = useForm({mode:"onChange"});
+  const {register, getValues, reset} = useForm({mode:"onChange"});
 
   // 강의에서는 PeerA가 'Brave' PeerB가 'FireFox'
   useEffect(() => {  
@@ -154,7 +154,7 @@ export function Conference() {
       // PeerA, FireFox 브라우저에서만 실행 
       await myPeerConnection.setLocalDescription(offer); 
       console.log("PeerA just Join!")
-      // Peer A가 Pe er B에 보낸다. 
+      // Peer A가 Peer B에 보낸다. 
       socket.emit("offer", offer, roomName)
     })
     socket.on("offer", async (offer) => {
@@ -163,7 +163,6 @@ export function Conference() {
         console.log(event);
         myDataChannel = event.channel; //peer B에서 설정
         //🌟 대화형 구현 2
-        
         myDataChannel.addEventListener("message", (event:any) => {
           console.log("Peer B Received message:", event.data);
           setMessages((prev) => [...prev, {msg:event.data, isMe: false}]) //setMessages((prev) => [...prev, event.data]); 
@@ -177,12 +176,7 @@ export function Conference() {
             myDataChannel.send("Hi Peer A")
           }
         };
-        /*
-        myDataChannel.onmessage = (event) =>{
-          console.log("offer에서 메세지 수신")
-          console.log(event.data)
-          
-        }*/
+
       })
       console.log("received the offer");
     //Peer B(크롬)에서만 실행하며(내peer의 description에서 설정)'offer'를 받아서 '상대방의 peer의 description'을 세팅한다. 
@@ -192,14 +186,9 @@ export function Conference() {
       socket.emit("answer", answer, roomName)
       console.log("sent the answer");
     })
-    
-    
-
     socket.on("chat", () => {
-
     })
 
-    
     socket.on("answer", async(answer) => {
       console.log("received the answer");
       await myPeerConnection.setRemoteDescription(answer)
@@ -233,7 +222,12 @@ export function Conference() {
       socket.disconnect();
     };
   }, [])
-
+  const chatContentRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if(chatContentRef.current){
+      chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
+    }
+  }, [messages])
 
   //유저의 카메라와 오디오를 가져온다. 
   const getUserMedia = async (cameraId:string) => {
@@ -351,6 +345,7 @@ export function Conference() {
     const {sendMessage} = getValues();
     setMessages((prev) => [...prev, {msg: sendMessage, isMe: true}]);
     myDataChannel.send(sendMessage);
+    reset({sendMessage : ''});
   }
   const currentTime = formatCurrentTime();
   return (
@@ -376,18 +371,18 @@ export function Conference() {
   
       {camON ?
       <CamWrapper>
-        <VideoContainer className="mt-4">
+        <VideoContainer className="mt-2">
           <video  autoPlay loop muted  ref={videoRef}></video>
           <video  autoPlay loop muted  ref={peerVideoRef} className="ml-4"></video>
         </VideoContainer >
-        <div>
-          <select onChange={handleCameraChange} id="camerasSelectRef" ref={selectRef} >
+        <div className="flex flex-col items-center mt-2 mb-2  ">
+          <select className="p-1 rounded-md focus:outline-none focus:border-gray-300 border-4" onChange={handleCameraChange} id="camerasSelectRef" ref={selectRef} >
             <option value={""}>{"Camera Option"}</option>
             {cameraDevices?.map((camera, index) => (
               <option 
                 key={index} 
                 value={camera.deviceId}
-                >
+              >
                 {camera.label}
               </option>
             ))}
@@ -401,7 +396,7 @@ export function Conference() {
 
       : null
       }
-      <ChatContent className=" shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll">
+      <ChatContent ref={chatContentRef} className=" shadow-lg rounded-lg custom-scrollbar w-2/4 h-96 overflow-y-scroll overflow-x-scroll">
         {messages.map((message, index) => (
 
           message.isMe 

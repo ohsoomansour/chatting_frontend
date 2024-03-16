@@ -114,7 +114,7 @@ export default function Chatting() {
   const history = useHistory();
   
   // 메시지가 업데이트될 때마다 스크롤을 가장 아래로 이동
-  
+
   useEffect(() => {
     // ✅https://socket.io/docs/v4/client-options/ 참조
     let sc = io(`${WS_BASE_PATH}`, {
@@ -180,11 +180,11 @@ export default function Chatting() {
       setUserJoined(true)
       setRoomName(chattingRoomId);
       setInit(false);
-      sc!.emit('joinRoom', { userName: userId, roomId: chattingRoomId } )
+      sc!.emit('joinRoom', { userName: userId, roomId: chattingRoomId} )
     } else if(!init){
       //이전 방에서 다른 방으로 변경하는 경우, 초기 랜더링 -> 감지 true -> 그 후 false  
       if(roomName  !== chattingRoomId){
-        alert(`현재 room name:${roomName} 에서 채팅방 나가기(Exit) 버튼을 누르고 참여 해주세요!💛`)
+        alert(`현재 room name:${roomName}에서 채팅방 나가기(Exit) 버튼을 누르고 참여 해주세요!💛`)
         return;
       }
       setIsJoined(true); 
@@ -216,7 +216,7 @@ export default function Chatting() {
 
      if (inputMessage.trim() !== '') {
        if(userId === ''){
-         alert('로그인 또는 참가 닉네임을 설정하세요!')
+         alert('로그인 또는 참가 닉네임을 설정하세요!💛');
          return new Error('닉네임 없음');
        } else {
        // 보낼때 id값으로 구분해주자!
@@ -228,11 +228,11 @@ export default function Chatting() {
        
      } else if(inputMessage.trim() === '') {
        if(userId === ''){
-         alert('로그인 또는 참가 닉네임을 설정하세요!')
+         alert('로그인 또는 참가 닉네임을 설정하세요!💛');
          return new Error('닉네임 없음');
        } else if (fileUrl !== ''){
 
-         sc!.emit('message', [`${userId}:`+ inputMessage, fileUrl, roomName, userId]); 
+         sc!.emit('message', [inputMessage, fileUrl, roomName, userId]); 
          setInputMessage('');
          setDragFile([]);
        }
@@ -270,11 +270,6 @@ export default function Chatting() {
   }
 
   // 스크롤 위치를 참조할 수 있는 함수
-  
-  /*if (chatContentRef.current) {
-      chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
-    }
-  }, [messages])  */
   const chatContentRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if(chatContentRef.current){
@@ -373,8 +368,7 @@ export default function Chatting() {
                   <p className='mt-4 text-left' >{message.myEmaiId}</p>
                   <p className='mr-4 ml-4 bg-white p-2 shadow-lg rounded-md' >{message.msg}</p>
                   <p className='text text-right text-sm mr-4' key={message.time}>{message.time}</p>
-                </div>
-                
+                </div>  
               </Mymessage>
               <MyImg>
                   {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
@@ -406,7 +400,7 @@ export default function Chatting() {
               <PeerMessage key={index}>
                 <div>
                   <p className='mt-4' >{message.myEmaiId}</p>
-                  <p className='mr-4 ml-4 bg-white p-2 shadow-lg rounded-md' key={index}>{message.msg}</p>
+                  <p className='mr-4 ml-4 bg-white p-2 shadow-lg rounded-md' >{message.msg}</p>
                   <p className='text text-sm text-right' key={message.time}>{message.time}</p>
                 </div>
               </PeerMessage>
@@ -427,7 +421,6 @@ export default function Chatting() {
                       playing={true}
                       muted={true}
                       volume={0}
-                      //autoPlay={false}
                   />
                   ) : null}
                   
@@ -483,17 +476,3 @@ export default function Chatting() {
   
   )
 } 
-
-
-
-
-
-
-
-
-
-
-function userRef(arg0: null) {
-  throw new Error('Function not implemented.');
-}
-
