@@ -5,7 +5,7 @@ import { tokenState } from "../recoil/atom_token";
 import { userIdState } from "../recoil/atom_user";
 import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
-import { getMyinfo } from "../api";
+import { BASE_PATH, getMyinfo } from "../api";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 const EditProfileWrapper = styled.div`
@@ -28,6 +28,11 @@ export interface IuserInfo{
   lastActivityAt: Date;
   isDormant: boolean;
 }
+interface IResult {
+  ok:boolean;
+  error:string;
+}
+
 export const EditUserInfo  = () => {
   const {register, getValues, formState:{errors} } = useForm<IeditUserInfo>({"mode": "onChange"})
   const privateInfoMatch = useRouteMatch("/myInfo/privateInfo"); 
@@ -44,7 +49,7 @@ export const EditUserInfo  = () => {
     'x-jwt': `${token}`,
   });
   const onModify = async (e: any) => {
-    e.preventDefault(); //새로고침 방지
+    e.preventDefault(); 
     const {email, password, address } = getValues() //이건 변경된 email 
     if(!(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email))){
       alert('이메일 형식이 아닙니다!💛');
@@ -59,15 +64,22 @@ export const EditUserInfo  = () => {
 
     setUserId(email);
     
-    await fetch(`http://localhost:3000/member/update/${whoamI?.id}`, {
-      headers: headers,
-      method: 'PATCH',
-      body: JSON.stringify({
-        userId:email,
-        password:password,
-        address:address,
+    const result:IResult = await(
+      await fetch(`${BASE_PATH}/member/update/${whoamI?.id}`, {
+        headers: headers,
+        method: 'PATCH',
+        body: JSON.stringify({
+          userId:email,
+          password:password,
+          address:address,
+        })  
       })
-    }).then(response => response.ok ? history.push("/login") : null)
+    ).json();
+    if(!result.ok){
+      alert(result.error);
+    } else {
+      window.location.href = '/';
+    }
   }
   return (
     <div className=" w-full h-2/4 flex flex-col items-center justify-center shadow-lg">

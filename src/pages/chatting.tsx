@@ -42,7 +42,7 @@ export const RplayerWrapper = styled.div`
 const MyMessageWrapper = styled.div`
   display: flex;
   flex-direction:column;
-`
+`;
 const PeerMessageWrapper = styled.div`
   display: flex;
   flex-direction:column;
@@ -50,12 +50,12 @@ const PeerMessageWrapper = styled.div`
 const MyImg = styled.div`
   display: flex;
   flex-direction: row-reverse;
-  margin-right:200px;
+  
 `;
 const PeerImg = styled.div`
   display: flex;
   flex-direction: row;
-  margin-left:200px;
+  
 `;
 
 
@@ -105,7 +105,7 @@ export default function Chatting() {
   const [userExited, setUserExited ] = useState<IUserExited>();
   const {register, getValues} = useForm({mode: "onChange"})
   const [sc, setSocket] = useState<Socket>();
-  const [messages, setMessages] = useState<IProps[]>([{msg:'', url: '', time: '',  myEmaiId: ""}]);
+  const [messages, setMessages] = useState<IProps[]>([{msg:'', url: '', time: '',  myEmaiId: ""}]); //[{msg:'', url: '', time: '',  myEmaiId: ""}]
   const [inputMessage, setInputMessage] = useState('');
   const [DraggedFile, setDragFile] = useState([])
   const [isLoading, setLoading] = useState(false);
@@ -322,12 +322,8 @@ export default function Chatting() {
     </RoomContainer>
     {isJoined 
       ? 
-    <ChatContainer 
-      className='mx-auto p-4 flex-1 flex flex-col items-center justify-center'
-      
-    >
-     
-      <div className="rounded-lg w-2/4 bg-gray-300 shadow-lg text-white p-4"  >
+    <ChatContainer className='mx-auto p-4 flex-1 flex flex-col items-center justify-center'>
+      <div className="rounded-lg w-2/4 bg-gray-300 shadow-lg text-white p-4">
         <h1 className="text-2xl text-left font-semibold">🙇‍♀️ 참가자</h1>
         {isUserJoined 
          ?
@@ -346,7 +342,7 @@ export default function Chatting() {
           <div className='bg-white p-3 shadow-lg rounded-md'>
             <ul>
               {joinedUserList && 
-                <li className='text text-black '>{particapants?.participant} <span className=' text-sm'>{particapants?.time}</span></li>
+                <li className='text text-black '>{particapants?.participant} <span className=' text-xs'>{particapants?.time}</span></li>
                }
             </ul>
               
@@ -363,18 +359,19 @@ export default function Chatting() {
             ? 
             (
             <MyMessageWrapper >
-              <Mymessage key={index}>
+              <Mymessage key={index} className=' mr-1'>
                 <div>
-                  <p className='mt-4 text-left' >{message.myEmaiId}</p>
-                  <p className='mr-4 ml-4 bg-white p-2 shadow-lg rounded-md' >{message.msg}</p>
-                  <p className='text text-right text-sm mr-4' key={message.time}>{message.time}</p>
+                  <p className='mt-4 ' >{message.myEmaiId}</p>
+                  {message.msg !== '' ? <p className=' bg-white p-2 shadow-lg rounded-md' >{message.msg}</p>
+                  : null}      
+                  <MyImg>
+                  {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
+                    <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className=' mt-1 rounded-md' />  
+                    ): null}
+                  </MyImg>
+                  
                 </div>  
               </Mymessage>
-              <MyImg>
-                  {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
-                    <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className=' ml-4 mt-1 rounded-md' />  
-                  ): null}
-              </MyImg>
               <RplayerWrapper>  
                 {(message.url.includes('.mp4') || message.url.includes('.MP4') )? (
                     <ReactPlayer 
@@ -387,44 +384,45 @@ export default function Chatting() {
                       playing={true}
                       volume={0}
                   />
-                   
                   ) : null}
-                  
               </RplayerWrapper>
-            
+              {message.time !== ''? <p className='text text-right text-xs mr-4' key={message.time}>{message.time}</p> : null}
             </MyMessageWrapper>
             )
             :
             (
             <PeerMessageWrapper>
-              <PeerMessage key={index}>
+              <PeerMessage key={index} className='ml-1'>
                 <div>
                   <p className='mt-4' >{message.myEmaiId}</p>
-                  <p className='mr-4 ml-4 bg-white p-2 shadow-lg rounded-md' >{message.msg}</p>
-                  <p className='text text-sm text-right' key={message.time}>{message.time}</p>
+                  {message.msg !== '' ? <p className=' bg-white p-2 shadow-lg rounded-md' >{message.msg}</p> : null }
+                  <PeerImg>
+                    {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
+                      <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className='mt-1 rounded-md' />  
+                    ): null}
+                  </PeerImg>
+                  {message.msg !== ''? <p className='text-right text-sm ml-1' key={message.time}>{message.time}</p> : null}
                 </div>
               </PeerMessage>
-              <PeerImg>
-                {(message.url.includes('.png') || message.url.includes('.jpg') || message.url.includes('.JPG') ) ? (
-                  <img key={message.url} alt='사진' src={message.url} style={{ width: "300px"}} className=' ml-4 mt-1 rounded-md' />  
-                ): null}
-              </PeerImg>
-              <RplayerWrapper>  
-                {(message.url.includes('.mp4') || message.url.includes('.MP4') )? (
-                    <ReactPlayer 
-                      key={message.url}
-                      className="player "
-                      url={message.url}
-                      width="80%"
-                      height="30%"
-                      controls={true}
-                      playing={true}
-                      muted={true}
-                      volume={0}
-                  />
-                  ) : null}
-                  
-              </RplayerWrapper>
+
+              {(message.url.includes('.mp4') || message.url.includes('.MP4') )? (
+                <div>
+                  <RplayerWrapper>  
+                      <ReactPlayer 
+                        key={message.url}
+                        className="player "
+                        url={message.url}
+                        width="80%"
+                        height="30%"
+                        controls={true}
+                        playing={true}
+                        muted={true}
+                        volume={0}
+                    />
+                </RplayerWrapper>
+              <p className='text-right mr-16  text-sm ml-1' key={message.time}>{message.time}</p>
+              </div>
+              ) : null}
             </PeerMessageWrapper>
             )
         ))}

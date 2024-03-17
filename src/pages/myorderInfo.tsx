@@ -89,7 +89,6 @@ interface MyOrderInfos{
 
 let page:number = 1;
 export const OrderInfo = () => {
-  const [isVisible, setIsVisible] = useState(false);
   const token = useRecoilValue(tokenState);
   const { data: myOrderInfo, isLoading, refetch }  = useQuery<MyOrderInfos>(
     ["customerOrderInfo", "ORDER"], () => getMyOrder(token, page)

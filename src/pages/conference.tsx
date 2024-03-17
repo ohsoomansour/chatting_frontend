@@ -64,10 +64,10 @@ const ChatContent=styled.div`
   margin-top: 100px;
 `;
 
-export const PeerMessage = styled.div`
+export const PeerMessage = styled.span`
   display:flex;
   flex-direction: row;
-`
+`;
 export const Mymessage = styled.div`
   display:flex;
   flex-direction: row-reverse;
