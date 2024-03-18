@@ -9,7 +9,7 @@ interface Imember {
   userId:string;
   name:string;
   address:string;
-  lastActivityAt:Date;
+  lastActivityAt:string;
   isDormant:boolean | null;
   memberRole:string;
 }
@@ -18,7 +18,7 @@ interface IschUser{
   userId:string;
   name:string;
   address:string;
-  lastActivityAt:Date;
+  lastActivityAt:string;
   isDormant:boolean | null;
   memberRole:string;
 }
