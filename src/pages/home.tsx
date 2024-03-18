@@ -105,20 +105,6 @@ export const Home = () => {
             
         </Canvas>
 
-        <Canvas camera={{ position: [0, 4, 7], fov:75 }} style={{ width: '50%', height: '30vh' }}>
-          <OrbitControls autoRotate={true}/>
-          <group rotation-y={Math.PI / 2} scale={[0.6, 0.6, 0.6]} >
-            <mesh
-            castShadow
-            receiveShadow
-              >
-              <HexaRbot />
-            </mesh>
-          </group>
-          <ambientLight intensity={1} />
-          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
-            
-        </Canvas>
       </div>
       <HandleScroll />
     </div>

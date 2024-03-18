@@ -59,22 +59,25 @@ export const SignUpForMember = () => {
         return;
       }
       const {email, password, name, address, mobilePhone_number, memberRole} = getValues();
-      const result = await fetch(`${BASE_PATH}/member/join`, {
-        headers : {"Content-Type":"application/json; charset=utf-8"},
-        method: 'POST',
-        body: JSON.stringify({
-          userId: email,
-          password,
-          name,
-          address,
-          mobile_phone:mobilePhone_number,
-          memberRole,
+      const result = await (
+        await fetch(`${BASE_PATH}/member/join`, {
+          headers : {"Content-Type":"application/json; charset=utf-8"},
+          method: 'POST',
+          body: JSON.stringify({
+            userId: email,
+            password,
+            name,
+            address,
+            mobile_phone:mobilePhone_number,
+            memberRole,
+          })
         })
-      });
-      console.log('result', result)
-      if(result.redirected){
-        console.log('result', result)
+      ).json();
+
+      if(result.ok){
         history.push('/login');
+      } else {
+        alert(result.error);
       }
     } catch(e) {
       console.error(e);

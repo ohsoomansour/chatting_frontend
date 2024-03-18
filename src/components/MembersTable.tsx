@@ -85,7 +85,7 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
                 <td className="text-center py-2 px-4 border-b">{member.userId}</td>
                 <td className="text-center py-2 px-4 border-b">{member.name}</td>
                 <td className="text-center py-2 px-4 border-b">{member.address}</td>
-                <td className="text-center py-2 px-4 border-b">{member.lastActivityAt}</td>
+                <td className="text-center py-2 px-4 border-b">{`${member.lastActivityAt}`}</td>
                 <td className="text-center py-2 px-4 border-b">{member.isDormant ? 'true' : (member.isDormant === false ? 'false' : '')}</td>
                 <td className="text-center py-2 px-4 border-b">{member.memberRole}</td>
                 <button onClick={() => onEditUser(member.id)} className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-400">Edit</button>
