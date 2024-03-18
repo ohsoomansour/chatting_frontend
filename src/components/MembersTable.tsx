@@ -9,7 +9,7 @@ interface Imember {
   userId:string;
   name:string;
   address:string;
-  lastActivityAt:string;
+  lastActivityAt:Date;
   isDormant:boolean | null;
   memberRole:string;
 }
@@ -18,7 +18,7 @@ interface IschUser{
   userId:string;
   name:string;
   address:string;
-  lastActivityAt:string;
+  lastActivityAt:Date;
   isDormant:boolean | null;
   memberRole:string;
 }
@@ -96,7 +96,7 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
                 <td className="text-center py-2 px-4 border-b">{searchedMembers.userId}</td>
                 <td className="text-center py-2 px-4 border-b">{searchedMembers.name}</td>
                 <td className="text-center py-2 px-4 border-b">{searchedMembers.address}</td>
-                <td className="text-center py-2 px-4 border-b">{searchedMembers.lastActivityAt}</td>
+                <td className="text-center py-2 px-4 border-b">{`${searchedMembers.lastActivityAt}`}</td>
                 <td className="text-center py-2 px-4 border-b">{searchedMembers.isDormant ? 'true' : (searchedMembers.isDormant === false ? 'false' : '')}</td>
                 <td className="text-center py-2 px-4 border-b">{searchedMembers.memberRole}</td>
                 <button onClick={() => onEditUser(searchedMembers.id)} className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-400">Edit</button>
