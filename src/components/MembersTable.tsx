@@ -91,7 +91,10 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
                 <td className="text-center py-2 px-4 border-b">{`${member.lastActivityAt}`}</td>
                 <td className="text-center py-2 px-4 border-b">{member.isDormant ? 'true' : (member.isDormant === false ? 'false' : '')}</td>
                 <td className="text-center py-2 px-4 border-b">{member.memberRole}</td>
-                <button onClick={() => onEditUser(member.id)} className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-400">Edit</button>
+                <td>
+                  <button onClick={() => onEditUser(member.id)} className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-400">Edit
+                  </button>
+                  </td>
               </tr>
             ))
             : member.map((searchedMembers, index) => (
@@ -102,12 +105,13 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
                 <td className="text-center py-2 px-4 border-b">{`${searchedMembers.lastActivityAt}`}</td>
                 <td className="text-center py-2 px-4 border-b">{searchedMembers.isDormant ? 'true' : (searchedMembers.isDormant === false ? 'false' : '')}</td>
                 <td className="text-center py-2 px-4 border-b">{searchedMembers.memberRole}</td>
-                <button onClick={() => onEditUser(searchedMembers.id)} className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-400">Edit</button>
+                <td>
+                <button onClick={() => onEditUser(searchedMembers.id)} className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-400">Edit
+                  </button>
+                  </td>
               </tr>
             ))
           }
-          
-          
         </tbody>
       </table>
       

@@ -25,7 +25,7 @@ export interface IuserInfo{
   address: string;
   mobile_phone:number;
   memberRole:string;
-  lastActivityAt: Date;
+  lastActivityAt: string;
   isDormant: boolean;
 }
 interface IResult {
@@ -39,7 +39,6 @@ export const EditUserInfo  = () => {
   console.log(privateInfoMatch);
   const token = useRecoilValue(tokenState);
   const [userId, setUserId] = useRecoilState<string>(userIdState);
-  const history = useHistory();
   const { data:whoamI, isLoading } = useQuery<IuserInfo>(
     ["me", "Member"], () => getMyinfo(token)
   );

@@ -77,8 +77,8 @@ export const ManageMembers:React.FC = () => {
   const {register, getValues, formState:{ errors },} = useForm<ImngMember>({mode: "onChange"})
   const token = useRecoilValue(tokenState)
   const [isAll, setIsAll ] = useState(false);
-  const [members, setMembers] = useState<Imember[]>([{id:0, userId:'', address:'', name:'', lastActivityAt:'', isDormant:null, memberRole: '' }]);
-  const [searchedUser, setSearchedUser] = useState<IschUser[]>([{id:0, userId:'', address:'', name:'', lastActivityAt:'', isDormant:null, memberRole: '' }]); //
+  const [members, setMembers] = useState<Imember[]>([]);//{id:0, userId:'', address:'', name:'', lastActivityAt:'', isDormant:null, memberRole: '' }
+  const [searchedUser, setSearchedUser] = useState<IschUser[]>([]); //[{id:0, userId:'', address:'', name:'', lastActivityAt:'', isDormant:null, memberRole: '' }]
 
   const headers = new Headers({
     'Content-Type':'application/json; charset=utf-8',

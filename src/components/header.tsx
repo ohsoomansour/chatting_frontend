@@ -145,8 +145,7 @@ export const Header: React.FC = () => {
   const {data:me, isLoading} = useQuery<IuserInfo>(
     ["me2", "Member"], () => getMyinfo(token)
   );
-  console.log("me", me)
-  
+
   const [headerCLose, setHeaderClose] = useState(false);
   const headerAnimation = useAnimation();
   const toggleSearch = (e:any) => {
@@ -192,7 +191,6 @@ export const Header: React.FC = () => {
       <HeaderPart 
         className="flex justify-around items-center "
         initial={{ scaleY: 1}} //랜더링 되었을 때 값 
-        
         transition={{ type: "linear" }}
       >
         <div><CompanyName >ROBOT Trader</CompanyName></div>

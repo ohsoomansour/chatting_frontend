@@ -50,8 +50,8 @@ DB/SQL       | 1년         | 1년 미만  |
  - 회원가입 시 admin으로 가입했다면 특정 회원을 '전체 검색' 또는 '회원 이름'을 통해 검색이 가능하다. 
  - Edit '회원 정보' 중 주소 또는 member Role을 변경할 수 있다.   
 
-### 📷화상 채팅 기능 & 1:1 메세지 가능  
-  **camera 설정**: cam_config.png를 참조하여 **구글 크롬에서 카메라 연결 설정** 을 알려준다. 
+### 📷화상 채팅 기능 & 🙇‍♀️1:1 메세지 가능  
+  #### **camera 설정**: cam_config.png를 참조하여 **구글 크롬에서 카메라 연결 설정** 을 알려준다. 
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/40c2a096-9775-4099-88f2-c33b4c124ac9"> 
 
   <img src=" 화상 채팅 설명 URL ">
@@ -60,7 +60,7 @@ DB/SQL       | 1년         | 1년 미만  |
  - 1.**socket**을 통해 room에 참가할 수 있도록 설정 
  - 2.초기 방을 참가할 때 누구나 myStream (MediaStream인터페이스)에 접촉 할 수 있도록 **양쪽 peer에 PeerConnection인스턴스**를 생성 후 offer/answer를 통해 sdp를 설정한다.    
  - 3.본인(peer B)이 room에 참가하고 상대 peer(peer A)가 참가하면 'addstream'이벤트가 발생되어상대의 stream이 추가되고 상대 cam을 추가한다.
- 
+
    4.**ICE candidate(실제 연결)**: offer를 보낸 상대방(peer A)이 answer를 받는 시점에 icecandidate이벤트가 발생하고 상대의 IP주소와 port를 인식하기 위해 **STUN 서버**를 사용한다.  
  - 5.DataChannel를 통한 메세지 기능: **상대방 peer에게 메세지 전달**이 가능하고 '카메라'를 보면서 '채팅'도 가능하다.   
  - *droid cam(window/Mac os 가능)을 검색해서 다운로드 후 보조 캠 용도로 사용이 가능   
