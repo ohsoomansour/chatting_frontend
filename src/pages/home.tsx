@@ -1,17 +1,14 @@
 import { OrbitControls } from "@react-three/drei"
 import { Canvas } from "@react-three/fiber"
 import { MoveRobot } from "../components/robots/MoveRobot"
-import { HexaRbot } from "../components/robots/hexahedronRobot"
 import { CuteRobot } from "../components/robots/cuteRobot"
 
 import { Helmet } from "react-helmet"
-import { CooperativeRobot } from "../components/robots/BoxArmRobot"
+import { CooperativeRobot } from "../components/robots/CooperativeRobot"
 import { DeliveryRobot } from "../components/robots/DeliveryRobot"
 import { ManufacturingRobot } from "../components/robots/ManufacturingRobot"
 import { useEffect, useState } from "react"
 import { Loading } from "../components/loading"
-import ScrollToTopButton from "../components/ScrollToTop"
-import styled from "styled-components"
 import { HandleScroll } from "../components/handleScroll"
 
 

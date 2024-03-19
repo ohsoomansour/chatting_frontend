@@ -5,7 +5,7 @@ https://backendcode.tistory.com/165 예시 참조
 https://github.com/samchon/resume/blob/master/README.md 참조
 
 ## 프로젝트 소개 
- **미래에는 ROBOT가 산업 현장의 노동 뿐만 아니라 가사 노동을 지원하고 몇 년 내에 로봇 친화적인 환경으로 변화될 것으로 예상됩니다. 로봇 시장의 규모가 커지고 거래가 B to B에서 확장하여 B to C 또는 C to C 거래도 활성화 되는 사업을 구상해서 만든 'ROBOT Trader 플랫폼'입니다.**
+ **미래에는 ROBOT가 산업 현장의 노동뿐만 아니라 가사 노동을 지원하고 몇 년 내에 로봇 친화적인 환경으로 변화될 것으로 예상됩니다. 로봇 시장의 규모가 커지고 거래가 B to B에서 확장하여 B to C 또는 C to C 거래도 활성화되는 사업을 구상해서 만든 'ROBOT Trader 플랫폼'입니다.**
  <img src="https://github.com/ohsoomansour/Trader/assets/98678172/d4ad738d-3674-48fd-96f6-df99aad75ebe">
 
 ### ⏲️프로젝트 개발 기간
@@ -57,37 +57,38 @@ DB/SQL       | 1년         | 1년 미만  |
  <img src="https://github.com/ohsoomansour/Trader/assets/98678172/0df07dcf-9f38-4e71-8991-caec61728a36 ">
 
  - **socket**을 통해 room에 참가할 수 있도록 설정 
- - 초기 방을 참가할 때 누구나 myStream (MediaStream인터페이스)에 접촉 할 수 있도록 **양쪽 peer에 - - PeerConnection인스턴스**를 생성 후 offer/answer를 통해 sdp를 설정한다.    
- - 본인(peer B)이 room에 참가하고 상대 peer(peer A)가 참가하면 'addstream'이벤트가 발생되어상대의 stream이 추가되고 상대 cam을 추가한다.
- - **ICE candidate(실제 연결)**: offer를 보낸 상대방(peer A)이 answer를 받는 시점에 icecandidate이벤트가 발생하고 상대의 IP주소와 port를 인식하기 위해 **STUN 서버**를 사용한다.  
- - DataChannel를 통한 메세지 기능: **상대방 peer에게 메세지 전달**이 가능하고 '카메라'를 보면서 '채팅'도 가능하다.   
+ - 초기 방을 참가할 때 누구나 myStream (MediaStream인터페이스)에 접촉할 수 있도록 **양쪽 peer에 PeerConnection인스턴스**를 생성 후 offer/answer를 통해 sdp를 설정한다.    
+ - 본인(peer B)이 room에 참가하고 상대 peer(peer A)가 참가하면 'addstream'이벤트가 발생되어 상대의 stream이 추가되고 상대 cam을 추가한다.
+ - **ICE candidate(실제 연결)**: offer를 보낸 상대방(peer A)이 answer를 받는 시점에 icecandidate이벤트가 발생하고 상대의 IP 주소와 port를 인식하기 위해 **STUN 서버**를 사용한다.  
+ - DataChannel를 통한 대화 기능: **상대방 peer에게 메세지 전달**이 가능하고 '카메라'를 보면서 '채팅'도 가능하다.   
    *droid cam(window/Mac os 가능)을 검색해서 다운로드 후 보조 캠 용도로 사용이 가능   
  
 
-## 고객센터 (채팅창) 
+## 👩‍💼고객센터 (채팅창) 
    <img src="https://github.com/ohsoomansour/Trader/assets/98678172/6a6dcbd5-34d4-4a6a-bff5-b085c7afc644"> 
  
  - '웹 소켓'과 '소켓'을 사용하여 채팅 기능 구현 
- - 우선 채팅방의 이름을 입력(숫자, 문자 가능)하고 입장한다. 
- - 메세지뿐만 아니라 **AWS S3**에 업로드하고 URL을 사용하여 '사진 및 동영상'도 메세지를 보낼 때 같이 사용이 가능하다.
- - 채팅창에서 욕설 내용은 ***로 필터 (Trader(B/E)프로젝트의 event.gateways.ts파일 messageFunction 함수 참조) 
- - 대화 참가자가 채팅방을 Exit 버튼을 누르고 퇴장하면 Home 으로 이동하고 **(아이디)님이 퇴장하였습니다** 메세지가 나옵니다.
+ - 우선 채팅방의 이름을 입력(숫자, 문자 가능) 하고 입장한다. 
+ - 메세지뿐만 아니라 **AWS S3**에 업로드하고 URL을 사용하여 '사진 및 동영상'도 메시지를 보낼 때 같이 사용이 가능하다.
+ - 채팅창에서 욕설 내용은 ***로 필터 (Trader(B/E)프로젝트의 event.gateways.ts파일 messageFunction 함수 참조
+ - 대화 참가자가 채팅방을 Exit 버튼을 누르고 퇴장하면 Home으로 이동하고 **(아이디)님이 퇴장하였습니다** 메세지가 나옵니다.
  
 
 ### 로봇 판매/구매 매칭 기능 
-  <img src=" 등록 URL ">
-  <img src=" 구매URL ">
-  <img src=" 미리담기 URL ">
-  <img src=" 배송 설명 URL ">
+  <img src=" 등록 삭제 URL ">
+
 
  - **r3f**를 통한 로봇 3d파일 업로드 
- - **REST API** 개인 또는 회사가 거래를 등록하고 누구나(수요자)는 판매되고 있는 리스트에서 선택하여 '주문' 또는 '미리담기'를 할 수 있습니다.  
- - 우선 판매자(공급자, 누구나 가능)가 회사 로고 사진 및 판매 가능한 로봇의 동영상 파일 또는 glb파일을 등록한다. 
- - 판매자들이 등록해 놓은 곳(메뉴 바에서 로봇 이미지 클릭)거래 가능한 상품을 **미리 담기** 또는 **바로 주문**이 가능하다.
+ - **REST API** 개인 또는 회사가 거래를 등록하고 누구나(수요자)는 판매되고 있는 리스트에서 선택하여 '주문' 또는 '미리 담기'를 할 수 있습니다.  
+ - 우선 판매자(공급자, 누구나 가능)가 회사 로고 사진 및 판매 가능한 로봇의 동영상 파일 또는 glb 파일을 등록한다. 
+  <img src="https://github.com/ohsoomansour/Trader/assets/98678172/a515bbd0-cbbf-46fc-9ac2-54c5682c6888">
+ - 판매자들이 등록해 놓은 곳(메뉴 바에서 로봇 이미지 클릭) 거래 가능한 상품을 **미리 담기** 또는 **바로 주문**이 가능하다.
  - **미리 담기**(메뉴 바에서 카트 모양 )에서 본인이 담은 상품 목록을 확인할 수 있고 여기에서 **주문**이 바로 가능하다.
+  <img src="구매 및 미리담기 URL ">
+  
  - **결제 상품 보기**(메뉴 바에서 카드 모양)에서 본인이 결제했던 **전자 영수증** 확인이 가능하다.  
  - 판매자가 등록한 판매 영수증과 **배송 상태**를 변경할 수 있다. 
-
+  <img src=" 배송 설명 URL ">
 
 ## 배포
  - **Front End:** Netlify 

@@ -9,11 +9,11 @@ https://carrotweb.tistory.com/304
 npm install buffer
 */
 export const RBproduct = ({rbURL}) => {
-
-    let mixer
+    console.log("rbURL:", rbURL);
+    let mixer;
     let start = rbURL.indexOf('_') + 1;
-    let glbModel = rbURL.slice(start)
-    let inputSrc = `/models/${glbModel}`
+    let glbModel = rbURL.slice(start);
+    let inputSrc = `/models/${glbModel}`;
     const glb = useLoader(GLTFLoader, inputSrc);
     if(glb.animations.length){
       mixer = new THREE.AnimationMixer(glb.scene) //three.js에서 제공하는 '애니메이션을 관리'하는 핵심 클래스 중 하나
