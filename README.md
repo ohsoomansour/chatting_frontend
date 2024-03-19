@@ -28,12 +28,10 @@ DB/SQL       | 1년         | 1년 미만  |
 ## 📌주요 기능 
 
 ### 회원가입
-  <img src=" 회원가입 URL ">
 
  - 아이디/비밀번호 및 휴대 전화의 유효성 확인등 을 통해 아이디/비밀번호 생성  
  - Admin으로 가입 시(일정 기간 제한적 가입)관리자의 '회원 관리' 기능 사용이 가능하다.   
 ### 로그인 
- <img src=" 로그인 설명 URL ">
 
  - jwt 활용 
  - DB에서 id 및 password 값 검증
@@ -54,16 +52,16 @@ DB/SQL       | 1년         | 1년 미만  |
   #### **camera 설정**: cam_config.png를 참조하여 **구글 크롬에서 카메라 연결 설정** 을 알려준다. 
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/40c2a096-9775-4099-88f2-c33b4c124ac9"> 
 
-  <img src=" 화상 채팅 설명 URL ">
+  <img src=" https://github.com/ohsoomansour/Trader/assets/98678172/0df07dcf-9f38-4e71-8991-caec61728a36 ">
  
  #### WebRTC (F/E: conference.tsx, B/E: events.gateway.ts 파일을 참조)
- - 1.**socket**을 통해 room에 참가할 수 있도록 설정 
- - 2.초기 방을 참가할 때 누구나 myStream (MediaStream인터페이스)에 접촉 할 수 있도록 **양쪽 peer에 PeerConnection인스턴스**를 생성 후 offer/answer를 통해 sdp를 설정한다.    
- - 3.본인(peer B)이 room에 참가하고 상대 peer(peer A)가 참가하면 'addstream'이벤트가 발생되어상대의 stream이 추가되고 상대 cam을 추가한다.
+ 1.**socket**을 통해 room에 참가할 수 있도록 설정 
+ 2.초기 방을 참가할 때 누구나 myStream (MediaStream인터페이스)에 접촉 할 수 있도록 **양쪽 peer에 PeerConnection인스턴스**를 생성 후 offer/answer를 통해 sdp를 설정한다.    
+ 3.본인(peer B)이 room에 참가하고 상대 peer(peer A)가 참가하면 'addstream'이벤트가 발생되어상대의 stream이 추가되고 상대 cam을 추가한다.
 
    4.**ICE candidate(실제 연결)**: offer를 보낸 상대방(peer A)이 answer를 받는 시점에 icecandidate이벤트가 발생하고 상대의 IP주소와 port를 인식하기 위해 **STUN 서버**를 사용한다.  
- - 5.DataChannel를 통한 메세지 기능: **상대방 peer에게 메세지 전달**이 가능하고 '카메라'를 보면서 '채팅'도 가능하다.   
- - *droid cam(window/Mac os 가능)을 검색해서 다운로드 후 보조 캠 용도로 사용이 가능   
+ 5.DataChannel를 통한 메세지 기능: **상대방 peer에게 메세지 전달**이 가능하고 '카메라'를 보면서 '채팅'도 가능하다.   
+   *droid cam(window/Mac os 가능)을 검색해서 다운로드 후 보조 캠 용도로 사용이 가능   
 
 ### 고객센터 (채팅창) 
    <img src=" 채팅 설명 URL "> 
@@ -76,8 +74,11 @@ DB/SQL       | 1년         | 1년 미만  |
  
 
 ### 로봇 판매/구매 매칭 기능 
-  <img src=" 등록/구매/판매/배송 설명 URL ">
- 
+  <img src=" 등록 URL ">
+  <img src=" 구매URL ">
+  <img src=" 미리담기 URL ">
+  <img src=" 배송 설명 URL ">
+
  - **r3f**를 통한 로봇 3d파일 업로드 
  - **REST API** 개인 또는 회사가 거래를 등록하고 누구나(수요자)는 판매되고 있는 리스트에서 선택하여 '주문' 또는 '미리담기'를 할 수 있습니다.  
  - 우선 판매자(공급자, 누구나 가능)가 회사 로고 사진 및 판매 가능한 로봇의 동영상 파일 또는 glb파일을 등록한다. 
