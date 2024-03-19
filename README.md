@@ -84,12 +84,13 @@ DB/SQL       | 1년         | 1년 미만  |
    *glb 파일은 프로젝트 path:/models/dogRobot.glb에 있어야 가능하다. 
     
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/b582ee5b-2069-47db-87f0-13e9f3ff1a6c">
+  #### 등록한 거래 삭제 기능
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/9d40f822-b80e-4049-ae26-7892684530e2">
 
  - **판매자들이 등록해 놓은 곳(메뉴 바에서 로봇 이미지 클릭) 거래 가능한 상품을 '미리 담기' 또는 '바로 주문'이 가능하다.**
  
  - 미리 담기**(메뉴 바에서 카트 모양 )에서 본인이 담은 상품 목록을 확인할 수 있고 여기에서 **주문**이 바로 가능하다.
-  <img src="구매 및 미리담기 URL ">
+  <img src="https://github.com/ohsoomansour/Trader/assets/98678172/2e961608-17e8-4156-8797-f1a8dd082b12">
   
  - **결제 상품 보기**(메뉴 바에서 카드 모양)에서 본인이 결제했던 **전자 영수증** 확인이 가능하다.  
  - 판매자가 등록한 판매 영수증과 **배송 상태**를 변경할 수 있다. 
