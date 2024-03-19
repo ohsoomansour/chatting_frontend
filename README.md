@@ -52,7 +52,8 @@ DB/SQL       | 1년         | 1년 미만  |
   #### **camera 설정**: cam_config.png를 참조하여 **구글 크롬에서 카메라 연결 설정** 을 알려준다. 
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/40c2a096-9775-4099-88f2-c33b4c124ac9"> 
 
-  <img src=" https://github.com/ohsoomansour/Trader/assets/98678172/0df07dcf-9f38-4e71-8991-caec61728a36 ">
+  <img src="https://github.com/ohsoomansour/Trader/assets/98678172/0df07dcf-9f38-4e71-8991-caec61728a36 ">
+ 
  #### WebRTC (F/E: conference.tsx, B/E: events.gateway.ts 파일을 참조)
  1.**socket**을 통해 room에 참가할 수 있도록 설정 
  2.초기 방을 참가할 때 누구나 myStream (MediaStream인터페이스)에 접촉 할 수 있도록 **양쪽 peer에 PeerConnection인스턴스**를 생성 후 offer/answer를 통해 sdp를 설정한다.    
