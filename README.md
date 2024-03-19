@@ -5,8 +5,10 @@ https://backendcode.tistory.com/165 예시 참조
 https://github.com/samchon/resume/blob/master/README.md 참조
 
 ## 프로젝트 소개 
- 미래에는 ROBOT가 산업 현장의 노동 뿐만 아니라 가사 노동을 지원하고 몇 년 내에 로봇 친화적인 환경으로 변화될 것으로 예상됩니다. 로봇 시장의 규모가 커지고 거래가 B to B에서 확장하여 B to C 또는 C to C 거래도 활성화 되는 사업을 구상해서 만든 'ROBOT Trader 플랫폼'입니다.
+ **미래에는 ROBOT가 산업 현장의 노동 뿐만 아니라 가사 노동을 지원하고 몇 년 내에 로봇 친화적인 환경으로 변화될 것으로 예상됩니다. 로봇 시장의 규모가 커지고 거래가 B to B에서 확장하여 B to C 또는 C to C 거래도 활성화 되는 사업을 구상해서 만든 'ROBOT Trader 플랫폼'입니다.**
  
+ <img src="https://github.com/ohsoomansour/Trader/assets/98678172/7ba295fd-09d3-4af6-b64d-894f69fd532d">
+
 ### ⏲️프로젝트 개발 기간
  2023년 12월 18일 ~ 2024년 3월 21일
 
@@ -53,13 +55,15 @@ DB/SQL       | 1년         | 1년 미만  |
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/40c2a096-9775-4099-88f2-c33b4c124ac9"> 
 
  ### WebRTC (F/E: conference.tsx, B/E: events.gateway.ts 파일을 참조)
- 1.**socket**을 통해 room에 참가할 수 있도록 설정 
- 2.초기 방을 참가할 때 누구나 myStream (MediaStream인터페이스)에 접촉 할 수 있도록 **양쪽 peer에 PeerConnection인스턴스**를 생성 후 offer/answer를 통해 sdp를 설정한다.    
- 3.본인(peer B)이 room에 참가하고 상대 peer(peer A)가 참가하면 'addstream'이벤트가 발생되어상대의 stream이 추가되고 상대 cam을 추가한다.
- 4.**ICE candidate(실제 연결)**: offer를 보낸 상대방(peer A)이 answer를 받는 시점에 icecandidate이벤트가 발생하고 상대의 IP주소와 port를 인식하기 위해 **STUN 서버**를 사용한다.  
- 5.DataChannel를 통한 메세지 기능: **상대방 peer에게 메세지 전달**이 가능하고 '카메라'를 보면서 '채팅'도 가능하다.   
-   *droid cam(window/Mac os 가능)을 검색해서 다운로드 후 보조 캠 용도로 사용이 가능   
  <img src="https://github.com/ohsoomansour/Trader/assets/98678172/0df07dcf-9f38-4e71-8991-caec61728a36 ">
+
+ - **socket**을 통해 room에 참가할 수 있도록 설정 
+ - 초기 방을 참가할 때 누구나 myStream (MediaStream인터페이스)에 접촉 할 수 있도록 **양쪽 peer에 - - PeerConnection인스턴스**를 생성 후 offer/answer를 통해 sdp를 설정한다.    
+ - 본인(peer B)이 room에 참가하고 상대 peer(peer A)가 참가하면 'addstream'이벤트가 발생되어상대의 stream이 추가되고 상대 cam을 추가한다.
+ - **ICE candidate(실제 연결)**: offer를 보낸 상대방(peer A)이 answer를 받는 시점에 icecandidate이벤트가 발생하고 상대의 IP주소와 port를 인식하기 위해 **STUN 서버**를 사용한다.  
+ - DataChannel를 통한 메세지 기능: **상대방 peer에게 메세지 전달**이 가능하고 '카메라'를 보면서 '채팅'도 가능하다.   
+   *droid cam(window/Mac os 가능)을 검색해서 다운로드 후 보조 캠 용도로 사용이 가능   
+ 
 
 ## 고객센터 (채팅창) 
    <img src="https://github.com/ohsoomansour/Trader/assets/98678172/6a6dcbd5-34d4-4a6a-bff5-b085c7afc644"> 
