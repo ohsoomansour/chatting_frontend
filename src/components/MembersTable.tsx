@@ -64,7 +64,7 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
       //변경된 회원
     
     ).json();
-    alert(`Address:${member.address} MemberRole:${member.memberRole} are updated!`)
+    
   }
   return (
     <div className="container mx-auto my-8 text-center">
@@ -91,10 +91,10 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
                 <td className="text-center py-2 px-4 border-b">{`${member.lastActivityAt}`}</td>
                 <td className="text-center py-2 px-4 border-b">{member.isDormant ? 'true' : (member.isDormant === false ? 'false' : '')}</td>
                 <td className="text-center py-2 px-4 border-b">{member.memberRole}</td>
-                <td>
+                <td className="p-1 border-b">
                   <button onClick={() => onEditUser(member.id)} className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-400">Edit
                   </button>
-                  </td>
+                </td>
               </tr>
             ))
             : member.map((searchedMembers, index) => (
@@ -105,10 +105,10 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
                 <td className="text-center py-2 px-4 border-b">{`${searchedMembers.lastActivityAt}`}</td>
                 <td className="text-center py-2 px-4 border-b">{searchedMembers.isDormant ? 'true' : (searchedMembers.isDormant === false ? 'false' : '')}</td>
                 <td className="text-center py-2 px-4 border-b">{searchedMembers.memberRole}</td>
-                <td>
+                <td className="p-1">
                 <button onClick={() => onEditUser(searchedMembers.id)} className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-400">Edit
                   </button>
-                  </td>
+                </td>
               </tr>
             ))
           }

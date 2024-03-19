@@ -42,7 +42,7 @@ DB/SQL       | 1년         | 1년 미만  |
  - '로그아웃' 또는 브라우저 창을 닫으면 Sessiong storage에서 제거된다. 
 
 ### 회원관리
-  <img src=" 회원관리 URL ">
+  <img src="https://github.com/ohsoomansour/Trader/assets/98678172/bdaa72f1-d7c7-4c06-b746-0b1dc2bf1cfe">
  
  - path: /admin
  - 관리자 회원 인증 방법: **UseGuards 데코레이터(Nesgjs 제공)**와 **AuthGuard 클래스**를 사용하여 Reflector 인터페이스 를 통해 현재 요청 핸들러에서 인증이 필요한 값(Role['admin'])을 불러오고 이 'admin'값이 **jwt Middleware**에서 입력한 '로그인 사용자의 정보'를 현재 request 파이프 라인을 기술한 **ExecutionContext 인터페이스**를 통해 사용자의 memberRole 속성 값이 'admin' 인지 확인한다.  
