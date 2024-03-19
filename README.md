@@ -6,8 +6,7 @@ https://github.com/samchon/resume/blob/master/README.md 참조
 
 ## 프로젝트 소개 
  **미래에는 ROBOT가 산업 현장의 노동 뿐만 아니라 가사 노동을 지원하고 몇 년 내에 로봇 친화적인 환경으로 변화될 것으로 예상됩니다. 로봇 시장의 규모가 커지고 거래가 B to B에서 확장하여 B to C 또는 C to C 거래도 활성화 되는 사업을 구상해서 만든 'ROBOT Trader 플랫폼'입니다.**
- 
- <img src="https://github.com/ohsoomansour/Trader/assets/98678172/7ba295fd-09d3-4af6-b64d-894f69fd532d">
+ <img src="https://github.com/ohsoomansour/Trader/assets/98678172/d4ad738d-3674-48fd-96f6-df99aad75ebe">
 
 ### ⏲️프로젝트 개발 기간
  2023년 12월 18일 ~ 2024년 3월 21일
