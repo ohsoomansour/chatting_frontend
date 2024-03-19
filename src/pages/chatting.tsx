@@ -28,7 +28,6 @@ export const UI = styled.div`
   flex-direction: column;
 `;
 const ChatContainer = styled(motion.div)``;
-
 export const RplayerWrapper = styled.div`
   display:flex;
   align-items:center;
@@ -50,22 +49,16 @@ const PeerMessageWrapper = styled.div`
 const MyImg = styled.div`
   display: flex;
   flex-direction: row-reverse;
-  
 `;
 const PeerImg = styled.div`
   display: flex;
   flex-direction: row;
   
 `;
-
-
 const RoomBtnContainer = styled.div`
   display:flex;
   flex-direction:row;
 `;
-
-
-
 interface ImsgObj{
   msg:string;
   url:string;
@@ -89,12 +82,10 @@ interface IParticapant{
 }
 
 //"wss://trade-2507d8197825.herokuapp.com:8080/(네임스페이스)"  
-//git add  -> git commit -m 
+// wss:// 스킴은 기본적으로 443 포트를 사용하므로 포트를 지정할 필요가 없습니다.
 export const WS_BASE_PATH = process.env.NODE_ENV === "production" 
-//wss:// 스킴은 기본적으로 443 포트를 사용하므로 포트를 지정할 필요가 없습니다.
- ? `wss://trade-2507d8197825.herokuapp.com`    //12.24일, 11:25`wss://trade.herokuapp.com`
+ ? `wss://trade-2507d8197825.herokuapp.com`
  : "http://localhost:8080";
-
 
 export default function Chatting() {
   const userId = useRecoilValue(userIdState);
@@ -118,13 +109,7 @@ export default function Chatting() {
   useEffect(() => {
     // ✅https://socket.io/docs/v4/client-options/ 참조
     let sc = io(`${WS_BASE_PATH}`, {
-      /*
-      withCredentials:true,
-      extraHeaders:{
-        Authorization: `Bearer ${token}`,
-      },*/
       transports:['websocket'], 
-      //path:'/chat/socket.io',
     },
     ) 
     setSocket(sc)
@@ -158,7 +143,6 @@ export default function Chatting() {
  
   const onJoining = (event:any) => {     
     event.preventDefault();
-    //아이디가 없을 경우의 validation 적시 
     if(userId === ''){
       alert('로그인이 필요합니다!💛');
       return;

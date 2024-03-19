@@ -48,7 +48,10 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
   });
   const onModify = async () => {
     //변경된 부분 알림!
-    const {address, memberRole} = getValues()
+    const {address, memberRole} = getValues();
+    if(address === ''){
+      alert('주소 값을 입력하세요!💛')
+    }
     const member = await (
       await fetch(`${BASE_PATH}/admin/update/${id}`, {
         headers: headers,
@@ -116,7 +119,8 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
               <h1 className=" text-lg text-center font-bold mb-4">Edit</h1>
               <h4 className="text-lg text-center font-bold mb-2">Address</h4>
               <input
-                {...register("address")} 
+                {...register("address")}
+                
                 type="text" 
                 className="input"
               />

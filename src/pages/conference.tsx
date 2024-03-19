@@ -28,7 +28,7 @@ const Btn = styled.button`
 export const RoomContainer = styled(motion.div)`
   display:flex;
   flex-direction:column;
-`
+`;
 export const EnterBtn = styled.button`
   background-color:gray;
   transition: background-color 0.3s ease-in-out;
@@ -36,7 +36,6 @@ export const EnterBtn = styled.button`
     background-color: #00FF80;
   }
 `;
-
 const ConferencerWrapper = styled.div`
   display:flex;
   flex-direction:column;
@@ -72,7 +71,6 @@ export const Mymessage = styled.div`
   display:flex;
   flex-direction: row-reverse;
 `;
-
 
 interface IcameraDevicesInfo {
   deviceId:string; 
@@ -149,7 +147,7 @@ export function Conference() {
         //🌟아이디어: [{msg:"", isMe: false }] -> message.isMe? 오른쪽 : 왼쪽  -> 전체 메세지에 넣는거지 
         setMessages((prev) => [...prev, {msg:event.data, isMe:false}]); 
       });
-      // Peer A(파이어 폭스)가 offer 생성 
+      /*  Peer A(파이어 폭스)가 offer 생성 (<-> Peer B는 크롬 브라우저) */
       const offer = await myPeerConnection.createOffer();
       // PeerA, FireFox 브라우저에서만 실행 
       await myPeerConnection.setLocalDescription(offer); 
@@ -206,8 +204,7 @@ export function Conference() {
         const cameras = devices.filter(device => device.kind === "videoinput");
         setInitCamera(cameras[0])
         setCameraDevices(cameras);
-        console.log("cameras:");
-        console.log(cameras);
+
         let currentCamera = myStream.getVideoTracks()[0]; //Logi C270 HD WebCam (046d:0825)
   
         currCamera = currentCamera;
@@ -277,8 +274,8 @@ export function Conference() {
   function makeConnection() {
     //누구나 myStream에 접촉 할 수 있도록, 크롬 브라우저와 FireFox에 만드는거다. 
     myPeerConnection = new RTCPeerConnection(iceServers);
-    myPeerConnection.addEventListener("icecandidate", handleIce);
-    myPeerConnection.addEventListener("addstream", handleAddStream);
+    myPeerConnection.addEventListener("icecandidate", handleIce); //offer를 보낸 피어가 answer를 받을 때
+    myPeerConnection.addEventListener("addstream", handleAddStream); //상대 피어가 참가할 때 발생
     myStream.getTracks().forEach(track => myPeerConnection.addTrack(track, myStream));
     //stream은 통째로 바꾸는데 track은 바꾸지 않고 있다. 
     //Sender는 우리의 peer로 보내진 media stream track을 컨트롤해준다. 
