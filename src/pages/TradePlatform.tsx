@@ -116,7 +116,7 @@ export const TradePlatform = () => {
         </div>
         <h1 className=" text-2xl font-semibold text-center ">{deal.robot.name}</h1>
         {deal.robot.rbURL.includes('.glb') ? (
-          <Canvas camera={{ position: [0, 3, 7], fov:45 }} style={{ width: '50%', height: '35vh' }}>
+          <Canvas camera={{ position: [0, 3, 7], fov:50 }} style={{ width: '50%', height: '35vh' }}>
             <OrbitControls 
               autoRotate={true}
             />
