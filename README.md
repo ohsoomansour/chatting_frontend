@@ -97,7 +97,7 @@ DB/SQL       | 1년         | 1년 미만  |
  
  - **결제 상품 보기(메뉴 바에서 카드 모양)에서 본인이 결제했던 전자 영수증 확인이 가능하다.**
  - **고객입장에서 배송 상태 확인**
-  <img src ="">
+  <img src ="https://github.com/ohsoomansour/Trader/assets/98678172/c9e2ace5-00c5-4274-8442-35a20ea7b217">
 ## 배포
  - **Front End:** Netlify 
  - **Back End:** Heroku 
