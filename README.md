@@ -1,9 +1,4 @@
 
-https://blog.naver.com/jooeun0502/221956294941 문법 참조
-https://backendcode.tistory.com/165 예시 참조 
-
-https://github.com/samchon/resume/blob/master/README.md 참조
-
 ## 프로젝트 소개 
  **미래에는 ROBOT가 산업 현장의 노동뿐만 아니라 가사 노동을 지원하고 몇 년 내에 로봇 친화적인 환경으로 변화될 것으로 예상됩니다. 로봇 시장의 규모가 커지고 거래가 B to B에서 확장하여 B to C 또는 C to C 거래도 활성화되는 사업을 구상해서 만든 'ROBOT Trader 플랫폼'입니다.**
  <img src="https://github.com/ohsoomansour/Trader/assets/98678172/d4ad738d-3674-48fd-96f6-df99aad75ebe">
@@ -25,6 +20,10 @@ Skill        | Experiences | Careers  | Note
 TypeScript   | 1 년        | 0 년      | 
 javascript   | 2 년        | 1년 미만  | 
 DB/SQL       | 1년         | 1년 미만  | 
+
+## 시험 아이디 / 비번 
+- 판매자 역할: osoomansour2@naver.com / osoomansour2 (구매도 가능)
+- 구매자 역할: osoomansour1@naver.com / osoomansour1 (구매자 역할)
 
 # 📌주요 기능 
 
@@ -52,7 +51,7 @@ DB/SQL       | 1년         | 1년 미만  |
  - **Edit '회원 정보' 중 주소 또는 member Role을 변경할 수 있다.**   
 
 ## 📷화상 채팅 기능 & 🙇‍♀️1:1 메세지 가능  
-  #### **camera 설정**: cam_config.png를 참조하여 **구글 크롬에서 카메라 연결 설정** 을 알려준다. 
+  #### **camera 설정:  구글 크롬에서 카메라 연결 설정 을 알려준다.** 
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/40c2a096-9775-4099-88f2-c33b4c124ac9"> 
 
  ### WebRTC (F/E: conference.tsx, B/E: events.gateway.ts 파일을 참조)
@@ -96,7 +95,7 @@ DB/SQL       | 1년         | 1년 미만  |
 
 ### 주문 및 미리담기 
 --------------------------------------------------------------------------------------------------------- 
- - **판매자들이 등록해 놓은 곳(메뉴 바에서 로봇 이미지 클릭) 거래 가능한 상품을 '미리 담기' 또는 '바로 주문'이 가능하다.**
+ - **고객이 상품 거래 리스트에서 (메뉴 바에서 로봇 이미지 클릭) 거래 가능한 상품을 '미리 담기' 또는 '바로 주문'이 가능하다.**
  
  - **미리 담기(메뉴 바에서 카트 모양 )에서 본인이 담은 상품 목록을 확인할 수 있고 여기에서 주문이 바로 가능하다.**
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/0a410eeb-0963-488d-8a35-dc76090f51e4">
@@ -106,7 +105,7 @@ DB/SQL       | 1년         | 1년 미만  |
 
 ### 배송상태 변경 
 --------------------------------------------------------------------------------------------------------- 
- - **판매자가 등록한 판매 영수증과 배송 상태를 변경할 수 있다.**
+ - **판매자가 등록한 '판매 영수증'과 '배송 상태'를 변경할 수 있다.**
   <img src ="https://github.com/ohsoomansour/Trader/assets/98678172/5754ff41-aedd-420b-b80e-999f5acbcd7c">
  
  - **결제 상품 보기(메뉴 바에서 카드 모양)에서 본인이 결제했던 전자 영수증 확인이 가능하다.**

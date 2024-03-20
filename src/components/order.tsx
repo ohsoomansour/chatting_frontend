@@ -72,11 +72,13 @@ export const Order = ({robot, deal}:OrderProps) => {
     setMaintenanceYN(option);
   };
   const onSave = async () => {
-  const { customer, maintenance_cost } = getValues();
+  const { customer, maintenance_cost, customerPhone } = getValues();
   try {
     if(customer === ''){
       alert('로그인 후 이용해 주세요!💛')
       return;
+    } else if(customerPhone === ''){
+      alert('고객님의 번호를 입력해 주세요!💛')
     } else if (!(/^\d{5}$/.test(postalCode.toString()) || /^\d{3,5}-\d{3,5}$/.test(postalCode.toString()))) {
       alert('우편번호가 올바른 지 확인 해주세요!💛');
       return;
