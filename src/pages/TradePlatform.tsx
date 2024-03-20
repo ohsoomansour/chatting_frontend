@@ -122,7 +122,7 @@ export const TradePlatform = () => {
             />
             <group 
               rotation-y={-Math.PI / 2}
-              scale={[1.2, 1.2, 1.2]}
+              scale={[1.1, 1.1, 1.1]}
             >
               <RBproduct rbURL={deal.robot.rbURL} />
             </group>
