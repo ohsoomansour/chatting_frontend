@@ -2,14 +2,8 @@ import * as THREE from 'three';
 import {  useFrame, useLoader } from '@react-three/fiber'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
 
-/* 
- # URL -> 로드하는 방법 
-https://carrotweb.tistory.com/304
 
-npm install buffer
-*/
 export const RBproduct = ({rbURL}) => {
-    console.log("rbURL:", rbURL);
     let mixer;
     let start = rbURL.indexOf('_') + 1;
     let glbModel = rbURL.slice(start);

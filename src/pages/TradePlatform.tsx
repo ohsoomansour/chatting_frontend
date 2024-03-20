@@ -7,8 +7,6 @@ import {Order} from "../components/order";
 import { useQuery } from "react-query";
 import { getallDeals } from "../api";
 import { Helmet } from "react-helmet";
-
-import ScrollToTopButton from "../components/ScrollToTop";
 import { useState } from "react";
 import { HandleScroll } from "../components/handleScroll";
 
@@ -57,7 +55,6 @@ const CompaBrandImg = styled.img`
   position:left;
   
 `; 
-
 
 export interface IRobot{
   id:number;
@@ -119,7 +116,7 @@ export const TradePlatform = () => {
         </div>
         <h1 className=" text-2xl font-semibold text-center ">{deal.robot.name}</h1>
         {deal.robot.rbURL.includes('.glb') ? (
-          <Canvas camera={{ position: [0, 3, 7], fov:75 }} style={{ width: '50%', height: '35vh' }}>
+          <Canvas camera={{ position: [0, 3, 7], fov:60 }} style={{ width: '50%', height: '35vh' }}>
             <OrbitControls 
               autoRotate={true}
             />
