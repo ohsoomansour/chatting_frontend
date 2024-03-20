@@ -85,7 +85,7 @@ DB/SQL       | 1년         | 1년 미만  |
     
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/d92172ed-71a3-45c4-b906-be26039f8c06">
 #### 등록한 거래 삭제 기능
-  <img src="">
+  <img src="https://github.com/ohsoomansour/Trader/assets/98678172/fa073cea-add8-4bbf-a9ae-69a0a4ba9821">
 
  - **판매자들이 등록해 놓은 곳(메뉴 바에서 로봇 이미지 클릭) 거래 가능한 상품을 '미리 담기' 또는 '바로 주문'이 가능하다.**
  
@@ -98,12 +98,16 @@ DB/SQL       | 1년         | 1년 미만  |
  - **결제 상품 보기(메뉴 바에서 카드 모양)에서 본인이 결제했던 전자 영수증 확인이 가능하다.**
  - **고객입장에서 배송 상태 확인**
   <img src ="https://github.com/ohsoomansour/Trader/assets/98678172/c9e2ace5-00c5-4274-8442-35a20ea7b217">
+
 ## 배포
+
  - **Front End:** Netlify 
  - **Back End:** Heroku 
 
 ## 개발 시작 가이드
+
 ### Backend 
-npm run start:dev 
+npm run start:dev
+
 ### Frontend
 npm run start
