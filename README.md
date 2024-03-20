@@ -64,7 +64,8 @@ DB/SQL       | 1년         | 1년 미만  |
    *droid cam(window/Mac os 가능)을 검색해서 다운로드 후 보조 캠 용도로 사용이 가능   
  
 
-## 👩‍💼고객센터 (채팅창) 
+## 👩‍💼고객센터 (채팅창)
+<br/> 
    <img src="https://github.com/ohsoomansour/Trader/assets/98678172/6a6dcbd5-34d4-4a6a-bff5-b085c7afc644"> 
  
  - **'웹 소켓'과 '소켓'을 사용하여 채팅 기능 구현** 
@@ -75,16 +76,16 @@ DB/SQL       | 1년         | 1년 미만  |
  
 
 ### 로봇 판매/구매 매칭 기능 
-  
-
-
+<br/>
  - **r3f를 통한 로봇 3d파일 업로드** 
  - **REST API 개인 또는 회사가 거래를 등록하고 누구나(수요자)는 판매되고 있는 리스트에서 선택하여 '주문' 또는 '미리 담기'를 할 수 있습니다.** 
  - **우선 판매자(공급자, 누구나 가능)가 회사 로고 사진 및 판매 가능한 로봇의 사진 및 동영상 파일 또는 glb 파일을 등록한다.**
    *glb 파일은 프로젝트 경로가 /models/dogRobot.glb에 있어야 가능하다. 
     
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/d92172ed-71a3-45c4-b906-be26039f8c06">
-#### 등록한 거래 삭제 기능
+
+### 등록한 거래 삭제 기능
+<br/>
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/fa073cea-add8-4bbf-a9ae-69a0a4ba9821">
 
  - **판매자들이 등록해 놓은 곳(메뉴 바에서 로봇 이미지 클릭) 거래 가능한 상품을 '미리 담기' 또는 '바로 주문'이 가능하다.**
