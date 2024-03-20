@@ -83,7 +83,7 @@ DB/SQL       | 1년         | 1년 미만  |
  - **우선 판매자(공급자, 누구나 가능)가 회사 로고 사진 및 판매 가능한 로봇의 사진 및 동영상 파일 또는 glb 파일을 등록한다.**
    *glb 파일은 프로젝트 경로가 /models/dogRobot.glb에 있어야 가능하다. 
     
-  <img src="https://github.com/ohsoomansour/Trader/assets/98678172/b582ee5b-2069-47db-87f0-13e9f3ff1a6c">
+  <img src="https://github.com/ohsoomansour/Trader/assets/98678172/d92172ed-71a3-45c4-b906-be26039f8c06">
   #### 등록한 거래 삭제 기능
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/9d40f822-b80e-4049-ae26-7892684530e2">
 
@@ -92,11 +92,11 @@ DB/SQL       | 1년         | 1년 미만  |
  - **미리 담기(메뉴 바에서 카트 모양 )에서 본인이 담은 상품 목록을 확인할 수 있고 여기에서 주문이 바로 가능하다.**
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/2e961608-17e8-4156-8797-f1a8dd082b12">
   
- - **결제 상품 보기(메뉴 바에서 카드 모양)에서 본인이 결제했던 전자 영수증 확인이 가능하다.**
  - **판매자가 등록한 판매 영수증과 배송 상태를 변경할 수 있다.**
-  <img src="https://github.com/ohsoomansour/Trader/assets/98678172/37c3bfd6-1b37-4843-aeaf-7e728bde03d8">
-  비교
   <img src ="https://github.com/ohsoomansour/Trader/assets/98678172/5754ff41-aedd-420b-b80e-999f5acbcd7c">
+ 
+ - **결제 상품 보기(메뉴 바에서 카드 모양)에서 본인이 결제했던 전자 영수증 확인이 가능하다.**
+ - **고객입장에서 배송 상태 확인**
   <img src ="https://github.com/ohsoomansour/Trader/assets/98678172/03dba524-e5e8-42b9-a7bf-a1cf60caf348">
 ## 배포
  - **Front End:** Netlify 

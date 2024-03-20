@@ -167,7 +167,7 @@ function EditMyDeals(){
           </PrevButton>
         </SliderWrapper>
       </AnimatePresence>
-      <p className=" mt-10 text-lg font-semibold text-center"> 현재 고객님이 '주문 완료 후 배송 완료 전 까지' 또는 '미리 담기가 진행 중'일 경우 등록하신 거래가 삭제되지 않습니다!💛</p>
+      <p className=" mt-10 text-lg font-semibold text-center"> 현재 고객님이 '주문 중 이거나' 또는 '미리 담기가 진행 중'일 경우 등록하신 거래가 삭제되지 않습니다!💛</p>
     </div>
   )
 }
