@@ -1,5 +1,4 @@
 import { useDropzone } from "react-dropzone";
-import { UI } from "./Streaming"
 import { useCallback, useState } from "react";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
@@ -15,9 +14,12 @@ import { Helmet } from "react-helmet";
 import { BASE_PATH } from "./logIn";
 import { Loading } from "../components/loading";
 import { useHistory } from "react-router-dom";
-import { useQuery } from "react-query";
-import { validateMyPhoneNumber } from "../api";
 import { IPhone, PhoneValidation } from "./signUpForMember";
+
+export const UI = styled.div`
+  display:flex;
+  flex-direction: column;
+`;
 
 const Wrapper = styled.div`
   display:flex;
@@ -37,12 +39,7 @@ interface ISellerForm {
   regionCode:string;
 }   
 
-
 export const SellerPage = () => {
-  const {data} = useQuery(["Validation", 'mobile_phone'], () => validateMyPhoneNumber())
-  console.log('Validation' , data)  
-
-
   const token = useRecoilValue(tokenState)
   const userId = useRecoilValue(userIdState);
   const compaImg = useRecoilValue(compaImgState);
@@ -58,14 +55,12 @@ export const SellerPage = () => {
   const [formattedMPnumber, setFormattedMPnumber] = useState<string>()
 
   // s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업 
-  const {maintenance_cost} = getValues();
-      console.log("maintenance_cost" , maintenance_cost)
   let rbURL = "";
   let coImgURL = "";
   const onRegister = async() => {
     try {
       const {company, sellerId, mobilePhone_number, rbName, price , maintenance_cost, description} = getValues();
-      console.log("maintenance_cost" , maintenance_cost)
+
       if(compaImg  === "") {
         alert('회사 로고 이미지를 넣어주세요!💛')
         return;
@@ -142,8 +137,7 @@ export const SellerPage = () => {
           'Content-Type':'application/json; charset=utf-8',  // 'application/json; charset=utf-8', //'multipart/form-data',  
           'x-jwt': `${token}`,
         });
-        console.log('threeDFile 들어오나?')
-        console.log(threeDFile[0])
+
         
         await fetch(`${BASE_PATH}/seller/make-deal`, {
           headers:headers,

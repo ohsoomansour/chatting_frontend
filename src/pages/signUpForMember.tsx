@@ -6,6 +6,7 @@ import { BASE_PATH } from "./logIn";
 import { FormError } from "../components/form-error";
 import styled from "styled-components";
 import { useState } from "react";
+
 export const PhoneValidation = styled.div`
   cursor:pointer;
 `;
@@ -17,11 +18,11 @@ interface ISignUpForMemberForm {
   mobilePhone_number:string;
   memberRole:string;
   regionCode:string;
-}
+};
 export interface IPhone{
   isValid:boolean;
   formattedNumber:string;
-}
+};
 //📄https://react-hook-form.com/api/useform 제대로 이해 필요함 
 
 export const SignUpForMember = () => {

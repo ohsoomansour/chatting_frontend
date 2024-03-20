@@ -10,9 +10,7 @@ import StoredGoodsPostcode from "../components/address/storedGoods-address";
 import { storedGoddsDetailed, storedGoodsAddress, storedGoodsPostal, storedGoodsRoad } from "../recoil/atom_address";
 import { Helmet } from "react-helmet";
 import { BASE_PATH } from "./logIn";
-import { useHistory } from "react-router-dom";
 import { HandleScroll } from "../components/handleScroll";
-
 
 interface ISeller {
   address:string;
@@ -20,7 +18,7 @@ interface ISeller {
   memberRole:string; 
   name:string; 
   userId:string; 
-}
+};
 
 interface IStoredDeal {
   compaBrand_ImgURL:string;
@@ -34,7 +32,7 @@ interface IStoredDeal {
   sellerId:number;
   seller_address:string;
   updatedAt:string;
-}
+};
 interface IMember{
   address: string;
   createdAt:string;
@@ -43,39 +41,39 @@ interface IMember{
   memberRole: string;
   name:string;
   userId:string;
-}
+};
 
 interface IPayment{
   maintenanceYN:boolean;
   maintenance_cost: number;
   price:number;
   total:number;
-}
+};
 
 interface IStore {
   deal:IStoredDeal;
   id:number;
   member:IMember;
   payment:IPayment;
-}
+};
 
 interface IMyStoredDeals {
   mySavings:IStore[];
   totalPages:number;
-}
+};
 
 const Wrapper = styled.div``;
 const DealContainer= styled.div``;
-
 const CompaWrapper = styled.div`
   display:flex;
-`
+`;
 const CompaName = styled.span`
   margin-left:90px;
 `;
 export const ButttonContainer = styled.div`
   display:flex;
-`
+`;
+
 let page:number = 1; 
 export const StoredGoods = () => {
   const onNextPage = () => { page = page + 1 ;  refetch(); }
@@ -86,19 +84,17 @@ export const StoredGoods = () => {
   const postalCode = useRecoilValue(storedGoodsPostal);
   const streetAddress = useRecoilValue(storedGoodsRoad);
   const detailedAddress = useRecoilValue(storedGoddsDetailed);
-  const history = useHistory()
+
   const {data: mystoredDeals, isLoading, refetch } = useQuery<IMyStoredDeals>(
     ["getStoredGoods","ORDER"], () => storedGoods(token, page)
   )
-  console.log("mystoredDeals:")
-  console.log(mystoredDeals)
 
   const stores = isLoading 
     ? []
     : mystoredDeals
     ? mystoredDeals.mySavings
     : [];
-  // alert('미리 담기 상품이 없습니다.')
+
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD'

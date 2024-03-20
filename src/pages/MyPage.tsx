@@ -2,7 +2,7 @@ import {  Link, Route, Switch, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 import { EditUserInfo } from "./editUserInfo";
 import EditMyDeals from "./EditMydeals";
-const Tab  = styled.span<{ isActive: boolean }>`
+const Tab = styled.span<{ isActive: boolean }>`
   text-align: center;
   text-transform: uppercase;
   font-size: 12px;
@@ -15,7 +15,7 @@ const Tab  = styled.span<{ isActive: boolean }>`
   a{
     display: block; 
   }
-`
+`;
 const Tabs = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -27,7 +27,6 @@ export const MyPage = () => {
   const privateInfoMatch = useRouteMatch("/myInfo/privateInfo"); 
   const myDealsMatch = useRouteMatch("/myInfo/myDeals");
   
-
   return (
     <div>
       <Tabs>

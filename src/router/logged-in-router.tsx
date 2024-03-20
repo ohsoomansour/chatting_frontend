@@ -3,11 +3,10 @@
      > npm i react-router-dom@5.3.0
      > npm i --save-dev @types/react-router-dom  18.0.6
 */
-import { BrowserRouter, Route, Switch, useHistory } from "react-router-dom";
-import Streaming from "../pages/Streaming";
-import React, { useEffect, useState } from "react";
+import { Route, Switch } from "react-router-dom";
+import { useEffect, useState } from "react";
 import {ManageMembers} from "../pages/manageMembers";
-import { EditUserInfo, IuserInfo } from "../pages/editUserInfo";
+import {IuserInfo } from "../pages/editUserInfo";
 import { ActiveAccount } from "../components/activeAccount";
 import { Home } from "../pages/home";
 import { Header, MemberRole } from "../components/header";

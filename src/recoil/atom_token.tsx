@@ -37,6 +37,5 @@ export const TokenSelector = selector({
     //#첫 번째 파라미터에서 getter, setter를 받고 두 번째 파라미터에서 우리가 보내는 새로운 값
     const result = get(tokenState);
     set(tokenState, newValue)
-    
   }
 })

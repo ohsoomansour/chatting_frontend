@@ -10,7 +10,6 @@ const logOutRoutes = [
   {path:"/create-account", component: <SignUpForMember /> },
 ]
 
-
 export const LoggedOutRouter = () => {
   const token = useRecoilValue(tokenState)
   return (

@@ -2,7 +2,6 @@ import { OrbitControls } from "@react-three/drei"
 import { Canvas } from "@react-three/fiber"
 import { MoveRobot } from "../components/robots/MoveRobot"
 import { CuteRobot } from "../components/robots/cuteRobot"
-
 import { Helmet } from "react-helmet"
 import { CooperativeRobot } from "../components/robots/CooperativeRobot"
 import { DeliveryRobot } from "../components/robots/DeliveryRobot"
@@ -10,8 +9,6 @@ import { ManufacturingRobot } from "../components/robots/ManufacturingRobot"
 import { useEffect, useState } from "react"
 import { Loading } from "../components/loading"
 import { HandleScroll } from "../components/handleScroll"
-
-
 
 export const Home = () => {
   const [isLoading, setLoading] = useState(true);
@@ -28,10 +25,6 @@ export const Home = () => {
     }
     
   }, []);
-  
-
-
-  
   
   return(
     <div className=" ">
@@ -53,8 +46,7 @@ export const Home = () => {
             </mesh>
           </group>
           <ambientLight intensity={1} />
-          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
-            
+          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />   
         </Canvas>
         <Canvas camera={{ position: [0, 3, 7], fov:75 }} style={{ width: '50%', height: '35vh' }}>
           <OrbitControls autoRotate={true}/>
@@ -72,7 +64,6 @@ export const Home = () => {
           <ambientLight intensity={1} />
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
         </Canvas>
-
         <Canvas camera={{ position: [0, 3, 7], fov:35 }} style={{ width: '70%', height: '55vh' }}>
           <OrbitControls autoRotate={true}/>
           <group rotation-y={-Math.PI / 2} scale={[1.1, 1.1, 1.2]} >
@@ -99,9 +90,7 @@ export const Home = () => {
           </group>
           <ambientLight intensity={1} />
           <spotLight position={[10, 2, 5]} angle={0.15}  penumbra={1}/>
-            
         </Canvas>
-
       </div>
       <HandleScroll />
     </div>

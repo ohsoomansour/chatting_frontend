@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 const Button  = styled.button`
@@ -23,7 +22,7 @@ const TopSVG = styled.svg`
 function scrollToTop() {
   window.scrollTo({
     top: 0,
-    behavior: 'smooth' // 부드럽게 스크롤되도록 설정합니다.
+    behavior: 'smooth' // 스무스한 스크롤 설정
   });
 }
 

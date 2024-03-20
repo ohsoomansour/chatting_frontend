@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-
+//판매 등록 창에서 주소
 export const sellerAddress = atom({
   key: "sellerAdderess",
   default:""
@@ -13,7 +13,7 @@ export const sellerRoad = atom({
   default:""
 })
 
-
+//구매 창에서 주소
 export const buyerAddress = atom({
   key: "buyerAddres",
   default:""
@@ -31,7 +31,7 @@ export const buyerDetail = atom({
   default:""
 })
 
-
+//미리 담기에서 주소 
 export const storedGoodsAddress = atom({
   key: "buyerStoringGoodsFull",
   default:""

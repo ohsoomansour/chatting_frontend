@@ -5,11 +5,7 @@ import { useRecoilValue } from "recoil";
 import { tokenState } from "../recoil/atom_token";
 import { Loading } from "../components/loading";
 import { Helmet } from "react-helmet";
-import { useState } from "react";
-
-import ScrollToTopButton from "../components/ScrollToTop";
 import { HandleScroll } from "../components/handleScroll";
-
 
 const Wrapper = styled.div``;
 export const CancelSVG = styled.svg`
@@ -23,7 +19,7 @@ export const CancelSVG = styled.svg`
     fill: red;
   }
 `;
-export enum OrderStatus  {
+export enum OrderStatus {
   PaymentApproval = "PaymentApproval",
   OrderCompleted = "OrderComplete",
   Pending = "Pending",
@@ -31,7 +27,7 @@ export enum OrderStatus  {
   OrderCancel = "OrderCancel",
   InDelivery = "InDelivery", 
   DeliveryCompleted = "DeliveryCompleted",
-}
+};
 
 
 interface IRobot{
@@ -91,9 +87,8 @@ let page:number = 1;
 export const OrderInfo = () => {
   const token = useRecoilValue(tokenState);
   const { data: myOrderInfo, isLoading, refetch }  = useQuery<MyOrderInfos>(
-    ["customerOrderInfo", "ORDER"], () => getMyOrder(token, page)
-    )
-
+    ["customerOrderInfo", "ORDER"], () => getMyOrder(token, page) )
+    
   const myOrders = isLoading 
     ? []
     : myOrderInfo
@@ -116,8 +111,6 @@ export const OrderInfo = () => {
     }).then(response => response.ok? refetch() : null )
   }
   
-
-
   return (
     <Wrapper className="mt-6">
       <Helmet>
@@ -204,8 +197,6 @@ export const OrderInfo = () => {
             <p className="text-sm ">{order.customer.mobile_phone}</p>
           </div>
           <hr className="my-6" />
-          
-
           <h3 className="text-lg font-semibold mb-2">Items Ordered</h3>
           <div className="flex justify-between mb-2">
             <p className="text-sm">{order.items.robot.name}</p>

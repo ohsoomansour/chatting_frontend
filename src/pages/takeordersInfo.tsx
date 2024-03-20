@@ -19,7 +19,7 @@ interface ICustomer{
   id:number;
   name:string;
   userId:string;
-}
+};
 
 interface IDeal{
   compaBrand_ImgURL:string;
@@ -29,7 +29,7 @@ interface IDeal{
   robotId:number;
   sellerId:number;
   seller_address:string;
-}
+};
 interface Iitems{
   createdAt:string;
   id:number;
@@ -38,7 +38,7 @@ interface Iitems{
     maintenanceYN:boolean;
     maintenance_cost:number;
   }
-}
+};
 export interface IRobot{
   description:string;
   id:number;
@@ -46,7 +46,7 @@ export interface IRobot{
   price:number;
   maintenance_cost:number;
   rbURL:string;
-}
+};
 interface ITakingOrders {
   createdAt:string;
   address:string; //판매자 주소
@@ -58,26 +58,23 @@ interface ITakingOrders {
   total:number;
   memberRole:string; //사이트에서 판매자는 client 
   takingorders:ITakingOrders[] //판매자가 받은 주문 리스트들
-}
+};
 interface ISellerTakingOrders {
   takingOrders:ITakingOrders[];
   totalPages:number;
   salesCount:number;
   totalSales:number;
-}
+};
 
 let page:number = 1; 
 export const TakingOrderInfo = () => {
   const token = useRecoilValue(tokenState);
   const onNextPage = () => { page = page + 1 ;  refetch(); }
   const onPrevPage = () => { page = page - 1 ; refetch(); }   
-
-  // next버튼, page:1 ->  prev버튼 page:2 -> 1   
   const { data: takingOrderInfos, isLoading, refetch }  = useQuery<ISellerTakingOrders>(
     ["takeOrdersInfo", "ORDER"], () => takeOrders(token, page)
-  )
-  console.log('takeOrdersInfos:')
-  console.log(takingOrderInfos);
+  );
+
   const takeOrderInfos = isLoading
     ? []
     : takingOrderInfos
@@ -122,7 +119,7 @@ export const TakingOrderInfo = () => {
         {isLoading 
           ? <Loading /> 
           :  ( takeOrderInfos.map((order, index) => (
-            //<div key={index} className="mb-2 max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">  
+
             <div key={index} className=" mb-2 max-w-md mx-auto p-6 bg-white rounded-lg shadow-md ">  
               <h2 className="text-2xl text-center font-semibold mb-4">Electronic Receipt</h2>
               <div className="flex justify-between mb-4">
@@ -169,7 +166,6 @@ export const TakingOrderInfo = () => {
                 <p className="text-lg">Total Amount:</p>
                 <p className="text-lg font-semibold">{formatter.format(order.total)}</p>
               </div>
-              
             </div>
 
           )) 

@@ -103,14 +103,13 @@ let myDataChannel: RTCDataChannel;
 
 export function Conference() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const peerVideoRef = useRef<HTMLVideoElement>(null)
-  const selectRef = useRef(null)
-
+  const peerVideoRef = useRef<HTMLVideoElement>(null);
+  const selectRef = useRef(null);
   const [isMuted, setMuted] = useState(false);
-  const [isCameraOff, setCameraOff] = useState(false)
+  const [isCameraOff, setCameraOff] = useState(false);
   const [cameraDevices, setCameraDevices] = useState<IcameraDevicesInfo[]>();
-  const [cameraId, setCameraId] = useState<string>("")
-  const [initCamera, setInitCamera] = useState<IcameraDevicesInfo>()
+  const [cameraId, setCameraId] = useState<string>("");
+  const [initCamera, setInitCamera] = useState<IcameraDevicesInfo>();
   const [socket, setSocket] = useState<Socket>();
   const [roomId, setRoomId] = useState<string>("");
   const [camON, setCamON] = useState(false);
@@ -118,11 +117,7 @@ export function Conference() {
   const [messages, setMessages] = useState<IChat[]>([{msg:"", isMe: true}]);
   const {register, getValues, reset} = useForm({mode:"onChange"});
 
-  // 강의에서는 PeerA가 'Brave' PeerB가 'FireFox'
   useEffect(() => {  
-    // SimplePeer 인스턴스 생성
-
-
     let socket = io(`${WS_BASE_PATH}`, {
       transports:['websocket'], 
     },
@@ -204,12 +199,8 @@ export function Conference() {
         const cameras = devices.filter(device => device.kind === "videoinput");
         setInitCamera(cameras[0])
         setCameraDevices(cameras);
-
         let currentCamera = myStream.getVideoTracks()[0]; //Logi C270 HD WebCam (046d:0825)
-  
         currCamera = currentCamera;
-        
-   
       } catch(e) {
         console.error(e);
       }
@@ -247,9 +238,7 @@ export function Conference() {
       myStream = await navigator.mediaDevices.getUserMedia( //1번
         cameraId ? cameraConstraints : initalConstraints
       )
-
       videoRef!.current!.srcObject = myStream;
-      //getCameras();
     } catch (e) {
       console.error(e);
     }

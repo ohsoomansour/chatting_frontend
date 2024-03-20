@@ -50,8 +50,6 @@ export const ActiveAccount  = () => {
         })
       ).json()
       
-      console.log('활성화 된 회원:')
-      console.log(activatedMember);
       alert('회원님의 계정이 활성화 되었습니다.');
       // 따라서 undefin활성화 상태가 아닐 경우 구분
       if(activatedMember?.isDormant === false) {

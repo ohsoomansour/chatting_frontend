@@ -6,7 +6,6 @@ import { userIdState } from "../recoil/atom_user";
 import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 import { BASE_PATH, getMyinfo } from "../api";
-import { useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 const EditProfileWrapper = styled.div`
   background-color:${props => props.theme.bgColor}
@@ -34,9 +33,7 @@ interface IResult {
 }
 
 export const EditUserInfo  = () => {
-  const {register, getValues, formState:{errors} } = useForm<IeditUserInfo>({"mode": "onChange"})
-  const privateInfoMatch = useRouteMatch("/myInfo/privateInfo"); 
-  console.log(privateInfoMatch);
+  const {register, getValues, formState:{errors} } = useForm<IeditUserInfo>({"mode": "onChange"});
   const token = useRecoilValue(tokenState);
   const [userId, setUserId] = useRecoilState<string>(userIdState);
   const { data:whoamI, isLoading } = useQuery<IuserInfo>(

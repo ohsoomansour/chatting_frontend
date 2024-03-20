@@ -85,23 +85,6 @@ const Login:React.FC = () => {
           console.log(response);
           
         }
-      //@Explain: 로그인된 유저의 isDormant가 true의 경우, 활성화 페이지 vs false의 경우 홈으로 이동
-      /* 
-        const user:IuserInfo = await (
-          await fetch(`${BASE_PATH}/member/getuser`, {
-            headers: {
-              'Content-Type':'application/json; charset=utf-8',
-              'x-jwt': `${token}`,
-            },
-            method: 'POST',
-            body: JSON.stringify({
-              userId: email,
-            })
-          })
-        ).json();
-      */
-        
-      
       }     
     } catch (e) {}
   }
@@ -117,7 +100,6 @@ const Login:React.FC = () => {
         Welcom to Trade
       </h4>
       <form
-        //className="grid gap-2 mt-5 w-full mb-3 " 
         className="grid gap-2 w-full " 
         onSubmit={handleSubmit((e) => onValid(e))}
       >

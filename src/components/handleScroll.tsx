@@ -19,7 +19,6 @@ export function HandleScroll(){
   return (
     <ScrollToTopButtonWrapper >
       {isVisible && <ScrollToTopButton />}
-
     </ScrollToTopButtonWrapper >
   )
 }

@@ -95,8 +95,7 @@ export const TradePlatform = () => {
     : Deals   
     ? Deals
     : [];   // Deals가 undefined의 경우 [] 반환
-  console.log(allDeals);
-  
+
   function handleScroll(){
     const scrollPosition = window.scrollY;
     const triggerPosition = 200;

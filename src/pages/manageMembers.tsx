@@ -39,7 +39,7 @@ const SearchSVG = styled.svg`
       fill: #696969;
   }
 
-`
+`;
 const SearchBtn = styled.button`
   display: flex;
   justify-content: center; 
@@ -61,8 +61,7 @@ const SearchBtn = styled.button`
 `;
 const BtnContainer = styled.div`
   display:flex;
-`
-
+` ;
 /*
  * @Author : OSOOMAN
  * @Date : 2024.1.16
@@ -70,8 +69,6 @@ const BtnContainer = styled.div`
  * @Parm : 
  * @Return : 
  * @Explain : 전체 회원 조회, 이름을 통한 회원 검색, 회원 정보 수정 기능, 비활성화 기능 
-   - 사용법: 
-   - 
  */
 export const ManageMembers:React.FC = () => {
   const {register, getValues, formState:{ errors },} = useForm<ImngMember>({mode: "onChange"})

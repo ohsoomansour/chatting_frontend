@@ -12,7 +12,7 @@ import {  faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icon
 const EditMyDealsWrappper = styled.div`
   background-color: ${props => props.theme.bgColor};
   margin:0 20px;
-`
+`;
 const SliderWrapper = styled(motion.div)`
   display:flex;
   flex-direction:row;
@@ -86,7 +86,7 @@ function EditMyDeals(){
           },
           method:'DELETE'
         }).then(res => res.ok? refetch() : null);
-        //alert('현재 주문을 하고 있는 고객이 있습니다.')
+        
       } catch (e) {
         console.error(e);
       }
