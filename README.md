@@ -21,7 +21,7 @@ TypeScript   | 1 년        | 0 년      |
 javascript   | 2 년        | 1년 미만  | 
 DB/SQL       | 1년         | 1년 미만  | 
 
-## 시험 아이디 / 비번 
+## 사용 경험 아이디 / 비번 
 - 판매자 역할: osoomansour2@naver.com / osoomansour2 (구매도 가능)
 - 구매자 역할: osoomansour1@naver.com / osoomansour1 (판매도 가능)
 
@@ -36,7 +36,6 @@ DB/SQL       | 1년         | 1년 미만  |
 ## 로그인 
  - (서버)엔드 포인트 경로: member/login
  - (클라이언트)라우트 경로: /login
- - **jwt 활용**
  - **DB에서 id 및 password 값 검증**
  - **로그인 시 jwt 발급: Session storage에 저장하고 이용**
    **Token의 값은 있지만 isDormant 속성 값이 true의 경우 '활성화 페이지'로 이동** 
@@ -48,14 +47,20 @@ DB/SQL       | 1년         | 1년 미만  |
  
  - (서버)엔드 포인트 경로: /admin/members/
  - (클라이언트)라우트 경로: /admin  
- - **관리자 회원 인증 방법: UseGuards 데코레이터(Nesgjs 제공)와 AuthGuard 클래스를 사용하여 Reflector 인터페이스 를 통해 현재 요청 핸들러에서 인증이 필요한 값(Role['admin'])을 불러오고 이 'admin'값이 jwt Middleware에서 입력한 '로그인 사용자의 정보'를 현재 request 파이프 라인을 기술한 ExecutionContext 인터페이스를 통해 사용자의 memberRole 속성 값이 'admin' 인지 확인한다.**  
-  *참조 파일: B/E -> src/admin/admin.controller.ts와 src/auth/auth.guard.ts
+ - **admin(관리자) 회원 인증 방법: 'UseGuards 데코레이터'(Nesgjs 제공)와 'AuthGuard 클래스'를 사용하여 'Reflector 인터페이스'를 통해 현재 요청 핸들러에서 'roles'키의 메타데이터 즉, 인증이 필요한 값(Role['admin']에서 'admin')을 불러오고 이 'admin'값이 jwt Middleware에서 입력한 '로그인 사용자의 정보'를 ⭐현재 request pipe⭐를 기술한 'ExecutionContext Interface'를 통해 사용자의 memberRole 속성 값이 'admin' 인지 확인한다.** 
+  
+  *현재 request pipe: src/auth/auth.guard.ts 파일에서 const request = context.switchToHttp().getRequest() 
+   > request.member.memberRole
+  *로그인 사용자의 정보: req['member'] = member;
+  *참조 파일: B/E -> src/admin/admin.controller.ts
+                    src/auth/auth.guard.ts 
+                    src/jwt/jwt.middleware.ts 
 
  - **회원가입 시 admin으로 가입했다면 특정 회원을 '전체 검색' 또는 '회원 이름'을 통해 검색이 가능하다.** 
  - **Edit '회원 정보' 중 주소 또는 member Role을 변경할 수 있다.**   
 
 ## 📷화상 채팅 기능 & 🙇‍♀️1:1 메세지 가능  
-  #### **camera 설정:  구글 크롬에서 카메라 연결 설정 을 알려준다.** 
+  #### **camera 설정: 구글 크롬에서 카메라 연결 설정이 필요하다.** 
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/40c2a096-9775-4099-88f2-c33b4c124ac9"> 
 
  ### WebRTC (F/E: conference.tsx, B/E: events.gateway.ts 파일을 참조)

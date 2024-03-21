@@ -85,7 +85,7 @@ export const EditUserInfo  = () => {
       <form
         className= " w-2/4"
         > 
-        <EditProfileWrapper className="flex flex-col w-full bg-slate-400  p-8 rounded shadow-2xl">
+        <EditProfileWrapper className="mb-4 flex flex-col w-full bg-slate-400  p-8 rounded shadow-2xl">
           <h1 className=" text-2xl text-black text-center font-bold mb-4">Edit Profile</h1>
           <h4 className="ml-4 text-lg text-black text-left font-bold mb-2">Email</h4>
           <input
