@@ -146,7 +146,7 @@ DB/SQL       | 1년         | 1년 미만  |
 ---------------------------------------------------------------------------------------------------------
 
 ## 배포
- > [ROBOT Trader App]: https://main--darling-kulfi-cecca8.netlify.app/
+ > ROBOT Trader App: https://main--darling-kulfi-cecca8.netlify.app/
  - **Front End:** Netlify  
  - **Back End:** Heroku 
 
