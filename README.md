@@ -51,8 +51,7 @@ DB/SQL       | 1년         | 1년 미만  |
   
   >*admin 핸들러의 참조 파일: src/admin/admin.controller.ts
   
-  >*현재 request pipe의 참조 파일: src/auth/auth.guard.ts 파일에서 const request = context.switchToHttp().getRequest() 
-  > 참조 파일: src/auth/auth.guard.ts파일에서 request.member.memberRole
+  >*현재 request pipe의 참조 파일: src/auth/auth.guard.ts 파일에서 const request = context.switchToHttp().getRequest() ✅request.member.memberRole
   
   >*로그인 사용자의 정보의 참조 파일: src/jwt/jwt.middleware.ts파일에서 req['member'] = member;  
                      
