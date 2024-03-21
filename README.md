@@ -100,7 +100,7 @@ DB/SQL       | 1년         | 1년 미만  |
  - **REST API 개인 또는 회사가 거래를 등록하고 누구나(수요자)는 판매되고 있는 리스트에서 선택하여 '주문' 또는 '미리 담기'를 할 수 있습니다.** 
  - **우선 판매자(공급자, 누구나 가능)가 회사 로고 사진 및 판매 가능한 로봇의 사진 및 동영상 파일 또는 glb 파일을 등록한다.**
    
-  >*glb 파일은 프로젝트 경로가 /models/dogRobot.glb에 있어야 가능하다. 
+  >*주의: dogRobot.glb 파일 로드가 가능하기 위해 프로젝트 경로 /models/dogRobot.glb 파일이 존재해야 가능하다. 
     
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/d92172ed-71a3-45c4-b906-be26039f8c06">
 
@@ -146,7 +146,7 @@ DB/SQL       | 1년         | 1년 미만  |
 ---------------------------------------------------------------------------------------------------------
 
 ## 배포
- > ROBOT Trader App: https://main--darling-kulfi-cecca8.netlify.app/
+ > **ROBOT Trader App**: https://main--darling-kulfi-cecca8.netlify.app/
  - **Front End:** Netlify  
  - **Back End:** Heroku 
 
