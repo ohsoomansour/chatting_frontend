@@ -1,5 +1,5 @@
 
-## 프로젝트 소개 
+# 프로젝트 소개 
  **미래에는 ROBOT가 산업 현장의 노동뿐만 아니라 가사 노동을 지원하고 몇 년 내에 로봇 친화적인 환경으로 변화될 것으로 예상됩니다. 로봇 시장의 규모가 커지고 거래가 B to B에서 확장하여 B to C 또는 C to C 거래도 활성화되는 사업을 구상해서 만든 'ROBOT Trader 플랫폼'입니다.**
  <img src="https://github.com/ohsoomansour/Trader/assets/98678172/d4ad738d-3674-48fd-96f6-df99aad75ebe">
 
@@ -13,6 +13,9 @@
  + **Framework**:Nestjs 10.2.10
  + **ORM**: TypeORM 
  + **Database**: Postgresql
+
+### 아키텍쳐
+ + SOLID 설계 원칙 적용
 
 ## Skill 숙련도 
 Skill        | Experiences | Careers  | Note
@@ -100,7 +103,7 @@ DB/SQL       | 1년         | 1년 미만  |
  - **REST API 개인 또는 회사가 거래를 등록하고 누구나(수요자)는 판매되고 있는 리스트에서 선택하여 '주문' 또는 '미리 담기'를 할 수 있습니다.** 
  - **우선 판매자(공급자, 누구나 가능)가 회사 로고 사진 및 판매 가능한 로봇의 사진 및 동영상 파일 또는 glb 파일을 등록한다.**
    
-  >*주의: dogRobot.glb 파일 로드가 가능하기 위해 프로젝트 경로 /models/dogRobot.glb 파일이 존재해야 가능하다. 
+  >*주의: dogRobot.glb 파일 로드가 가능하기 위해 프로젝트 경로 /models/dogRobot.glb 해당 파일이 존재해야 가능하다. 
     
   <img src="https://github.com/ohsoomansour/Trader/assets/98678172/d92172ed-71a3-45c4-b906-be26039f8c06">
 
