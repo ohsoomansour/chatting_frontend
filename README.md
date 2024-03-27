@@ -21,8 +21,8 @@
 Skill        | Experiences | Careers  | Note
 -------------|-------------|--------- |-------
 TypeScript   | 1 년        | 0 년      | 
-javascript   | 2 년        | 1년 미만  | 
-DB/SQL       | 1년         | 1년 미만  | 
+javascript   | 1 년 6개월   | 5개월    | 
+DB/SQL       | 1년         | 5개월     | 
 
 ## 사용 경험 아이디 / 비번 
 - 판매자 역할: osoomansour2@naver.com / osoomansour2 (구매도 가능)

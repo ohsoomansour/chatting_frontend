@@ -114,3 +114,19 @@ export async function validateMyPhoneNumber() {
   
 }
 
+export async function getComments() {
+  try {
+    const allComments = await (
+      await fetch(`${BASE_PATH}/allComents`, {
+        headers:{
+          'Content-Type':'application/json; charset=utf-8',
+  
+        },
+        method:'GET',
+      })
+    ).json();
+    return allComments;
+  } catch(e){
+
+  }
+}
