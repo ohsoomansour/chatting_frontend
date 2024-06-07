@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import { IDeal, IRobot } from '../pages/TradePlatform';
+import { IDeal, IRobot } from '../pages/RobotTrade';
 import { useRecoilValue } from 'recoil';
 import { tokenState } from '../recoil/atom_token';
 import { userIdState } from '../recoil/atom_user';
