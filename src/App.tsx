@@ -6,7 +6,7 @@ import { darkTheme, lightTheme } from './theme.t';
 import { LoggedOutRouter } from './router/logged-out-router';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
-import { MyPage } from './pages/MyPage';
+
 
 
 
