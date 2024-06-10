@@ -8,17 +8,10 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
 
 
-
-
-
    /*Q.컴포넌트가 랜더링될 때: DOM 리랜더링? 
       > React의 리랜더링 조건
       > Parent 컴포넌트가 리렌더링되면 자식 component는 리랜더링
-   
-
-      
-
-
+  
   */ 
 
 

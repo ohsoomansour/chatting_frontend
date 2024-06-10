@@ -7,10 +7,36 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { useQuery } from "react-query";
 import { BASE_PATH, getMyinfo } from "../api";
 import styled from "styled-components";
+import { useState } from "react";
+
 
 const EditProfileWrapper = styled.div`
   background-color:${props => props.theme.bgColor}
 `;
+const PwSwitch = styled.button<{isPwSelected: boolean}>`
+  background-color: ${props => props.isPwSelected ?  "#ec5353" : "#BFFF00"};
+  padding: 7px;
+  border-radius: 10px;
+  transition: background-color 0.3s ease-in-out;
+  &:hover{
+    background-color: ${props => props.isPwSelected ? "#dc143c" : "#cfff00"}; 
+  }
+`;
+
+const CheckingPwButton = styled.button`
+  font-weight:bold;
+  background-color: #BFFF00;
+  width:100px;
+  height:50px;
+  padding: 10px;
+  margin-left:5px;
+  transition: background-color 0.4s ease-in-out;
+  &:hover{
+    background-color: #cfff00
+  }
+  
+`; 
+
 interface IeditUserInfo{
   id:string;
   password:string;
@@ -33,11 +59,12 @@ interface IResult {
   ok:boolean;
   error:string;
 };
-
+// 비밀번호 변경 가능 선택 Y -> 나타나고 /N -> 사라지고  -> 변수 : N -> "" 값으로 들어가면 알아서 업데이트 하지 않는 로직   
 export const EditUserInfo  = () => {
   const {register, getValues, formState:{errors} } = useForm<IeditUserInfo>({"mode": "onChange"});
   const token = useRecoilValue(tokenState);
   const [userId, setUserId] = useRecoilState<string>(userIdState);
+  const [isPwSelected, setPwSelected] = useState(true);
   //const [isPrePw, setPrevPw] = useState(false)   # useState 훅의 isPrePw값은 전역 스코프
   const { data:whoamI, isLoading } = useQuery<IuserInfo>(
     ["me", "Member"], () => getMyinfo(token)
@@ -47,6 +74,20 @@ export const EditUserInfo  = () => {
     'Content-Type':'application/json; charset=utf-8',
     'x-jwt': `${token}`,
   });
+  const isHpFormat = (hp:any) => {	
+    if(hp == ""){
+    		return true;	
+    }	
+    const phoneRule = /^(01[016789]{1})[0-9]{3,4}[0-9]{4}$/;	
+        return phoneRule.test(hp);
+  }
+
+
+  const onSelecPassword = (e:any) =>{
+    e.preventDefault();
+    setPwSelected(prev => !prev)
+  }
+
   // /then(res => res.ok? alert('기존 비밀번호와 같습니다. 다른 비밀번호를 !') : alert('비밀번호 정상적으로 사용이 가능합니다.'))
   const onConfrimPw = async (e: any) => {
     e.preventDefault();
@@ -76,20 +117,23 @@ export const EditUserInfo  = () => {
     e.preventDefault(); 
     const {id, password, address, mobile_phone } = getValues() //이건 변경된 email 
     //기존 패스워드 값이 같을 경우 기능 -> 확인 
-
+    const phValidTrue = isHpFormat(mobile_phone);
 
     if(!(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(id))){
-      alert('이메일 형식이 아닙니다!💛');
+      alert('아이디가 이메일 형식이 아닙니다!💛'); 
       return;
-    } else if(password.length < 10) {
-      alert('패스워드의 길이가 10자 이상이 아닙니다!💛');
-      
-      return;
-      // isPrePw ? 패스워드가 이전과 같다 + 
+    } else if(isPwSelected) {
+      if(password.length < 10){
+        alert('패스워드의 길이가 10자 이상이 아닙니다!💛');
+        return;
+      }
+      //패스워드 형식 유효성 검사 필요 
+    } else if(!phValidTrue){
+      alert("휴대폰 번호 형식이 틀렸습니다!💛 ")
     } else if(address.length < 5) {
       alert('주소의 길이는 5자 이상이어야 합니다!💛')
       return;
-    }
+    } 
 
     setUserId(id);
     //업데이트 api 
@@ -99,8 +143,8 @@ export const EditUserInfo  = () => {
         method: 'PATCH',
         body: JSON.stringify({
           userId:id,
-          password:password,
-          address:address,
+          password,
+          address,
           mobile_phone
         })  
       })
@@ -141,14 +185,19 @@ export const EditUserInfo  = () => {
           {errors?.id?.type === 'pattern'&& (
             <FormError errorMessage={"Please Insert a valid Email that you would like to change!"} />
           )}
-          <h4 className="ml-4 text-black text-lg text-left font-bold mb-2 mt-2">비밀번호 </h4>
-          <input
-            {...register("password", {required: "Password is required", minLength:10})} 
-            type="password" 
-            placeholder="Please Enter the password you want to change."
-            className="input mb-2 text-center font-semibold rounded"
-          />
-          <button onClick={(e) => onConfrimPw(e)}>비번 체크</button>
+          <h4 className="ml-4 text-black text-lg text-left font-bold mb-2 mt-2"> <PwSwitch isPwSelected={isPwSelected} onClick={(e) => onSelecPassword(e)}>{isPwSelected ? "비밀번호 선택 X " : "비밀번호 변경 o"} </PwSwitch></h4> 
+          {isPwSelected ? 
+            <div className=" flex flex-row justify-between items-center mb-2 ">
+              <input
+                {...register("password", {required: "Password is required", minLength:10})} 
+                type="password" 
+                placeholder="Please Enter the password you want to change."
+                className=" w-full input text-center font-semibold rounded"
+              />
+              <CheckingPwButton  onClick={(e) => onConfrimPw(e)}>비번 체크</CheckingPwButton>  
+            </div> : null
+          }
+          
           {errors?.password?.message && (
             <FormError errorMessage={errors.password.message}/>
           )}
