@@ -31,7 +31,6 @@ const ProfileSvg = styled.svg`
     fill: #30336b;
   }
 `;
-
 const TakingOrderSvg = styled.svg`
   fill:#130f40;
   transition: fill 0.3s ease-in-out;
@@ -39,7 +38,6 @@ const TakingOrderSvg = styled.svg`
     fill: #FFD700;
   }
 `;
-
 const TranasactionSVG = styled.svg`
   fill:#130f40;
   transition: fill 0.3s ease-in-out;
@@ -54,7 +52,6 @@ const RobotHomeSVG = styled.svg`
     fill: #E3E2B4;
   }
 `;
-
 const MyOrderSVG = styled.svg`
   fill:#130f40;
   transition: fill 0.3s ease-in-out;
@@ -91,7 +88,6 @@ const AdminSVG = styled.svg`
     fill: #009933;
   }
 `;
-
 const StreamingSVG = styled.svg`
   fill:black;
   transition: fill 0.3s ease-in-out;
@@ -122,18 +118,15 @@ const DownSVG = styled.svg`
     fill: #BFC8D7;
   }
 `;
-
 const CompanyName = styled.h1`
   font-family: "Stylish", serif;
   font-size:30px;
   font-weight: 400;
   font-style: normal;
 `;
-
 const ButtonWrapper = styled.div`
   background-color:${props => props.theme.bgColor};
 `;
-
 export enum MemberRole {
   admin = "admin",
   client = "client",

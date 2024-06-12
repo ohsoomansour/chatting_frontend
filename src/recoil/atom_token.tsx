@@ -13,7 +13,6 @@ const sessionStorage =
 export const { persistAtom } = recoilPersist({
   key: "tk",
   storage: sessionStorage,
-
 });
 
 export const tokenState = atom({

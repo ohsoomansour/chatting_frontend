@@ -63,8 +63,6 @@ export const LoggedInRouter = () => {
         ))
         : null}
         
-      
-
       { userRoutes.map((route, index) => (
         <Route key={index} exact path={route.path}>
           {route.component }

@@ -32,14 +32,14 @@ npx tailwindcss init
 
 */
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Button } from "../components/Button";
 import {  Helmet, HelmetProvider } from "react-helmet-async";
 import {  tokenState } from "../recoil/atom_token";
 import { useRecoilState} from 'recoil';
 import { FormError } from "../components/form-error";
 import { userIdState } from "../recoil/atom_user";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface ILoginForm {
   email: string;
@@ -56,13 +56,19 @@ const Login:React.FC = () => {
   const { register, formState:{ errors },handleSubmit, formState, getValues } = useForm<ILoginForm>({mode: "onChange"});
   const [token, setToken] = useRecoilState(tokenState)
   const [user, setUserId] = useRecoilState(userIdState)
-  
-  useEffect(() => {
+  const [pwErrorMsg, setPwErrorMsg] = useState("");
+  const history = useHistory();
 
-  })
-  const onValid = async (e:any) => {
-    try {
-      const {email, password} = getValues();
+  const onInvalid = (data:any) => {
+    //유효하지 않으면 실행 
+    
+    console.log(data, "onInvalid");
+  }
+  const onValid = async (data:ILoginForm) => {
+    try { 
+      
+      console.log(data) //{email: 'admin@naver.com', password: 'admin@naver.com'}
+            const {email, password} = getValues();
       const response =  await (
         await fetch(`${BASE_PATH}/member/login`, {
         headers : {"Content-Type":"application/json; charset=utf-8"},
@@ -70,24 +76,36 @@ const Login:React.FC = () => {
         credentials: 'same-origin',
         body: JSON.stringify({
           userId: email, 
-          password: password, 
+          password: password
         })
       })
       ).json();
-
+      console.log("response:")
+      console.log(response);
+      /*
+      if(!response.ok){
+      🌝🌝⚡️🌺🌺🥝
+      }*/
+    
       setToken(response.token)
       setUserId(email);
-      if(response.token !== ''){
+      if(response.ok){
         if(user.isDormant === true ){
           window.location.href= '/member/activate';
         } else {
-          window.location.href= "/";
-          console.log(response);
-          
+          window.location.href = "/";
         }
-      }     
-    } catch (e) {}
+      } else {
+        alert(response.error);
+        window.location.href = "/login";
+        //history.push("/login");  //handleSubmit은 새로고침을 하지 않고 history.push 또한 새로고침을 하지않음, 본 로그인 페이지가 당연히 뜨지 않음 
+      }   
+    } catch (e) {
+      console.error(e);
+    }
   }
+
+
   return (
     <div className="m-5">
 
@@ -101,7 +119,7 @@ const Login:React.FC = () => {
       </h4>
       <form
         className="grid gap-2 w-full " 
-        onSubmit={handleSubmit((e) => onValid(e))}
+        onSubmit={handleSubmit(onValid, onInvalid)}
       >
         <input
             {...register("email", {
@@ -119,6 +137,7 @@ const Login:React.FC = () => {
         {errors.email?.type === "pattern" && (
           <FormError errorMessage="Please enter a valid email" />
         )}
+        
        <input
           {...register("password", {required: "Password is required", minLength:10})} 
           type="password"
@@ -131,6 +150,8 @@ const Login:React.FC = () => {
         {errors.password?.type === "minLength" && (
           <FormError errorMessage="Password must be more than 10"/>
         )}
+        {"" ? <FormError errorMessage={pwErrorMsg}/> : null}
+
         <Button 
           canClick={formState.isValid}
           actionText={"Log In"}
