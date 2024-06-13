@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import { IDeal, IRobot } from '../pages/RobotTrade';
+import { IDeal, IProduct } from '../pages/RobotTrade';
 import { useRecoilValue } from 'recoil';
 import { tokenState } from '../recoil/atom_token';
 import { userIdState } from '../recoil/atom_user';
@@ -45,14 +45,14 @@ interface IBuyerInfo{
 }
 
 interface OrderProps{
-  robot:IRobot;
+  product:IProduct;
   deal: IDeal;
 }
 const BASE_PATH = process.env.NODE_ENV === "production" 
  ? "https://trade-2507d8197825.herokuapp.com"
  : "http://localhost:3000";
 
-export const Order = ({robot, deal}:OrderProps) => {
+export const Order = ({product, deal}:OrderProps) => {
   const token = useRecoilValue<string>(tokenState);
   const userId = useRecoilValue<string>(userIdState);
   const customerFullAddress = useRecoilValue<string>(buyerAddress); 
@@ -94,8 +94,8 @@ export const Order = ({robot, deal}:OrderProps) => {
   } catch (e) {
     console.error(e);
   }
-  const numSeletedManitenance = maintenance_cost === undefined ? 0 : robot.maintenance_cost;
-  const numTotal = robot.price + numSeletedManitenance;
+  const numSeletedManitenance = maintenance_cost === undefined ? 0 : product.maintenance_cost;
+  const numTotal = product.price + numSeletedManitenance;
     
   //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
   await fetch(`${BASE_PATH}/order/storegoods`, {
@@ -108,7 +108,7 @@ export const Order = ({robot, deal}:OrderProps) => {
       dealId: deal.id,
       customer,
       payment:{
-        price:robot.price,   
+        price:product.price,   
         maintenanceYN,
         maintenance_cost: numSeletedManitenance, //{ maintenanceYN: true, maintenance_cost: '100' }
         total: numTotal, 
@@ -125,8 +125,8 @@ const formatter = new Intl.NumberFormat('en-US', {
  const onOrder = async() => {
     //판매자 추가
     const {seller,sellerPhone, customer , maintenance_cost } = getValues()
-    const numPrice = robot.price;
-    const numSeletedManitenance = maintenance_cost === undefined ? 0 : robot.maintenance_cost;
+    const numPrice = product.price;
+    const numSeletedManitenance = maintenance_cost === undefined ? 0 : product.maintenance_cost;
     const numTotal = numPrice + numSeletedManitenance;
     
     //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
@@ -143,7 +143,7 @@ const formatter = new Intl.NumberFormat('en-US', {
           customer,
           address:customerFullAddress,
           items:{
-            robot: robot,  
+            product: product,  
             options:{
               maintenanceYN: maintenanceYN,
               maintenance_cost: numSeletedManitenance, 
@@ -201,7 +201,7 @@ const formatter = new Intl.NumberFormat('en-US', {
             type='text'
             
             className='text-center font-semibold text-gray-500 w-full mx-auto border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
-            value={robot.description}
+            value={product.description}
           />
           <MantenanceOption className=" mt-10 mb-5">
             <div className="flex ml-2">
@@ -236,7 +236,7 @@ const formatter = new Intl.NumberFormat('en-US', {
                 {...register('price', {required: true})}
                 //type='number'
                 className=' w-full  border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'  
-                defaultValue={formatter.format(robot.price)}
+                defaultValue={formatter.format(product.price)}
                 placeholder="We will strive to adust to a more reasonable price "
               />
             </div>
@@ -252,7 +252,7 @@ const formatter = new Intl.NumberFormat('en-US', {
                     //type='number'
                     //size={30}
                     className=' w-full  border-4 rounded px-2 py-1  focus:outline-none  focus:border-pink-400 '  
-                    defaultValue={formatter.format(robot.maintenance_cost)}
+                    defaultValue={formatter.format(product.maintenance_cost)}
                     placeholder="We will strive to adust to a more reasonable price "
                   />
                 </div>    
@@ -267,7 +267,7 @@ const formatter = new Intl.NumberFormat('en-US', {
                 <input 
                   {...register('total', {required: true})}
                   className= ' w-full text-lg  border-4 rounded px-2 py-1  focus:outline-none  focus:border-pink-400'                   
-                  value={formatter.format(robot.price + (maintenanceYN === false ? 0 : robot.maintenance_cost) )}
+                  value={formatter.format(product.price + (maintenanceYN === false ? 0 : product.maintenance_cost) )}
                   placeholder="We will strive to adust to a more reasonable price "
                 />
               </div>

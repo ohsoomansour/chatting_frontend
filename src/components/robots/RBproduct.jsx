@@ -3,10 +3,10 @@ import {  useFrame, useLoader } from '@react-three/fiber'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
 
 
-export const RBproduct = ({rbURL}) => {
+export const RBproduct = ({productURL}) => {
     let mixer;
-    let start = rbURL.indexOf('_') + 1;
-    let glbModel = rbURL.slice(start);
+    let start = productURL.indexOf('_') + 1;
+    let glbModel = productURL.slice(start);
     let inputSrc = `/models/${glbModel}`;
     const glb = useLoader(GLTFLoader, inputSrc);
     if(glb.animations.length){

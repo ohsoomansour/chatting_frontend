@@ -27,8 +27,6 @@ export const TokenSelector = selector({
   key: 'Tselector',
   get: ({ get }) => {
     const result = get(tokenState);
-    console.log('TokenSelector_selector:');
-    console.log(result); // '' 또는 변경된 token값
     return get(tokenState)
   },
 

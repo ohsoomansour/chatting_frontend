@@ -149,7 +149,7 @@ function EditMyDeals(){
                 </div>
                 <div className="flex justify-between mb-4">
                   <p className="text-sm text-black f">Product Name:</p>
-                  <p className="text-sm font-semibold">{deal.robot.name}</p>
+                  <p className="text-sm font-semibold">{deal.product.name}</p>
                 </div>
                 <button onClick={() => onDelete(deal.id)} className="text-sm flex mx-auto p-2 bg-white rounded-lg shadow-md hover:bg-red-400 transition duration-500">
                   <CancelSVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
