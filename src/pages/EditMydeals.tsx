@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import { BASE_PATH, getMyDeals } from "../api";
 import { useRecoilValue } from "recoil";
 import { tokenState } from "../recoil/atom_token";
-import { IDeal } from "./RobotTrade";
+import { IDeal } from "./ProductsTrade";
 import { CancelSVG } from "./myorderInfo";
 import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";

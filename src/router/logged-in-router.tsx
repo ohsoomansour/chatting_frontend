@@ -11,7 +11,7 @@ import { ActiveAccount } from "../components/activeAccount";
 import { Home } from "../pages/home";
 import { Header, MemberRole } from "../components/header";
 import { SellerPage } from "../pages/sellerPage";
-import { RobotTrade } from "../pages/RobotTrade";
+import { ProductsTrade } from "../pages/ProductsTrade";
 import { OrderInfo } from "../pages/myorderInfo";
 import { TakingOrderInfo } from "../pages/takeordersInfo";
 import { StoredGoods } from "../pages/storedGoods";
@@ -31,7 +31,7 @@ const userRoutes = [
   {path: "/order/info/", component: <OrderInfo /> },
   {path: "/order/takeorders", component: <TakingOrderInfo />},
   {path: "/order/getstoredgoods", component: <StoredGoods /> },
-  {path: "/trade", component: <RobotTrade /> },
+  {path: "/trade", component: <ProductsTrade /> },
   {path: "/seller", component: <SellerPage /> },
   {path: "/cc", component: <Chatting />},
 ]

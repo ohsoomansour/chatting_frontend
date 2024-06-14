@@ -11,6 +11,7 @@ import { storedGoddsDetailed, storedGoodsAddress, storedGoodsPostal, storedGoods
 import { Helmet } from "react-helmet";
 import { BASE_PATH } from "./logIn";
 import { HandleScroll } from "../components/handleScroll";
+import { getCookie } from "../utils/cookie";
 
 interface ISeller {
   address:string;
@@ -78,15 +79,18 @@ let page:number = 1;
 export const StoredGoods = () => {
   const onNextPage = () => { page = page + 1 ;  refetch(); }
   const onPrevPage = () => { page = page - 1 ; refetch(); }
-  const token = useRecoilValue(tokenState);
+  //const token = useRecoilValue(tokenState);
+  const ckToken = getCookie('token');
   const me = useRecoilValue(userIdState);
   const addressYo = useRecoilValue(storedGoodsAddress)
   const postalCode = useRecoilValue(storedGoodsPostal);
   const streetAddress = useRecoilValue(storedGoodsRoad);
   const detailedAddress = useRecoilValue(storedGoddsDetailed);
+  
+
 
   const {data: mystoredDeals, isLoading, refetch } = useQuery<IMyStoredDeals>(
-    ["getStoredGoods","ORDER"], () => storedGoods(token, page)
+    ["getStoredGoods","ORDER"], () => storedGoods(ckToken!, page)
   )
 
   const stores = isLoading 
@@ -103,7 +107,7 @@ export const StoredGoods = () => {
     await fetch(`${BASE_PATH}/order/deletestoredgoods/${storageId}`, {
       method: 'DELETE',
       headers:{
-        'x-jwt':token,
+        'x-jwt':ckToken!,
         'Content-Type': 'application/json; charset=utf-8',
       },
     }).then(response => response.ok ? refetch() : null );
@@ -124,7 +128,7 @@ export const StoredGoods = () => {
   
     await fetch(`${BASE_PATH}/order/make`, {
       headers:{
-        'x-jwt':token,
+        'x-jwt':ckToken!,
         'Content-Type': 'application/json; charset=utf-8',
         
       },

@@ -2,9 +2,7 @@ import { useDropzone } from "react-dropzone";
 import { useCallback, useState } from "react";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
-import { tokenState } from "../recoil/atom_token";
 import { useForm } from "react-hook-form";
-import { userIdState } from "../recoil/atom_user";
 import { CompaImg } from "../components/CompaImg";
 import { compaImgState } from "../recoil/atom_compaImg";
 import { FormError } from "../components/form-error";
@@ -15,6 +13,10 @@ import { BASE_PATH } from "./logIn";
 import { Loading } from "../components/loading";
 import { useHistory } from "react-router-dom";
 import { IPhone, PhoneValidation } from "./signUpForMember";
+import { getCookie } from "../utils/cookie";
+import { useQuery } from "react-query";
+import { getMyinfo } from "../api";
+import { IuserInfo } from "./editUserInfo";
 
 export const UI = styled.div`
   display:flex;
@@ -40,8 +42,9 @@ interface ISellerForm {
 }   
 
 export const SellerPage = () => {
-  const token = useRecoilValue(tokenState)
-  const userId = useRecoilValue(userIdState);
+  //const token = useRecoilValue(tokenState)
+  const ckToken = getCookie('token');
+  //const userId = useRecoilValue(userIdState);
   const compaImg = useRecoilValue(compaImgState);
   const [threeDFile, setThreeDFile] = useState([]);
   const sellerZipcode = useRecoilValue<string>(sellerPostal);
@@ -53,9 +56,13 @@ export const SellerPage = () => {
   const [phoneEvent, setPhoneEvent] = useState<boolean>(false);
   const [mphoneValid, setMphoneValid] = useState(false);
   const [formattedMPnumber, setFormattedMPnumber] = useState<string>()
+  
+  const {data:me} = useQuery<IuserInfo>(
+    ["me2", "Member"], () => getMyinfo(ckToken!)
+  );
 
   // s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업 
-  let rbURL = "";
+  let productURL = "";
   let coImgURL = "";
   const onRegister = async() => {
     try {
@@ -125,17 +132,17 @@ export const SellerPage = () => {
         const actualFile = threeDFile[0];
   
         formBody.append('file', actualFile);
-        const { url: RobotURL} = await (
+        const { url: ProductURL} = await (
           await fetch(`${BASE_PATH}/upload`, {
             method: 'POST',
             body: formBody
           })
         ).json();
-        rbURL = RobotURL;
+        productURL = ProductURL;
   
         const headers = new Headers({
           'Content-Type':'application/json; charset=utf-8',  // 'application/json; charset=utf-8', //'multipart/form-data',  
-          'x-jwt': `${token}`,
+          'x-jwt': `${ckToken!}`,
         });
 
         
@@ -152,7 +159,7 @@ export const SellerPage = () => {
             price,
             maintenance_cost,
             description: description,
-            rbURL
+            productURL : productURL
           })
         }).then(response => response.ok ? window.location.href = '/trade'  : history.go(0) )
       
@@ -188,6 +195,7 @@ export const SellerPage = () => {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: {
+      'image/jpg': ['.jpg'],
       'image/jpeg': ['.jpeg'],
       'image/png': ['.png'],
       'video/mp4': ['.mp4', '.MP4'],
@@ -226,7 +234,8 @@ export const SellerPage = () => {
               pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
             })}
             className='w-full border-4 rounded-md focus:border-pink-400  border-gray-300  px-2 py-1 outline-none mr-2'
-            value={userId}
+            defaultValue={me?.userId}
+            //value={me?.userId}
             placeholder="Your Email address!"
             type="email"
             size={10} 

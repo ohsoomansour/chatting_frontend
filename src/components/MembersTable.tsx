@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useRecoilValue } from "recoil";
 import { tokenState } from "../recoil/atom_token";
 import { BASE_PATH } from "../pages/logIn";
+import { getCookie } from "../utils/cookie";
 
 interface Imember {
   id:number;
@@ -29,7 +30,8 @@ interface IschUser{
 const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUser[], isAll:boolean}) => {
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [id, setId] = useState(0);
-  const token = useRecoilValue(tokenState);
+  //const token = useRecoilValue(tokenState);
+  const ckToken = getCookie('token');
   const {getValues, register} = useForm();
   const openPopup = () => {
     setPopupOpen(true);
@@ -44,7 +46,7 @@ const MemberTable = ({members, member, isAll}:{members:Imember[], member:IschUse
   }
   const headers = new Headers({
     'Content-Type':'application/json; charset=utf-8',
-    'x-jwt': `${token}`,
+    'x-jwt': `${ckToken!}`,
   });
   const onModify = async () => {
     //변경된 부분 알림!

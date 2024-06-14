@@ -9,7 +9,6 @@ import { getallDeals } from "../api";
 import { Helmet } from "react-helmet";
 import { useState } from "react";
 import { HandleScroll } from "../components/handleScroll";
-import { IProduct } from "./RobotTrade";
 
 const Wrapper = styled.div`
   dispaly:flex;
@@ -69,7 +68,7 @@ const ProductImg = styled.img`
 `;
 
 
-export interface IRobot{
+export interface IProduct{
   id:number;
   name:number;
   price:number;
@@ -98,7 +97,7 @@ export interface IDeal{
   product:IProduct;
 }
 
-export const ProductTrade = () => {
+export const ProductsTrade = () => {
   const [isVisible, setIsVisible] = useState(false);
   const {data:Deals, isLoading} = useQuery<IDeal[]>(
     ["getDeals", "Deal"], () => getallDeals() 
@@ -124,7 +123,9 @@ export const ProductTrade = () => {
       <div key={index}>
       <OrderContainer className="border-4 border-gray-100 p-4 shadow-lg rounded-lg">
         <ProductContainer className=" w-2/4 h-2/4 relative">
+          
             <CompaBrandImg  alt='company logo' src={deal.compaBrand_ImgURL} width={"15%"} height={"15%"}></CompaBrandImg>
+          
           <h1 className=" text-2xl font-semibold text-center ">{deal.product.name}</h1>
           {deal.product.productURL.includes('.glb') ? (
             <Canvas camera={{ position: [0, 3, 7], fov:50 }} style={{ width: '50%', height: '35vh' }}>
@@ -159,7 +160,7 @@ export const ProductTrade = () => {
             </PlayerWrapper>
             
           </VideoContainer>
-          {deal.product.productURL.includes('.png') || deal.product.productURL.includes('jpg') || deal.product.productURL.includes('JPG') ? (
+          {deal.product.productURL.includes('.png') || deal.product.productURL.includes('.jpg') || deal.product.productURL.includes('.JPG') || deal.product.productURL.includes('.jpeg') ? (
             <ProductImg 
               alt='로봇 사진'
               width="30%"

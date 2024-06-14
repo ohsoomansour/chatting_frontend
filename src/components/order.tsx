@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import { IDeal, IProduct } from '../pages/RobotTrade';
+import { IDeal, IProduct } from '../pages/ProductsTrade';
 import { useRecoilValue } from 'recoil';
 import { tokenState } from '../recoil/atom_token';
 import { userIdState } from '../recoil/atom_user';
@@ -11,6 +11,7 @@ import { ButttonContainer } from '../pages/storedGoods';
 import { useQuery } from 'react-query';
 import { getMyinfo } from '../api';
 import { useHistory } from 'react-router-dom';
+import { getCookie } from '../utils/cookie';
 
 const PlusSvg = styled.svg`
   fill:red;
@@ -53,7 +54,8 @@ const BASE_PATH = process.env.NODE_ENV === "production"
  : "http://localhost:3000";
 
 export const Order = ({product, deal}:OrderProps) => {
-  const token = useRecoilValue<string>(tokenState);
+  //const token = useRecoilValue<string>(tokenState);
+  const ckToken = getCookie('token');
   const userId = useRecoilValue<string>(userIdState);
   const customerFullAddress = useRecoilValue<string>(buyerAddress); 
   const roadAddress = useRecoilValue<string>(buyerRoad);
@@ -63,7 +65,7 @@ export const Order = ({product, deal}:OrderProps) => {
   const {register, getValues} = useForm();
   const history = useHistory();
   const { data: buyerInfo, isLoading }  = useQuery<IBuyerInfo>(
-    ["buyerInfo", "MEMBER"], () => getMyinfo(token)
+    ["buyerInfo", "MEMBER"], () => getMyinfo(ckToken!)
   )
 
   console.log("buyerInfo",buyerInfo);
@@ -100,7 +102,7 @@ export const Order = ({product, deal}:OrderProps) => {
   //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
   await fetch(`${BASE_PATH}/order/storegoods`, {
     headers:{
-      'x-jwt':token,
+      'x-jwt':ckToken!,
       'Content-Type': 'application/json; charset=utf-8',
     },
     method:'POST',
@@ -132,7 +134,7 @@ const formatter = new Intl.NumberFormat('en-US', {
     //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
       await fetch(`${BASE_PATH}/order/make`, {
         headers:{
-          'x-jwt':token,
+          'x-jwt':ckToken!,
           'Content-Type': 'application/json; charset=utf-8',
         },
         method:'POST',

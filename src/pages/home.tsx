@@ -12,6 +12,22 @@ import { HandleScroll } from "../components/handleScroll"
 
 export const Home = () => {
   const [isLoading, setLoading] = useState(true);
+  // 로직 : setToken(response.token) -> sessionStorage -> cookie에 설정
+  /*
+  const { data: buyerInfo, isLoading }  = useQuery<IBuyerInfo>(
+    ["buyerInfo", "MEMBER"], () => getMyinfo(token)
+  )
+  */
+ /*
+  const hasTokenCookie = getCookie('tk');
+  if(hasTokenCookie){
+    //token이 살아있냐 아니냐 -> api, 나의 주문 정보 -> 나의 주문 정보를 로그인&패스워드 자동 입력
+    
+
+  }else{
+    //로그인 창으로 이동 
+    window.location.href = "/login"
+  }*/
 
   useEffect(()=> {
     const timer = setTimeout(() => {

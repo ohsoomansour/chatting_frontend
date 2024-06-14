@@ -6,6 +6,7 @@ import { tokenState } from "../recoil/atom_token";
 import { Loading } from "../components/loading";
 import { Helmet } from "react-helmet";
 import { HandleScroll } from "../components/handleScroll";
+import { getCookie } from "../utils/cookie";
 
 const Wrapper = styled.div``;
 export const CancelSVG = styled.svg`
@@ -85,9 +86,10 @@ interface MyOrderInfos{
 
 let page:number = 1;
 export const OrderInfo = () => {
-  const token = useRecoilValue(tokenState);
+  //const token = useRecoilValue(tokenState);
+  const ckToken = getCookie('token');
   const { data: myOrderInfo, isLoading, refetch }  = useQuery<MyOrderInfos>(
-    ["customerOrderInfo", "ORDER"], () => getMyOrder(token, page) )
+    ["customerOrderInfo", "ORDER"], () => getMyOrder(ckToken!, page) )
     
   const myOrders = isLoading 
     ? []

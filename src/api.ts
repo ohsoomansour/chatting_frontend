@@ -1,4 +1,4 @@
-import { IDeal } from "./pages/RobotTrade";
+import { IDeal } from "./pages/ProductsTrade";
 import { IuserInfo } from "./pages/editUserInfo";
 
 //  https://trade-2507d8197825.herokuapp.com/

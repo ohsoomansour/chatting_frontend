@@ -5,6 +5,7 @@ import { tokenState } from "../recoil/atom_token";
 import styled from "styled-components";
 import { Loading } from "../components/loading";
 import { Helmet } from "react-helmet";
+import { getCookie, setCookie } from "../utils/cookie";
 
 const Wrapper = styled.div`
   display:flex;
@@ -68,11 +69,12 @@ interface ISellerTakingOrders {
 
 let page:number = 1; 
 export const TakingOrderInfo = () => {
-  const token = useRecoilValue(tokenState);
-  const onNextPage = () => { page = page + 1 ;  refetch(); }
-  const onPrevPage = () => { page = page - 1 ; refetch(); }   
+  //const token = useRecoilValue(tokenState);
+  const ckToken = getCookie('token');
+  const onNextPage = () => { page = page + 1 ;  refetch(); };
+  const onPrevPage = () => { page = page - 1 ; refetch(); };   
   const { data: takingOrderInfos, isLoading, refetch }  = useQuery<ISellerTakingOrders>(
-    ["takeOrdersInfo", "ORDER"], () => takeOrders(token, page)
+    ["takeOrdersInfo", "ORDER"], () => takeOrders(ckToken!, page)
   );
 
   const takeOrderInfos = isLoading

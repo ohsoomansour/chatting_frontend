@@ -40,6 +40,7 @@ import { useRecoilState} from 'recoil';
 import { FormError } from "../components/form-error";
 import { userIdState } from "../recoil/atom_user";
 import { useEffect, useState } from "react";
+import { setCookie, getCookie } from "../utils/cookie";
 
 interface ILoginForm {
   email: string;
@@ -57,18 +58,20 @@ const Login:React.FC = () => {
   const [token, setToken] = useRecoilState(tokenState)
   const [user, setUserId] = useRecoilState(userIdState)
   const [pwErrorMsg, setPwErrorMsg] = useState("");
-  const history = useHistory();
 
   const onInvalid = (data:any) => {
-    //유효하지 않으면 실행 
-    
+    //유효하지 않으면 실행    
     console.log(data, "onInvalid");
-  }
+  };
   const onValid = async (data:ILoginForm) => {
     try { 
+      //data = {email: 'admin@naver.com', password: 'admin@naver.com'}
+      const { email, password } = getValues();
+      //cookie 설정
+      if(getCookie("loginId") !== email){
+
+      }
       
-      console.log(data) //{email: 'admin@naver.com', password: 'admin@naver.com'}
-            const {email, password} = getValues();
       const response =  await (
         await fetch(`${BASE_PATH}/member/login`, {
         headers : {"Content-Type":"application/json; charset=utf-8"},
@@ -80,15 +83,12 @@ const Login:React.FC = () => {
         })
       })
       ).json();
-      console.log("response:")
-      console.log(response);
-      /*
-      if(!response.ok){
-      🌝🌝⚡️🌺🌺🥝
-      }*/
-    
+      // recoil & session 설정
       setToken(response.token)
       setUserId(email);
+      // 쿠키: 만료가 있는 '토큰'을 설정   
+      setCookie("token", response.token, 1);
+
       if(response.ok){
         if(user.isDormant === true ){
           window.location.href= '/member/activate';
@@ -100,10 +100,12 @@ const Login:React.FC = () => {
         window.location.href = "/login";
         //history.push("/login");  //handleSubmit은 새로고침을 하지 않고 history.push 또한 새로고침을 하지않음, 본 로그인 페이지가 당연히 뜨지 않음 
       }   
+
     } catch (e) {
       console.error(e);
     }
   }
+  
 
 
   return (

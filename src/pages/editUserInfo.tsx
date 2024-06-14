@@ -8,6 +8,7 @@ import { useQuery } from "react-query";
 import { BASE_PATH, getMyinfo } from "../api";
 import styled from "styled-components";
 import { useState } from "react";
+import { getCookie } from "../utils/cookie";
 
 
 const EditProfileWrapper = styled.div`
@@ -62,17 +63,18 @@ interface IResult {
 // 비밀번호 변경 가능 선택 Y -> 나타나고 /N -> 사라지고  -> 변수 : N -> "" 값으로 들어가면 알아서 업데이트 하지 않는 로직   
 export const EditUserInfo  = () => {
   const {register, getValues, formState:{errors} } = useForm<IeditUserInfo>({"mode": "onChange"});
-  const token = useRecoilValue(tokenState);
+  //const token = useRecoilValue(tokenState);
+  const ckToken = getCookie('token');
   const [userId, setUserId] = useRecoilState<string>(userIdState);
   const [isPwSelected, setPwSelected] = useState(true);
   //const [isPrePw, setPrevPw] = useState(false)   # useState 훅의 isPrePw값은 전역 스코프
   const { data:whoamI, isLoading } = useQuery<IuserInfo>(
-    ["me", "Member"], () => getMyinfo(token)
+    ["me", "Member"], () => getMyinfo(ckToken!)
   );
   
   const headers = new Headers({
     'Content-Type':'application/json; charset=utf-8',
-    'x-jwt': `${token}`,
+    'x-jwt': `${ckToken!}`,
   });
   const isHpFormat = (hp:any) => {	
     if(hp == ""){
