@@ -39,10 +39,19 @@ interface ISellerForm {
   maintenance_cost: number;
   description:string;
   regionCode:string;
+}
+
+interface IOptionPart{
+  option_name: string;
+  price:number;
+}
+interface IOption{
+  option_index: string;
+  title:string;
+  option_parts:IOptionPart[];
 }   
 
 export const SellerPage = () => {
-  //const token = useRecoilValue(tokenState)
   const ckToken = getCookie('token');
   //const userId = useRecoilValue(userIdState);
   const compaImg = useRecoilValue(compaImgState);
@@ -51,15 +60,57 @@ export const SellerPage = () => {
   const sellerDoro = useRecoilValue(sellerRoad);
   const selAddress = useRecoilValue(sellerAddress);
   const {getValues, register, formState:{errors}} = useForm<ISellerForm>({ mode: "all" });
-  const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
-  const [phoneEvent, setPhoneEvent] = useState<boolean>(false);
-  const [mphoneValid, setMphoneValid] = useState(false);
   const [formattedMPnumber, setFormattedMPnumber] = useState<string>()
   
   const {data:me} = useQuery<IuserInfo>(
     ["me2", "Member"], () => getMyinfo(ckToken!)
   );
+  const [phoneEvent, setPhoneEvent] = useState<boolean>(false);
+  const [mphoneValid, setMphoneValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [opIdx, setOpidx] = useState(0);
+  
+  const [optionPart, setOptionPart] = useState<IOptionPart[]>([{ option_name: '', price: 0}]);
+
+  const [options, setOptions] = useState<IOption[]>([{option_index:'', title: '', option_parts: [{option_name:'', price: 0}] }])
+  
+  const addOption = (e:any) => {
+    setOpidx(prev => prev+1);
+    setOptions(prevOptions => [...prevOptions, {option_index:'OP'+opIdx, title: '', option_parts:[ {option_name: '', price: 0}]  }]    )
+  }
+
+  const addOptPart = (e:any) => {
+    /* *** 옵션에 옵션 파츠 추가 로직들 *** 
+    #부모 요소의 id값을 감지하는 코드 작성# 
+    [하나의 옵션 섹션]
+    <div key="index" id="option.option_index">   
+      <input />
+      <input />
+      <button onClick="onSearchPNode"> + 내용 추가하기</button>
+    </div>
+    로직1.
+    const [selectedOpIdx, setSelectedOpIdx] = useState()
+    ##JS방법##
+    const onSearchPNode = (element) = {
+      const parentDiv = element.parentNode;
+      setSelectedOpIdx(parentDiv.id)
+      console.log("부모 요소의 ID:", parentDiv.id)
+    }
+    ##React 방법#
+    const onSearchPNode = (event) = {
+      const parentDiv = event.target.parentNode;
+      setSelectedOpIdx(parentDiv.id)
+      console.log("부모 요소의 ID:", parentDiv.id)
+    }  
+    로직2.op1 경우 => const selectedOptions = options.filter(prev => prev.option_index === 클릭했을때, selectedOpIdx) 
+    로직3.selectedOption.option_part에 옵션파츠 추가 -> selectedOptions.option_part.push({option_name: '', price: 0}])
+    */
+
+
+    setOptionPart((prev) => [...prev, {option_name: '', price: 0} ])
+  }
+  
 
   // s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업 
   let productURL = "";
@@ -288,6 +339,20 @@ export const SellerPage = () => {
         size={10}
       />
       {errors.price?.type === 'required' && (<FormError errorMessage={errors.price.message}/>)}
+      <div>
+        <label htmlFor="option1">옵션1</label>
+        <input id="option1_1" placeholder="내용1"/> <input  id="option1_2" placeholder="내용2" /> <input id="option1_3" placeholder="내용3" /> <input id="option1_4" placeholder="내용4" />
+      </div>
+      <div>
+        <label htmlFor="option2">옵션2</label>
+        <input id="option2_1" placeholder="내용1"/> <input id="option2_2" placeholder="내용2"/> <input id="option2_3" placeholder="내용3"/> <input id="option2_4" placeholder="내용4"/>
+      </div>    
+      <input />
+      <label htmlFor="option3">옵션3</label>
+      <input />
+
+
+
       <input
         {...register('maintenance_cost', {required:"Please write the maintenance_costs."})}
         className='w-full border-4 rounded-md focus:border-pink-400  border-gray-300  px-2 py-1 outline-none mr-2 mb-2'

@@ -117,7 +117,7 @@ export default function Chatting() {
       //⭐ msgObj:{msg:'', url: '', time: '', isMe: true}
       setMessages((prev) => [...prev, msgObj]);
       setLoading(isLoading);
-    });
+    }); 
     sc.on('userJoined', (userInfo) => {
       setJoinedUserList(userInfo.userList);
     })
