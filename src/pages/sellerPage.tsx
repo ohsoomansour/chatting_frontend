@@ -42,12 +42,13 @@ interface ISellerForm {
 }
 
 interface IOptionPart{
-  option_name: string;
+  optPart_idx:string;
+  part_name: string;
   price:number;
 }
 interface IOption{
-  option_index: string;
-  title:string;
+  option_index:number;
+  option_title:string;
   option_parts:IOptionPart[];
 }   
 
@@ -69,49 +70,40 @@ export const SellerPage = () => {
   const [phoneEvent, setPhoneEvent] = useState<boolean>(false);
   const [mphoneValid, setMphoneValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [opIdx, setOpidx] = useState(0);
-  
-  const [optionPart, setOptionPart] = useState<IOptionPart[]>([{ option_name: '', price: 0}]);
+  const [opIdx, setOpidx] = useState(1);
+  const [partIdx, setPartIdx] = useState(1);
+  const [optPartKey, setOptPartKey] = useState("first_0");
+  const [options, setOptions] = useState<IOption[]>([{option_index:0, option_title: '', option_parts: [{optPart_idx:'0_init', part_name:'', price: 0}] }])
 
-  const [options, setOptions] = useState<IOption[]>([{option_index:'', title: '', option_parts: [{option_name:'', price: 0}] }])
-  
-  const addOption = (e:any) => {
+  const addOption = () => {
     setOpidx(prev => prev+1);
-    setOptions(prevOptions => [...prevOptions, {option_index:'OP'+opIdx, title: '', option_parts:[ {option_name: '', price: 0}]  }]    )
+    setOptions(prevOptions => [...prevOptions, {option_index:opIdx, option_title: '', option_parts:[{optPart_idx:'1_add', part_name: '', price: 0}]  }]    )
+  }
+  const delOption = (indexToRemove:number) => {
+    //삭제하기 버튼을 누르면  indexToRemove값을 가진 div 섹터 삭제 
+    setOpidx(prev => prev-1);
+    setOptions(options.filter((op, idx) => op.option_index != indexToRemove));
+  }
+  //####6.17 해결해야 할 부분: partIdx로 map함수에서 점프함, 삭제되면 안됨 
+  const addOptPart = (optIdx:number) => {
+    setPartIdx((prev) => prev+1);
+    const optPartKey = `${optIdx}_${partIdx}`;  // 첫 추가 0~9_0
+    setOptPartKey(optPartKey);
+
+    const selectedOption = options.find(option => option.option_index === optIdx);  //
+    selectedOption!.option_parts!.push({optPart_idx: optPartKey ,part_name: '', price: 0})
+    const newOptions = options.filter((option, idx) => option.option_index !== optIdx); //삭제
+    newOptions.splice(optIdx, 0, selectedOption!);
+   
+  }
+  const delOptPart = (option_idx:number, optPart_idx:string) => {
+    const selectedOpt = options.find(option => option.option_index === option_idx);
+    const newOptionParts = selectedOpt?.option_parts.filter(optPart => optPart.optPart_idx !== optPart_idx);
+    const {option_parts=newOptionParts!, ...rest} = selectedOpt!;  //구조 분해 할당
+    //6.18 테스트 필요
   }
 
-  const addOptPart = (e:any) => {
-    /* *** 옵션에 옵션 파츠 추가 로직들 *** 
-    #부모 요소의 id값을 감지하는 코드 작성# 
-    [하나의 옵션 섹션]
-    <div key="index" id="option.option_index">   
-      <input />
-      <input />
-      <button onClick="onSearchPNode"> + 내용 추가하기</button>
-    </div>
-    로직1.
-    const [selectedOpIdx, setSelectedOpIdx] = useState()
-    ##JS방법##
-    const onSearchPNode = (element) = {
-      const parentDiv = element.parentNode;
-      setSelectedOpIdx(parentDiv.id)
-      console.log("부모 요소의 ID:", parentDiv.id)
-    }
-    ##React 방법#
-    const onSearchPNode = (event) = {
-      const parentDiv = event.target.parentNode;
-      setSelectedOpIdx(parentDiv.id)
-      console.log("부모 요소의 ID:", parentDiv.id)
-    }  
-    로직2.op1 경우 => const selectedOptions = options.filter(prev => prev.option_index === 클릭했을때, selectedOpIdx) 
-    로직3.selectedOption.option_part에 옵션파츠 추가 -> selectedOptions.option_part.push({option_name: '', price: 0}])
-    */
-
-
-    setOptionPart((prev) => [...prev, {option_name: '', price: 0} ])
-  }
   
-
   // s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업 
   let productURL = "";
   let coImgURL = "";
@@ -254,6 +246,14 @@ export const SellerPage = () => {
       "model/gltf-binary": [".glb"],
     }
   });
+  
+  const AddOptionBtn = styled.button`
+    background-color: yellow;
+  `;
+  const DelOptionBtn = styled.button`
+    background-color: orange;
+    margin-left: 10px;
+  `;
 
   return (
   <Wrapper className= "h-3/4">
@@ -303,8 +303,7 @@ export const SellerPage = () => {
                 {...register('mobilePhone_number', { required: "What is your mobile phone Number? ", minLength:10 })}
                 className='w-full h-12 border-4 rounded-md focus:border-pink-400  border-gray-300  px-2 py-1 outline-none mr-2'
                 placeholder="Enter your smart phone number!"
-              
-              />
+            />
             <PhoneValidation className="w-2/4 h-12 font-semibold flex justify-center items-center bg-green-300 " onClick={onPhoneValid}>Validation</PhoneValidation>  
           </div>
           {phoneEvent && (mphoneValid ? (
@@ -339,19 +338,26 @@ export const SellerPage = () => {
         size={10}
       />
       {errors.price?.type === 'required' && (<FormError errorMessage={errors.price.message}/>)}
+   
+      <AddOptionBtn onClick={() => addOption()}>옵션 추가하기</AddOptionBtn> 
       <div>
-        <label htmlFor="option1">옵션1</label>
-        <input id="option1_1" placeholder="내용1"/> <input  id="option1_2" placeholder="내용2" /> <input id="option1_3" placeholder="내용3" /> <input id="option1_4" placeholder="내용4" />
-      </div>
-      <div>
-        <label htmlFor="option2">옵션2</label>
-        <input id="option2_1" placeholder="내용1"/> <input id="option2_2" placeholder="내용2"/> <input id="option2_3" placeholder="내용3"/> <input id="option2_4" placeholder="내용4"/>
-      </div>    
-      <input />
-      <label htmlFor="option3">옵션3</label>
-      <input />
-
-
+        {options.map((option, index) => (
+          <div key={option.option_index} id={option.option_index + ""} >
+              <input  defaultValue={option.option_title} placeholder="옵션 이름을 기입" />
+              {option.option_parts.map((part, idx) => (
+                <div key={part.optPart_idx}>
+                  <input defaultValue={part.part_name} placeholder="옵션 리스트" />
+                  <input defaultValue={part.price} placeholder="옵션 리스트 가격" />
+                  <button  onClick={ () => addOptPart(option.option_index)}> + 옵션 리스트 추가하기</button>
+                  <button onClick={() => delOptPart(option.option_index, part.optPart_idx)} >- 옵션 리스트 삭제하기</button>
+                </div>
+              ))}
+              
+            <DelOptionBtn onClick={() => delOption(option.option_index)}>옵션 삭제하기</DelOptionBtn>  
+            
+          </div>
+        ))}
+        </div>   
 
       <input
         {...register('maintenance_cost', {required:"Please write the maintenance_costs."})}

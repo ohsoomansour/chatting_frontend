@@ -1,12 +1,10 @@
 import styled from "styled-components";
 import {motion, useAnimation} from "framer-motion";
 import { useState } from "react";
-import { useRecoilValue } from "recoil";
 import { useQuery } from "react-query";
-import { tokenState } from "../recoil/atom_token";
 import { IuserInfo } from "../pages/editUserInfo";
 import { getMyinfo } from "../api";
-import { getCookie } from "../utils/cookie";
+import { delCookie, getCookie } from "../utils/cookie";
 
 const Wrapper = styled(motion.div)`
 `
@@ -169,11 +167,13 @@ export const Header: React.FC = () => {
      setHeaderClose((prev) => !prev);
   }
 
-
   const onLogOut = () => {
-     sessionStorage.removeItem('tk')
-     sessionStorage.removeItem('UserId')
-     window.location.href = "/login";
+    delCookie('token');
+    /*
+      sessionStorage.removeItem('tk')
+      sessionStorage.removeItem('UserId')
+      window.location.href = "/login";
+    */
   }
   
   return(

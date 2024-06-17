@@ -1,9 +1,10 @@
+// 쿠키 설정 
 export const setCookie = (name: string, value: string | null, day: number) => {
     let today = new Date();
     today.setDate(today.getDate() + day)
     document.cookie = name + "=" + value + "; path=/; expires=" + today.toUTCString() + ";"
 }
-
+//쿠키 얻기 
 export const getCookie = (key:string) => {
     // name 변수 = loginId 
     let cookie = document.cookie + ";"  
@@ -17,5 +18,11 @@ export const getCookie = (key:string) => {
         val = cookie.substring(begin, end);
         return val;
     }
-    
+
 }
+//쿠키 삭제 
+export const delCookie = (name:string) => {
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+    
