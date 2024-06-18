@@ -29,6 +29,12 @@ const Wrapper = styled.div`
   align-items: center;
   height: 100vh;
 `;
+const DelOptPart = styled.button`
+  background-color: yellow;
+  margin-top: 10px;
+  margin-left: 10px;
+`;
+
 
 interface ISellerForm {
   company: string;
@@ -39,6 +45,7 @@ interface ISellerForm {
   maintenance_cost: number;
   description:string;
   regionCode:string;
+  
 }
 
 interface IOptionPart{
@@ -49,7 +56,7 @@ interface IOptionPart{
 interface IOption{
   option_index:number;
   option_title:string;
-  option_parts:IOptionPart[];
+  option_parts?:IOptionPart[];
 }   
 
 export const SellerPage = () => {
@@ -70,14 +77,17 @@ export const SellerPage = () => {
   const [phoneEvent, setPhoneEvent] = useState<boolean>(false);
   const [mphoneValid, setMphoneValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [delOpPartCount, setDelOpPartCount] = useState(0);
   const [opIdx, setOpidx] = useState(1);
   const [partIdx, setPartIdx] = useState(1);
   const [optPartKey, setOptPartKey] = useState("first_0");
   const [options, setOptions] = useState<IOption[]>([{option_index:0, option_title: '', option_parts: [{optPart_idx:'0_init', part_name:'', price: 0}] }])
-
-  const addOption = () => {
-    setOpidx(prev => prev+1);
-    setOptions(prevOptions => [...prevOptions, {option_index:opIdx, option_title: '', option_parts:[{optPart_idx:'1_add', part_name: '', price: 0}]  }]    )
+  //현상:옵션을 추가할때는 옵션인덱스는 증가함, 그런데 옵션 파츠는 다시 초기화가됨 
+  const addOption = (partIndex:number) => {
+    console.log("partIndex", partIndex)
+    setOpidx(prev => prev+1);  
+    //##주의option - ption_parts: {optPart_idx: `${opIdx}_${partIdx="1 기본 값을 계속 참조"}`, part_name: '', price: 0} -> 추가할 때마다 참조 
+    setOptions(prevOptions => [...prevOptions, {option_index:opIdx, option_title: '', option_parts:[{optPart_idx: `${opIdx}_`, part_name: '', price: 0}]  }]    )
   }
   const delOption = (indexToRemove:number) => {
     //삭제하기 버튼을 누르면  indexToRemove값을 가진 div 섹터 삭제 
@@ -87,22 +97,41 @@ export const SellerPage = () => {
   //####6.17 해결해야 할 부분: partIdx로 map함수에서 점프함, 삭제되면 안됨 
   const addOptPart = (optIdx:number) => {
     setPartIdx((prev) => prev+1);
-    const optPartKey = `${optIdx}_${partIdx}`;  // 첫 추가 0~9_0
+    const optPartKey = `${optIdx}_${partIdx}`;  // 첫 추가 0~9_0  
     setOptPartKey(optPartKey);
-
     const selectedOption = options.find(option => option.option_index === optIdx);  //
     selectedOption!.option_parts!.push({optPart_idx: optPartKey ,part_name: '', price: 0})
     const newOptions = options.filter((option, idx) => option.option_index !== optIdx); //삭제
     newOptions.splice(optIdx, 0, selectedOption!);
-   
   }
   const delOptPart = (option_idx:number, optPart_idx:string) => {
+    //삭제 sensor 
+    setDelOpPartCount((prev) => prev+1);
     const selectedOpt = options.find(option => option.option_index === option_idx);
-    const newOptionParts = selectedOpt?.option_parts.filter(optPart => optPart.optPart_idx !== optPart_idx);
-    const {option_parts=newOptionParts!, ...rest} = selectedOpt!;  //구조 분해 할당
-    //6.18 테스트 필요
+    const newOptionParts = selectedOpt!.option_parts!.filter(optPart => optPart.optPart_idx !== optPart_idx);
+    //delete selectedOpt!.option_parts;
+    selectedOpt!.option_parts = newOptionParts!;
+    
+  }
+  
+  const onOpTitleChange = (e:React.ChangeEvent<HTMLInputElement>, op_idx:number) => {
+     const selectedOp = options.find(op => op.option_index === op_idx);
+     selectedOp!.option_title = e.target.value;
+     console.log("options:", options);
   }
 
+  const onPartValueChange = (e:React.ChangeEvent<HTMLInputElement>, op_idx:number, opPart_idx:string) => {
+    //options
+    const selectedOp = options.find(op => op.option_index === op_idx);
+    const selectedOpPart = selectedOp?.option_parts?.find(opPart => opPart.optPart_idx === opPart_idx);
+    selectedOpPart!.part_name = e.target.value;
+  }
+  const onPartPriceChange = (e:React.ChangeEvent<HTMLInputElement>, op_idx:number, opPart_idx:string) => {
+    const selectedOp = options.find(op => op.option_index === op_idx);
+    const selectedOpPart = selectedOp?.option_parts?.find((opPart) => opPart.optPart_idx === opPart_idx);
+    selectedOpPart!.price = +e.target.value;
+
+  }
   
   // s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업 
   let productURL = "";
@@ -267,7 +296,7 @@ export const SellerPage = () => {
     (
     <UI className='max-w-full  max-h-full border-4 border-gray-100 p-4  rounded-lg'>
       <div className=" flex h-2/4 items-center justify-center">
-        <CompaImg  />
+        <CompaImg />
         <div className=" w-full flex-col items-center justify-center ">
           <h2 className=" text-lg text-center font-bold  ">Private or Company</h2> 
           <input
@@ -338,18 +367,18 @@ export const SellerPage = () => {
         size={10}
       />
       {errors.price?.type === 'required' && (<FormError errorMessage={errors.price.message}/>)}
-   
-      <AddOptionBtn onClick={() => addOption()}>옵션 추가하기</AddOptionBtn> 
+          
+      <AddOptionBtn onClick={() => addOption(partIdx)}>옵션 추가하기</AddOptionBtn> 
       <div>
         {options.map((option, index) => (
           <div key={option.option_index} id={option.option_index + ""} >
-              <input  defaultValue={option.option_title} placeholder="옵션 이름을 기입" />
-              {option.option_parts.map((part, idx) => (
+              <input  defaultValue={option.option_title} placeholder="옵션 이름을 기입" onChange={ (e) => onOpTitleChange(e, option.option_index)} />
+              {option.option_parts!.map((part, idx) => (
                 <div key={part.optPart_idx}>
-                  <input defaultValue={part.part_name} placeholder="옵션 리스트" />
-                  <input defaultValue={part.price} placeholder="옵션 리스트 가격" />
+                  <input defaultValue={part.part_name} placeholder="옵션 리스트" onChange={(e) => onPartValueChange(e,option.option_index, part.optPart_idx)}/>
+                  <input defaultValue={part.price} onChange={(e) => onPartPriceChange(e,option.option_index, part.optPart_idx)} placeholder="옵션 리스트 가격" />
                   <button  onClick={ () => addOptPart(option.option_index)}> + 옵션 리스트 추가하기</button>
-                  <button onClick={() => delOptPart(option.option_index, part.optPart_idx)} >- 옵션 리스트 삭제하기</button>
+                  <DelOptPart  onClick={() => delOptPart(option.option_index,  part.optPart_idx)} >- 옵션 리스트 삭제하기 </DelOptPart>
                 </div>
               ))}
               
