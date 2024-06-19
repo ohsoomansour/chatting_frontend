@@ -1,5 +1,5 @@
 import { useDropzone } from "react-dropzone";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
 import { useForm } from "react-hook-form";
@@ -84,7 +84,7 @@ export const SellerPage = () => {
   const [options, setOptions] = useState<IOption[]>([{option_index:0, option_title: '', option_parts: [{optPart_idx:'0_init', part_name:'', price: 0}] }])
   //현상:옵션을 추가할때는 옵션인덱스는 증가함, 그런데 옵션 파츠는 다시 초기화가됨 
   const addOption = (partIndex:number) => {
-    console.log("partIndex", partIndex)
+    
     setOpidx(prev => prev+1);  
     //##주의option - ption_parts: {optPart_idx: `${opIdx}_${partIdx="1 기본 값을 계속 참조"}`, part_name: '', price: 0} -> 추가할 때마다 참조 
     setOptions(prevOptions => [...prevOptions, {option_index:opIdx, option_title: '', option_parts:[{optPart_idx: `${opIdx}_`, part_name: '', price: 0}]  }]    )
@@ -117,19 +117,27 @@ export const SellerPage = () => {
   const onOpTitleChange = (e:React.ChangeEvent<HTMLInputElement>, op_idx:number) => {
      const selectedOp = options.find(op => op.option_index === op_idx);
      selectedOp!.option_title = e.target.value;
-     console.log("options:", options);
+
   }
 
   const onPartValueChange = (e:React.ChangeEvent<HTMLInputElement>, op_idx:number, opPart_idx:string) => {
-    //options
-    const selectedOp = options.find(op => op.option_index === op_idx);
-    const selectedOpPart = selectedOp?.option_parts?.find(opPart => opPart.optPart_idx === opPart_idx);
-    selectedOpPart!.part_name = e.target.value;
+    //validation test: 변경했을 때 아무 값이 없을 때 감지 
+    if(e.target.value){
+      const selectedOp = options.find(op => op.option_index === op_idx);
+      const selectedOpPart = selectedOp?.option_parts?.find(opPart => opPart.optPart_idx === opPart_idx);
+      selectedOpPart!.part_name = e.target.value;
+    } else {
+      alert('옵션 리스트 내용을 입력해주세요!')
+    }
   }
   const onPartPriceChange = (e:React.ChangeEvent<HTMLInputElement>, op_idx:number, opPart_idx:string) => {
-    const selectedOp = options.find(op => op.option_index === op_idx);
-    const selectedOpPart = selectedOp?.option_parts?.find((opPart) => opPart.optPart_idx === opPart_idx);
-    selectedOpPart!.price = +e.target.value;
+    if(e.target.value){
+      const selectedOp = options.find(op => op.option_index === op_idx);
+      const selectedOpPart = selectedOp?.option_parts?.find((opPart) => opPart.optPart_idx === opPart_idx);
+      selectedOpPart!.price = +e.target.value;
+    }else{
+      alert('옵션 리스트 내용에 대한 가격을 입력해주세요!')
+    }
 
   }
   
@@ -137,48 +145,93 @@ export const SellerPage = () => {
   let productURL = "";
   let coImgURL = "";
   const onRegister = async() => {
+    //옵션 타이틀 
+    console.log("onRegister-options:",options);
+    options.forEach((op) => {
+      const opElement = document.getElementById(`${op.option_index}_title`) as HTMLInputElement | null;
+      console.log("opElement", opElement)
+      if(opElement){
+        const opTitle = opElement.value;
+        console.log("opTitle:", opTitle);
+        if(!opTitle) {
+        alert('옵션 리스트의 제목을 기입해주세요!');
+        return false;
+        }
+      }
+      op.option_parts?.forEach((opParts) => {
+        const opPartsElementC = document.getElementById(`${opParts.optPart_idx}_cont`) as HTMLInputElement | null;
+        const opPartsElementP = document.getElementById(`${opParts.optPart_idx}_price`) as HTMLInputElement | null;
+        if(opPartsElementC){
+          const opPartsCont = opPartsElementC.value;
+          if(!opPartsCont){
+            alert('옵션 리스트의 내용이 없습니다!');
+            return false;
+          }
+        }
+        if(opPartsElementP){
+          const opPartsPrice = opPartsElementP.value;
+          if(+opPartsPrice < 0){
+            alert('옵션 리스트의 내용에 대한 가격이 0원 미만은 부적합입니다!');
+            return false;
+          }
+        }
+      })
+    });
+ 
     try {
       const {company, sellerId, mobilePhone_number, rbName, price , maintenance_cost, description} = getValues();
-
       if(compaImg  === "") {
         alert('회사 로고 이미지를 넣어주세요!💛')
         return;
-      } else if(company.length < 1){
+      }
+      if(company.length < 1){
         alert("회사 이름을 입력하세요!💛");
         return;
-      } else if(sellerId === undefined){
+      } 
+      if(sellerId === undefined){
         alert("판매자 아이디가 없습니다!")
         return;
-      }  else if(!phoneEvent){
+      }  
+      if(!phoneEvent){
         alert('휴대폰 번호 유효성 확인을 해주세요!💛')
         return;
-      } else if(!mphoneValid){
+      } 
+      if(!mphoneValid){
         alert('휴대폰 번호의 값이 유효하지 않습니다!💛')
         return;
-      } else if(!(/^\d{10,11}$/.test(mobilePhone_number.toString()))) {
+      } 
+      if(!(/^\d{10,11}$/.test(mobilePhone_number.toString()))) {
         alert("회원님의 휴대폰 번호가 10자리 또는 11자리가 아닙니다!💛")
-      } else if(  !(/^\d{5}$/.test(sellerZipcode.toString()) || /^\d{3,5}-\d{3,5}$/.test(sellerZipcode.toString())) ){
+      } 
+      if(  !(/^\d{5}$/.test(sellerZipcode.toString()) || /^\d{3,5}-\d{3,5}$/.test(sellerZipcode.toString())) ){
         alert('우편 번호가 정상 코드가 아닙니다!💛');
         return;
-      } else if(sellerDoro === "") {
+      } 
+      if(sellerDoro === "") {
         alert("도로 주솟값이 없습니다!💛");
         return;
-      } else if(selAddress.length < 5) {
+      } 
+      if(selAddress.length < 5) {
         alert('5자 이상 작성해주세요!💛');
         return;
-      }  else if(sellerId === "") {
+      }  
+      if(sellerId === "") {
         alert("회원님의 이메일 아이디를 확인해 주세요!💛");
         return; 
-      } else if(rbName === "") {
+      } 
+      if(rbName === "") {
         alert("로봇의 이름을 입력해 주세요!💛");
         return;
-      }  else if(price <= 0 ) {
+      }  
+      if(price <= 0 ) {
         alert("상품의 가격을 0원 보다 큰 값을 입력하세요!💛");
         return;
-      } else if(maintenance_cost < 0 || maintenance_cost === null || maintenance_cost === undefined) {
+      } 
+      if(maintenance_cost < 0 || maintenance_cost === null || maintenance_cost === undefined) {
         alert("유지 보수 비용을 0 또는 0 보다 큰 값을 입력하세요!💛");
         return;
-      } else if(!maintenance_cost) {
+      } 
+      if(!maintenance_cost) {
         alert("유지 보수 비용을 0 또는 0 보다 큰 값을 입력하세요!💛");
         return;
       }
@@ -371,12 +424,12 @@ export const SellerPage = () => {
       <AddOptionBtn onClick={() => addOption(partIdx)}>옵션 추가하기</AddOptionBtn> 
       <div>
         {options.map((option, index) => (
-          <div key={option.option_index} id={option.option_index + ""} >
-              <input  defaultValue={option.option_title} placeholder="옵션 이름을 기입" onChange={ (e) => onOpTitleChange(e, option.option_index)} />
+          <div  id={option.option_index + ""} >
+              <input id={option.option_index+"_title"}  defaultValue={option.option_title} placeholder="옵션 이름을 기입" onChange={ (e) => onOpTitleChange(e, option.option_index)} />
               {option.option_parts!.map((part, idx) => (
                 <div key={part.optPart_idx}>
-                  <input defaultValue={part.part_name} placeholder="옵션 리스트" onChange={(e) => onPartValueChange(e,option.option_index, part.optPart_idx)}/>
-                  <input defaultValue={part.price} onChange={(e) => onPartPriceChange(e,option.option_index, part.optPart_idx)} placeholder="옵션 리스트 가격" />
+                  <input id={part.optPart_idx+"_cont"} defaultValue={part.part_name} placeholder="옵션 리스트" onChange={(e) => onPartValueChange(e,option.option_index, part.optPart_idx)}/>
+                  <input type="number" id={part.optPart_idx+"_price"} defaultValue={part.price} onChange={(e) => onPartPriceChange(e,option.option_index, part.optPart_idx)} placeholder="옵션 리스트 가격" />
                   <button  onClick={ () => addOptPart(option.option_index)}> + 옵션 리스트 추가하기</button>
                   <DelOptPart  onClick={() => delOptPart(option.option_index,  part.optPart_idx)} >- 옵션 리스트 삭제하기 </DelOptPart>
                 </div>

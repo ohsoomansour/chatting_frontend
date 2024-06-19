@@ -8,7 +8,6 @@ export const setCookie = (name: string, value: string | null, day: number) => {
 export const getCookie = (key:string) => {
     // name 변수 = loginId 
     let cookie = document.cookie + ";"  
-    console.log("cookie:" + cookie);  // loginId=admin1; (0~14)
     let index = cookie.indexOf(key, 0);  //키가 시작되는 index = 0
     let val = "";
     if(index > -1){
