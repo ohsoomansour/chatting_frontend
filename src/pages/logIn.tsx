@@ -39,7 +39,7 @@ import {  tokenState } from "../recoil/atom_token";
 import { useRecoilState} from 'recoil';
 import { FormError } from "../components/form-error";
 import { userIdState } from "../recoil/atom_user";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { setCookie, getCookie } from "../utils/cookie";
 
 interface ILoginForm {
@@ -55,8 +55,8 @@ export const BASE_PATH = process.env.NODE_ENV === "production"
 const Login:React.FC = () => {
 //Validation is triggered on the changeevent for each input, leading to multiple re-renders. Warning: this often comes with a significant impact on performance.
   const { register, formState:{ errors },handleSubmit, formState, getValues } = useForm<ILoginForm>({mode: "onChange"});
-  const [token, setToken] = useRecoilState(tokenState)
-  const [user, setUserId] = useRecoilState(userIdState)
+  //const [token, setToken] = useRecoilState(tokenState);
+  const [user, setUserId] = useRecoilState(userIdState);
   const [pwErrorMsg, setPwErrorMsg] = useState("");
 
   const onInvalid = (data:any) => {
@@ -66,12 +66,7 @@ const Login:React.FC = () => {
   const onValid = async (data:ILoginForm) => {
     try { 
       //data = {email: 'admin@naver.com', password: 'admin@naver.com'}
-      const { email, password } = getValues();
-      //cookie 설정
-      if(getCookie("loginId") !== email){
-
-      }
-      
+      const { email, password } = getValues();      
       const response =  await (
         await fetch(`${BASE_PATH}/member/login`, {
         headers : {"Content-Type":"application/json; charset=utf-8"},
@@ -84,7 +79,7 @@ const Login:React.FC = () => {
       })
       ).json();
       // recoil & session 설정
-      setToken(response.token)
+      //setToken(response.token)
       setUserId(email);
       // 쿠키: 만료가 있는 '토큰'을 설정   
       setCookie("token", response.token, 1);
@@ -160,7 +155,7 @@ const Login:React.FC = () => {
         />
       </form>
       <div>
-      {token === '' ? <Link to="/create-account" className=" text-red-300 font-bold hover:underline "> Sign up for membership</Link> : null}      
+      <Link to="/create-account" className=" text-red-300 font-bold hover:underline "> Sign up for membership</Link>
         
       </div>
     </div>

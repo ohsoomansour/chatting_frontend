@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
 import { IDeal, IProduct } from '../pages/ProductsTrade';
 import { useRecoilValue } from 'recoil';
-import { tokenState } from '../recoil/atom_token';
 import { userIdState } from '../recoil/atom_user';
 import BuyerPostcode from './address/buyer-address';
 import { buyerAddress, buyerDetail, buyerPostal, buyerRoad } from '../recoil/atom_address';
@@ -34,7 +33,7 @@ const SellerAndCustomerInfo = styled.form`
 `;
 
 const MantenanceOption = styled.div``;
-const Robot = styled.div``;
+const Product = styled.div``;
 
 interface IBuyerInfo{
   address:string;
@@ -68,8 +67,6 @@ export const Order = ({product, deal}:OrderProps) => {
     ["buyerInfo", "MEMBER"], () => getMyinfo(ckToken!)
   )
 
-  console.log("buyerInfo",buyerInfo);
-  
   const handleOptionSelect = (option:boolean) => {
     setMaintenanceYN(option);
   };
@@ -77,21 +74,26 @@ export const Order = ({product, deal}:OrderProps) => {
   const { customer, maintenance_cost, customerPhone } = getValues();
   try {
     if(customer === ''){
-      alert('로그인 후 이용해 주세요!💛')
+      alert('로그인 후 이용해 주세요!')
       return;
-    } else if(customerPhone === ''){
-      alert('고객님의 번호를 입력해 주세요!💛')
-    } else if (!(/^\d{5}$/.test(postalCode.toString()) || /^\d{3,5}-\d{3,5}$/.test(postalCode.toString()))) {
-      alert('우편번호가 올바른 지 확인 해주세요!💛');
+    } 
+    if(customerPhone === ''){
+      alert('고객님의 번호를 입력해 주세요!')
+    } 
+    if (!(/^\d{5}$/.test(postalCode.toString()) || /^\d{3,5}-\d{3,5}$/.test(postalCode.toString()))) {
+      alert('우편번호가 올바른 지 확인 해주세요!');
       return;
-    }  else if(roadAddress === "") {
-      alert('도로 주소가 올바른 지 확인해 주세요!💛');
+    }  
+    if(roadAddress === "") {
+      alert('도로 주소가 올바른 지 확인해 주세요!');
       return;
-    } else if(DetailedAdd.length < 5){
-      alert('상세 주솟값이 올바른 지 확인해 주세요!💛');
+    } 
+    if(DetailedAdd.length < 5){
+      alert('상세 주솟값이 올바른 지 확인해 주세요!');
       return;
-    } else if(customerFullAddress === "") {
-      alert('전체 주솟값 올바른 지 확인해 주세요!💛')
+    } 
+    if(customerFullAddress === "") {
+      alert('전체 주솟값 올바른 지 확인해 주세요!')
     }
   } catch (e) {
     console.error(e);
@@ -157,7 +159,7 @@ const formatter = new Intl.NumberFormat('en-US', {
   }
   return (
     <div className=' w-2/4'>
-      <Robot>
+      <Product>
         <SellerAndCustomerInfo className='ml-2'>
           <div className=' flex mb-4'>
             <div className='w-2/4 flex-col'>
@@ -165,14 +167,14 @@ const formatter = new Intl.NumberFormat('en-US', {
               <input 
                 {...register('seller', {required: true})}
                 type='text'
-                value={deal.seller.userId}
+                value={deal.seller.userId || ""}
                 size={30} 
                 className='w-full mb-1 flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
                 placeholder='Please write your name'
               />
               <input 
                 {...register('sellerPhone', {required: true})}
-                value={deal.salesManager_mobilephone}
+                value={deal.salesManager_mobilephone || ""}
                 className='w-full  flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
                 placeholder='Please write your phone number'
               /> 
@@ -184,14 +186,14 @@ const formatter = new Intl.NumberFormat('en-US', {
               <input 
                 {...register('customer', {required: true})}
                 type='text'
-                value={userId}
+                value={userId || ""}
                 className=' w-full mb-1 flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
                 placeholder='Please write your name'
                 />
               <input 
                 {...register('customerPhone', {required: true})}
                 className=' w-full  flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
-                value={buyerInfo?.mobile_phone}
+                value={buyerInfo?.mobile_phone || ""}
                 placeholder='Please write your name'
                 />   
             </div>
@@ -226,6 +228,14 @@ const formatter = new Intl.NumberFormat('en-US', {
               </div>
             </div>
           </MantenanceOption>
+          {deal?.product.options?.map((op) => (
+            <select>
+              <label htmlFor="kimchi">{op.option_title}</label>
+              {op.option_parts.map((op_parts) => (
+                <option value={op_parts.price}>{op_parts.part_name}</option>
+              ))}
+            </select>
+          ))}
           <hr className=' border border-solid border-gray-300 shadow-lg mb-1  '/>
           <div className=' flex justify-around'>
             <h2 className='text-lg  text-center font-bold '>Price</h2>
@@ -276,7 +286,7 @@ const formatter = new Intl.NumberFormat('en-US', {
             </div>
           </div>
         </SellerAndCustomerInfo>
-      </Robot>
+      </Product>
       <ButttonContainer className=' mt-10'>
         <button 
           onClick={onSave} 

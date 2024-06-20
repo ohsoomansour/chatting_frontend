@@ -6,7 +6,7 @@ import ReactPlayer from "react-player";
 import {Order} from "../components/order";
 import { useQuery } from "react-query";
 import { getallDeals } from "../api";
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async"
 import { useState } from "react";
 import { HandleScroll } from "../components/handleScroll";
 
@@ -67,11 +67,23 @@ const ProductImg = styled.img`
   margin-bottom:20px;
 `;
 
+export interface optionParts{
+  optPart_idx: string;
+  part_name:string;
+  price: number;
+}
+
+export interface option{
+  option_index : number;
+  option_title : string;
+  option_parts : optionParts[];
+}
 
 export interface IProduct{
   id:number;
   name:number;
   price:number;
+  options?: option[];  //선택 사항
   maintenance_cost:number;
   description:string;
   productURL:string;
@@ -107,7 +119,7 @@ export const ProductsTrade = () => {
     : Deals   
     ? Deals
     : [];   // Deals가 undefined의 경우 [] 반환
-
+  console.log("allDeals",allDeals)
   function handleScroll(){
     const scrollPosition = window.scrollY;
     const triggerPosition = 200;
@@ -116,9 +128,11 @@ export const ProductsTrade = () => {
   window.addEventListener('scroll', handleScroll);
   return ( 
     <Wrapper className=" max-w-full max-h-full border-4 border-gray-100 p-4 shadow-lg rounded-lg ">
-      <Helmet>
-         <title>Trader | Transaction </title>       
-      </Helmet>
+      <HelmetProvider>
+        <Helmet>
+          <title>Trader | Transaction </title>       
+        </Helmet>
+      </HelmetProvider>
       {allDeals.map((deal, index) => (
       <div key={index}>
       <OrderContainer className="border-4 border-gray-100 p-4 shadow-lg rounded-lg">

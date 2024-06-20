@@ -138,7 +138,7 @@ export const Header: React.FC = () => {
 
   const {data:me, isLoading} = useQuery<IuserInfo>(
     ["me2", "Member"], () => getMyinfo(ckToken!)
-  );
+  , {refetchInterval: 20000});
   const [headerCLose, setHeaderClose] = useState(false);
   const headerAnimation = useAnimation();
   const toggleSearch = (e:any) => {
@@ -167,11 +167,10 @@ export const Header: React.FC = () => {
 
   const onLogOut = () => {
     delCookie('token');
-    /*
-      sessionStorage.removeItem('tk')
-      sessionStorage.removeItem('UserId')
-      window.location.href = "/login";
-    */
+    window.location.href ="/login"
+    sessionStorage.removeItem('tk')
+    sessionStorage.removeItem('UserId'); // 세션 스토리지의 '유저 아이디'는 로그 아웃 실행만 없앰
+    window.location.href = "/login";
   }
   
   return(

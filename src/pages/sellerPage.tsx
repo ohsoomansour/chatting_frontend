@@ -60,7 +60,6 @@ interface IOption{
 }   
 
 export const SellerPage = () => {
-  const ckToken = getCookie('token');
   //const userId = useRecoilValue(userIdState);
   const compaImg = useRecoilValue(compaImgState);
   const [threeDFile, setThreeDFile] = useState([]);
@@ -71,9 +70,17 @@ export const SellerPage = () => {
   const history = useHistory();
   const [formattedMPnumber, setFormattedMPnumber] = useState<string>()
   
+  const ckToken = getCookie('token');
   const {data:me} = useQuery<IuserInfo>(
     ["me2", "Member"], () => getMyinfo(ckToken!)
-  );
+  , {refetchInterval: 20000});
+  
+/**
+  *@explain : me 값이 왔다갔다 그래서 undefined 값과 정상 유저 정보의 값이 왔다갔다해서 사용할 수가 없음 
+  */
+  if(!ckToken){
+    window.location.href = "/login"
+  } 
   const [phoneEvent, setPhoneEvent] = useState<boolean>(false);
   const [mphoneValid, setMphoneValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -82,19 +89,19 @@ export const SellerPage = () => {
   const [partIdx, setPartIdx] = useState(1);
   const [optPartKey, setOptPartKey] = useState("first_0");
   const [options, setOptions] = useState<IOption[]>([{option_index:0, option_title: '', option_parts: [{optPart_idx:'0_init', part_name:'', price: 0}] }])
-  //현상:옵션을 추가할때는 옵션인덱스는 증가함, 그런데 옵션 파츠는 다시 초기화가됨 
+  
+/** 
+  *@caution option - ption_parts: {optPart_idx: `${opIdx}_${partIdx="1 기본 값을 계속 참조"}`, part_name: '', price: 0} -> 추가할 때마다 참조 
+  */ 
   const addOption = (partIndex:number) => {
-    
     setOpidx(prev => prev+1);  
-    //##주의option - ption_parts: {optPart_idx: `${opIdx}_${partIdx="1 기본 값을 계속 참조"}`, part_name: '', price: 0} -> 추가할 때마다 참조 
     setOptions(prevOptions => [...prevOptions, {option_index:opIdx, option_title: '', option_parts:[{optPart_idx: `${opIdx}_`, part_name: '', price: 0}]  }]    )
   }
   const delOption = (indexToRemove:number) => {
-    //삭제하기 버튼을 누르면  indexToRemove값을 가진 div 섹터 삭제 
     setOpidx(prev => prev-1);
     setOptions(options.filter((op, idx) => op.option_index != indexToRemove));
   }
-  //####6.17 해결해야 할 부분: partIdx로 map함수에서 점프함, 삭제되면 안됨 
+
   const addOptPart = (optIdx:number) => {
     setPartIdx((prev) => prev+1);
     const optPartKey = `${optIdx}_${partIdx}`;  // 첫 추가 0~9_0  
@@ -121,7 +128,6 @@ export const SellerPage = () => {
   }
 
   const onPartValueChange = (e:React.ChangeEvent<HTMLInputElement>, op_idx:number, opPart_idx:string) => {
-    //validation test: 변경했을 때 아무 값이 없을 때 감지 
     if(e.target.value){
       const selectedOp = options.find(op => op.option_index === op_idx);
       const selectedOpPart = selectedOp?.option_parts?.find(opPart => opPart.optPart_idx === opPart_idx);
@@ -141,7 +147,9 @@ export const SellerPage = () => {
 
   }
   
-  // s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업 
+/** 
+  * @Explain s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업
+  */  
   let productURL = "";
   let coImgURL = "";
   const onRegister = async() => {
@@ -188,10 +196,10 @@ export const SellerPage = () => {
         alert("회사 이름을 입력하세요!💛");
         return;
       } 
-      if(sellerId === undefined){
-        alert("판매자 아이디가 없습니다!")
-        return;
-      }  
+      if(!sellerId) {
+        alert("로그인 해주세요");
+        window.location.href = "/login"
+      } 
       if(!phoneEvent){
         alert('휴대폰 번호 유효성 확인을 해주세요!💛')
         return;
@@ -215,11 +223,8 @@ export const SellerPage = () => {
         alert('5자 이상 작성해주세요!💛');
         return;
       }  
-      if(sellerId === "") {
-        alert("회원님의 이메일 아이디를 확인해 주세요!💛");
-        return; 
-      } 
-      if(rbName === "") {
+      
+      if(!rbName) {
         alert("로봇의 이름을 입력해 주세요!💛");
         return;
       }  
@@ -237,7 +242,7 @@ export const SellerPage = () => {
       }
       setIsLoading(true);
       //회사 이미지 업로드
-      if(compaImg.length !==0 ) {
+      if(compaImg.length !== 0 ) {
         const imgForm = new FormData();
         const actualImgFile = compaImg[0];
         imgForm.append('file', actualImgFile);
@@ -263,14 +268,43 @@ export const SellerPage = () => {
             body: formBody
           })
         ).json();
+
         productURL = ProductURL;
-  
+        options.forEach((op) => {
+          const opElement = document.getElementById(`${op.option_index}_title`) as HTMLInputElement | null;
+          console.log("opElement", opElement)
+          if(opElement){
+            const opTitle = opElement.value;
+            console.log("opTitle:", opTitle);
+            if(!opTitle) {
+            alert('옵션 리스트의 제목을 기입해주세요!');
+            return false;
+            }
+          }
+          op.option_parts?.forEach((opParts) => {
+            const opPartsElementC = document.getElementById(`${opParts.optPart_idx}_cont`) as HTMLInputElement | null;
+            const opPartsElementP = document.getElementById(`${opParts.optPart_idx}_price`) as HTMLInputElement | null;
+            if(opPartsElementC){
+              const opPartsCont = opPartsElementC.value;
+              if(!opPartsCont){
+                alert('옵션 리스트의 내용이 없습니다!');
+                return false;
+              }
+            }
+            if(opPartsElementP){
+              const opPartsPrice = opPartsElementP.value;
+              if(+opPartsPrice < 0){
+                alert('옵션 리스트의 내용에 대한 가격이 0원 미만은 부적합입니다!');
+                return false;
+              }
+            }
+          })
+        });
         const headers = new Headers({
           'Content-Type':'application/json; charset=utf-8',  // 'application/json; charset=utf-8', //'multipart/form-data',  
           'x-jwt': `${ckToken!}`,
         });
 
-        
         await fetch(`${BASE_PATH}/seller/make-deal`, {
           headers:headers,
           method: 'POST',
@@ -283,6 +317,7 @@ export const SellerPage = () => {
             name: rbName,
             price,
             maintenance_cost,
+            options: options,
             description: description,
             productURL : productURL
           })
@@ -454,7 +489,7 @@ export const SellerPage = () => {
         {...register('description', {required:"Please write descriptions."})}
         className='w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2 mb-2'
         
-        placeholder="Explain your product about the robot"
+        placeholder="상품에 대해 설명해주세요!"
         type="text"
         size={10}
       />
