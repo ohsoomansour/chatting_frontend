@@ -1,5 +1,5 @@
 import { useDropzone } from "react-dropzone";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
 import { useForm } from "react-hook-form";
@@ -17,24 +17,6 @@ import { getCookie } from "../utils/cookie";
 import { useQuery } from "react-query";
 import { getMyinfo } from "../api";
 import { IuserInfo } from "./editUserInfo";
-
-export const UI = styled.div`
-  display:flex;
-  flex-direction: column;
-`;
-
-const Wrapper = styled.div`
-  display:flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-`;
-const DelOptPart = styled.button`
-  background-color: yellow;
-  margin-top: 10px;
-  margin-left: 10px;
-`;
-
 
 interface ISellerForm {
   company: string;
@@ -57,7 +39,82 @@ interface IOption{
   option_index:number;
   option_title:string;
   option_parts?:IOptionPart[];
-}   
+} 
+export const UI = styled.div`
+  display:flex;
+  flex-direction: column;
+`;
+
+const Wrapper = styled.div`
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+
+const AddOptionBtn = styled.button`
+background-color: #DDF657;
+font-weight: bold;
+transition: background-color 0.4s ease-in-out;
+&:hover{
+  background-color: #cfff00
+  }
+  border-radius:10px;
+  padding:10px;      
+`;
+const AddOptPart = styled.button`
+  background-color:#7fffd4;
+  transition: background-color 0.4s ease-in-out;
+  &:hover{
+    background-color: #00fa9a;
+  }
+  font-weight: bold;
+  padding:5px;
+  border-radius:10px;
+`;
+const DelOptionBtn = styled.button`
+  font-size:15px;
+  font-weight: bold;
+  padding:5px;
+  background-color: #FB6544;
+  transition: background-color 0.4s ease-in-out;
+  &:hover{
+    background-color: #ff0000;
+  }
+  border-radius:10px;
+  margin:0 10px;
+`;
+const DelOptPart = styled.button`
+  color: red;
+  margin-top: 10px;
+  margin-left: 10px;
+`;
+const DelOptPartSVG = styled.svg`
+  height:20px; 
+  width:20px;
+  transition: fill 0.4s ease-in-out;
+  &:hover{
+    fill: #ff0000;
+  }
+`;
+
+const OptionTitle = styled.input`
+  margin-top:10px;
+  box-shadow: 0 1px 0 0 black;
+`;
+const OptionName = styled.input`
+  box-shadow: 0 1px 0 0 black; 
+`;
+const OptionPrice = styled.input`
+  box-shadow: 0 1px 0 0 black; 
+  margin-left: 5px;
+`;
+const OptionContainer = styled.div``;
+const OptionWrapper = styled.div`
+  margin: 13px 0;
+`;
+
+
 
 export const SellerPage = () => {
   //const userId = useRecoilValue(userIdState);
@@ -193,7 +250,7 @@ export const SellerPage = () => {
         return;
       }
       if(company.length < 1){
-        alert("회사 이름을 입력하세요!💛");
+        alert("회사 이름을 입력하세요!");
         return;
       } 
       if(!sellerId) {
@@ -201,11 +258,11 @@ export const SellerPage = () => {
         window.location.href = "/login"
       } 
       if(!phoneEvent){
-        alert('휴대폰 번호 유효성 확인을 해주세요!💛')
+        alert('휴대폰 번호 유효성 확인을 해주세요!')
         return;
       } 
       if(!mphoneValid){
-        alert('휴대폰 번호의 값이 유효하지 않습니다!💛')
+        alert('휴대폰 번호의 값이 유효하지 않습니다!')
         return;
       } 
       if(!(/^\d{10,11}$/.test(mobilePhone_number.toString()))) {
@@ -222,8 +279,7 @@ export const SellerPage = () => {
       if(selAddress.length < 5) {
         alert('5자 이상 작성해주세요!💛');
         return;
-      }  
-      
+      } 
       if(!rbName) {
         alert("로봇의 이름을 입력해 주세요!💛");
         return;
@@ -272,7 +328,7 @@ export const SellerPage = () => {
         productURL = ProductURL;
         options.forEach((op) => {
           const opElement = document.getElementById(`${op.option_index}_title`) as HTMLInputElement | null;
-          console.log("opElement", opElement)
+          console.log("opElement", opElement);
           if(opElement){
             const opTitle = opElement.value;
             console.log("opTitle:", opTitle);
@@ -364,14 +420,7 @@ export const SellerPage = () => {
     }
   });
   
-  const AddOptionBtn = styled.button`
-    background-color: yellow;
-  `;
-  const DelOptionBtn = styled.button`
-    background-color: orange;
-    margin-left: 10px;
-  `;
-
+  
   return (
   <Wrapper className= "h-3/4">
     <Helmet>
@@ -455,27 +504,30 @@ export const SellerPage = () => {
         size={10}
       />
       {errors.price?.type === 'required' && (<FormError errorMessage={errors.price.message}/>)}
-          
-      <AddOptionBtn onClick={() => addOption(partIdx)}>옵션 추가하기</AddOptionBtn> 
+    <OptionWrapper>
+      <AddOptionBtn onClick={() => addOption(partIdx)}>옵션 추가</AddOptionBtn> 
       <div>
         {options.map((option, index) => (
-          <div  id={option.option_index + ""} >
-              <input id={option.option_index+"_title"}  defaultValue={option.option_title} placeholder="옵션 이름을 기입" onChange={ (e) => onOpTitleChange(e, option.option_index)} />
+          <OptionContainer  id={option.option_index + ""} >
+              <OptionTitle id={option.option_index+"_title"}  defaultValue={option.option_title} placeholder={"옵션 이름"} onChange={ (e) => onOpTitleChange(e, option.option_index)} />
+              <DelOptionBtn onClick={() => delOption(option.option_index)}>옵션 삭제  </DelOptionBtn>  
+              <AddOptPart  onClick={ () => addOptPart(option.option_index)}> + 옵션 리스트 추가</AddOptPart>
               {option.option_parts!.map((part, idx) => (
-                <div key={part.optPart_idx}>
-                  <input id={part.optPart_idx+"_cont"} defaultValue={part.part_name} placeholder="옵션 리스트" onChange={(e) => onPartValueChange(e,option.option_index, part.optPart_idx)}/>
-                  <input type="number" id={part.optPart_idx+"_price"} defaultValue={part.price} onChange={(e) => onPartPriceChange(e,option.option_index, part.optPart_idx)} placeholder="옵션 리스트 가격" />
-                  <button  onClick={ () => addOptPart(option.option_index)}> + 옵션 리스트 추가하기</button>
-                  <DelOptPart  onClick={() => delOptPart(option.option_index,  part.optPart_idx)} >- 옵션 리스트 삭제하기 </DelOptPart>
+                <div key={part.optPart_idx} className=" mb-2">
+                  <OptionName id={part.optPart_idx+"_cont"} defaultValue={part.part_name} placeholder={"옵션 리스트"+(idx+1)} onChange={(e) => onPartValueChange(e,option.option_index, part.optPart_idx)}/>
+                  <OptionPrice  type="number" id={part.optPart_idx+"_price"} defaultValue={part.price} onChange={(e) => onPartPriceChange(e,option.option_index, part.optPart_idx)} placeholder="옵션 리스트 가격" />
+                  <DelOptPart  
+                    onClick={() => delOptPart(option.option_index,  part.optPart_idx)} 
+                  ><DelOptPartSVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" >
+                    <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/>
+                  </DelOptPartSVG>
+                  </DelOptPart>
                 </div>
-              ))}
-              
-            <DelOptionBtn onClick={() => delOption(option.option_index)}>옵션 삭제하기</DelOptionBtn>  
-            
-          </div>
+              ))} 
+          </OptionContainer>
         ))}
         </div>   
-
+    </OptionWrapper>    
       <input
         {...register('maintenance_cost', {required:"Please write the maintenance_costs."})}
         className='w-full border-4 rounded-md focus:border-pink-400  border-gray-300  px-2 py-1 outline-none mr-2 mb-2'

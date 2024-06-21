@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form"
 import { FormError } from "../components/form-error";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { tokenState } from "../recoil/atom_token";
 import { userIdState } from "../recoil/atom_user";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { useQuery } from "react-query";
