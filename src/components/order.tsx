@@ -235,12 +235,14 @@ const formatter = new Intl.NumberFormat('en-US', {
             </div>
           </MantenanceOption>
           {deal?.product.options?.map((op) => (
-            <select>
-              <label htmlFor="kimchi">{op.option_title}</label>
-              {op.option_parts.map((op_parts) => (
-                <option value={op_parts.price}>{op_parts.part_name}</option>
-              ))}
-            </select>
+            <div key={op.option_index}>
+              <label >{op.option_title}</label>
+              <select >
+                {op.option_parts.map((op_parts) => (
+                  <option key={op_parts.optPart_idx} value={op_parts.price}>{op_parts.part_name}</option>
+                ))}
+              </select>
+            </div>
           ))}
           <hr className=' border border-solid border-gray-300 shadow-lg mb-1  '/>
           <div className=' flex justify-around'>
