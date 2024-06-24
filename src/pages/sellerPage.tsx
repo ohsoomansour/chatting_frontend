@@ -145,8 +145,8 @@ export const SellerPage = () => {
   const [opIdx, setOpidx] = useState(1);
   const [partIdx, setPartIdx] = useState(1);
   const [optPartKey, setOptPartKey] = useState("first_0");
-  const [options, setOptions] = useState<IOption[]>([{option_index:0, option_title: '', option_parts: [{optPart_idx:'0_init', part_name:'', price: 0}] }])
-  
+  //const [options, setOptions] = useState<IOption[]>([{option_index:0, option_title: '', option_parts: [{optPart_idx:'0_init', part_name:'', price: 0}] }])
+  const [options, setOptions] = useState<IOption[]>([])
 /** 
   *@caution option - ption_parts: {optPart_idx: `${opIdx}_${partIdx="1 기본 값을 계속 참조"}`, part_name: '', price: 0} -> 추가할 때마다 참조 
   */ 
@@ -160,6 +160,7 @@ export const SellerPage = () => {
   }
 
   const addOptPart = (optIdx:number) => {
+    console.log(options);
     setPartIdx((prev) => prev+1);
     const optPartKey = `${optIdx}_${partIdx}`;  // 첫 추가 0~9_0  
     setOptPartKey(optPartKey);
@@ -253,7 +254,8 @@ export const SellerPage = () => {
         alert("회사 이름을 입력하세요!");
         return;
       } 
-      if(!sellerId) {
+      //로그인 아이디로 하면 useQuery 값을 가져오는 것이 일정하지 않음 -> token이 적절
+      if(!ckToken) {
         alert("로그인 해주세요");
         window.location.href = "/login"
       } 
@@ -326,9 +328,8 @@ export const SellerPage = () => {
         ).json();
 
         productURL = ProductURL;
-        options.forEach((op) => {
+        options?.forEach((op) => {
           const opElement = document.getElementById(`${op.option_index}_title`) as HTMLInputElement | null;
-          console.log("opElement", opElement);
           if(opElement){
             const opTitle = opElement.value;
             console.log("opTitle:", opTitle);
