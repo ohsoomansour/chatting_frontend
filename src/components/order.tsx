@@ -56,7 +56,7 @@ const BASE_PATH = process.env.NODE_ENV === "production"
 export const Order = ({product, deal}:OrderProps) => {
   //const token = useRecoilValue<string>(tokenState);
   const ckToken = getCookie('token');
-  const userId = useRecoilValue<string>(userIdState);
+  //const userId = useRecoilValue<string>(userIdState);
 
 
   const customerFullAddress = useRecoilValue<string>(buyerAddress); 
