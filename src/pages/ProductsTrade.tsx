@@ -91,7 +91,7 @@ export interface IProduct{
 
 export interface IMember{
   id:number;
-  userId:string;
+  userId?:string;
   address:string;
   name:string;
   memberRole:string;

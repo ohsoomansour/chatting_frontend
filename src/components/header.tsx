@@ -136,6 +136,7 @@ export const Header: React.FC = () => {
   //const token = useRecoilValue(tokenState)
   const ckToken = getCookie('token');
 
+  
   const {data:me, isLoading} = useQuery<IuserInfo>(
     ["me2", "Member"], () => getMyinfo(ckToken!)
   , {refetchInterval: 20000});

@@ -54,6 +54,7 @@ const BASE_PATH = process.env.NODE_ENV === "production"
  : "http://localhost:3000";
 
 export const Order = ({product, deal}:OrderProps) => {
+  console.log("deal", deal)
   //const token = useRecoilValue<string>(tokenState);
   const ckToken = getCookie('token');
   //const userId = useRecoilValue<string>(userIdState);
@@ -172,14 +173,14 @@ const formatter = new Intl.NumberFormat('en-US', {
               <input 
                 {...register('seller', {required: true})}
                 type='text'
-                value={deal.seller.userId || ""}
+                value={deal?.seller?.userId || ""}
                 size={30} 
                 className='w-full mb-1 flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
                 placeholder='Please write your name'
               />
               <input 
                 {...register('sellerPhone', {required: true})}
-                value={deal.salesManager_mobilephone || ""}
+                value={deal?.salesManager_mobilephone || ""}
                 className='w-full  flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
                 placeholder='Please write your phone number'
               /> 
