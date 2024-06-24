@@ -11,6 +11,7 @@ import { useQuery } from 'react-query';
 import { getMyinfo } from '../api';
 import { useHistory } from 'react-router-dom';
 import { getCookie } from '../utils/cookie';
+import { IuserInfo } from '../pages/editUserInfo';
 
 const PlusSvg = styled.svg`
   fill:red;
@@ -56,6 +57,8 @@ export const Order = ({product, deal}:OrderProps) => {
   //const token = useRecoilValue<string>(tokenState);
   const ckToken = getCookie('token');
   const userId = useRecoilValue<string>(userIdState);
+
+
   const customerFullAddress = useRecoilValue<string>(buyerAddress); 
   const roadAddress = useRecoilValue<string>(buyerRoad);
   const postalCode = useRecoilValue<string>(buyerPostal);
@@ -66,6 +69,8 @@ export const Order = ({product, deal}:OrderProps) => {
   const { data: buyerInfo, isLoading }  = useQuery<IBuyerInfo>(
     ["buyerInfo", "MEMBER"], () => getMyinfo(ckToken!)
   )
+
+
 
   const handleOptionSelect = (option:boolean) => {
     setMaintenanceYN(option);
@@ -186,7 +191,7 @@ const formatter = new Intl.NumberFormat('en-US', {
               <input 
                 {...register('customer', {required: true})}
                 type='text'
-                value={userId || ""}
+                value={buyerInfo?.userId || ""}
                 className=' w-full mb-1 flex-1 border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
                 placeholder='Please write your name'
                 />
