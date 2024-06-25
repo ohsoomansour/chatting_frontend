@@ -124,37 +124,9 @@ export const SellerPage = () => {
   const history = useHistory();
   const [formattedMPnumber, setFormattedMPnumber] = useState<string>();
   const ckToken = getCookie('token');
-  const [myInfo, setMyinfo] = useState<IuserInfo>();
   
-  //const userId = useRecoilValue(userIdState);
-  const {data:me} = useQuery<IuserInfo>(
-    ["me2", "Member"], () => getMyinfo(ckToken!)
-  );
   const userId =sessionStorage.getItem('userId');
   
-  /*  
-    const me = async(ckToken:string) => {
-    const response = await fetch(`${BASE_PATH}/member/getmyinfo`, {
-      headers: {
-        'Content-Type':'application/json; charset=utf-8',
-        'x-jwt': ckToken,
-      },
-      method: 'GET',
-    })
-
-    if (!response.ok) {
-      console.error('Failed to fetch user information');
-    }
-    const user:IuserInfo = await response.json();
-    console.log("user")
-    console.log(user);
-    setMyinfo(user)
-    return user;
- }   
- useEffect(() => {
-  me(ckToken!);
- }, [ckToken!])
-*/
 
 /**
   *@explain : me 값이 왔다갔다 그래서 undefined 값과 정상 유저 정보의 값이 왔다갔다해서 사용할 수가 없음 
@@ -479,7 +451,6 @@ export const SellerPage = () => {
             })}
             className='w-full border-4 rounded-md focus:border-pink-400  border-gray-300  px-2 py-1 outline-none mr-2'
             defaultValue={userId || ""}
-            value={userId || ""}
             placeholder="Your Email address!"
             type="email"
             size={10} 

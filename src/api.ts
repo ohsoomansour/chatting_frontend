@@ -60,12 +60,13 @@ export async function storedGoods(token:string, page:number) {
 
 
 export async function getMyinfo(token:string) {
-  
   try {
     const response = await fetch(`${BASE_PATH}/member/getmyinfo`, {
       headers: {
         'Content-Type':'application/json; charset=utf-8',
-        'x-jwt': token,
+        'x-jwt': JSON.stringify({
+          token
+        }) 
       },
       method: 'GET',
     });
@@ -75,10 +76,10 @@ export async function getMyinfo(token:string) {
     }
     const user:IuserInfo = await response.json();
     sessionStorage.setItem('userId', user!.userId);
+
     return user;
-  } catch (error) {
-    console.error('Error fetching user information:', error);
-    throw error;
+  } catch  {
+    throw new Error('Error fetching user information:');
   }
   
 }
