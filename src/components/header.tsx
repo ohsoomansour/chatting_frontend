@@ -139,7 +139,7 @@ export const Header: React.FC = () => {
   
   const {data:me, isLoading} = useQuery<IuserInfo>(
     ["me2", "Member"], () => getMyinfo(ckToken!)
-  , {refetchInterval: 20000});
+  );
   const [headerCLose, setHeaderClose] = useState(false);
   const headerAnimation = useAnimation();
   const toggleSearch = (e:any) => {

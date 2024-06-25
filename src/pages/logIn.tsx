@@ -51,7 +51,6 @@ export const BASE_PATH = process.env.NODE_ENV === "production"
  ? "https://trade-2507d8197825.herokuapp.com"
  : "http://localhost:3000";
 
-
 const Login:React.FC = () => {
 //Validation is triggered on the changeevent for each input, leading to multiple re-renders. Warning: this often comes with a significant impact on performance.
   const { register, formState:{ errors },handleSubmit, formState, getValues } = useForm<ILoginForm>({mode: "onChange"});

@@ -74,7 +74,7 @@ export async function getMyinfo(token:string) {
       throw new Error('Failed to fetch user information');
     }
     const user:IuserInfo = await response.json();
-    console.log(user)
+    sessionStorage.setItem('userId', user!.userId);
     return user;
   } catch (error) {
     console.error('Error fetching user information:', error);

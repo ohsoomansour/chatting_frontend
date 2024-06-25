@@ -1,14 +1,14 @@
 import { useDropzone } from "react-dropzone";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useForm } from "react-hook-form";
 import { CompaImg } from "../components/CompaImg";
 import { compaImgState } from "../recoil/atom_compaImg";
 import { FormError } from "../components/form-error";
 import { sellerAddress, sellerPostal, sellerRoad } from "../recoil/atom_address";
 import SellerPostcode from "../components/address/seller-address";
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async"
 import { BASE_PATH } from "./logIn";
 import { Loading } from "../components/loading";
 import { useHistory } from "react-router-dom";
@@ -17,6 +17,7 @@ import { getCookie } from "../utils/cookie";
 import { useQuery } from "react-query";
 import { getMyinfo } from "../api";
 import { IuserInfo } from "./editUserInfo";
+import { userIdState } from "../recoil/atom_user";
 
 interface ISellerForm {
   company: string;
@@ -97,7 +98,6 @@ const DelOptPartSVG = styled.svg`
     fill: #ff0000;
   }
 `;
-
 const OptionTitle = styled.input`
   margin-top:10px;
   box-shadow: 0 1px 0 0 black;
@@ -114,10 +114,7 @@ const OptionWrapper = styled.div`
   margin: 13px 0;
 `;
 
-
-
 export const SellerPage = () => {
-  //const userId = useRecoilValue(userIdState);
   const compaImg = useRecoilValue(compaImgState);
   const [threeDFile, setThreeDFile] = useState([]);
   const sellerZipcode = useRecoilValue<string>(sellerPostal);
@@ -125,13 +122,40 @@ export const SellerPage = () => {
   const selAddress = useRecoilValue(sellerAddress);
   const {getValues, register, formState:{errors}} = useForm<ISellerForm>({ mode: "all" });
   const history = useHistory();
-  const [formattedMPnumber, setFormattedMPnumber] = useState<string>()
-  
+  const [formattedMPnumber, setFormattedMPnumber] = useState<string>();
   const ckToken = getCookie('token');
+  const [myInfo, setMyinfo] = useState<IuserInfo>();
+  
+  //const userId = useRecoilValue(userIdState);
   const {data:me} = useQuery<IuserInfo>(
     ["me2", "Member"], () => getMyinfo(ckToken!)
-  , {refetchInterval: 20000});
+  );
+  const userId =sessionStorage.getItem('userId');
   
+  /*  
+    const me = async(ckToken:string) => {
+    const response = await fetch(`${BASE_PATH}/member/getmyinfo`, {
+      headers: {
+        'Content-Type':'application/json; charset=utf-8',
+        'x-jwt': ckToken,
+      },
+      method: 'GET',
+    })
+
+    if (!response.ok) {
+      console.error('Failed to fetch user information');
+    }
+    const user:IuserInfo = await response.json();
+    console.log("user")
+    console.log(user);
+    setMyinfo(user)
+    return user;
+ }   
+ useEffect(() => {
+  me(ckToken!);
+ }, [ckToken!])
+*/
+
 /**
   *@explain : me 값이 왔다갔다 그래서 undefined 값과 정상 유저 정보의 값이 왔다갔다해서 사용할 수가 없음 
   */
@@ -424,9 +448,11 @@ export const SellerPage = () => {
   
   return (
   <Wrapper className= "h-3/4">
-    <Helmet>
-      <title>Trader | Seller Page </title>       
-    </Helmet>
+    <HelmetProvider>
+      <Helmet>
+        <title>Trader | Seller Page </title>       
+      </Helmet>
+    </HelmetProvider>
     {isLoading 
       ? 
     <Loading /> 
@@ -452,8 +478,8 @@ export const SellerPage = () => {
               pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
             })}
             className='w-full border-4 rounded-md focus:border-pink-400  border-gray-300  px-2 py-1 outline-none mr-2'
-            defaultValue={me?.userId}
-            //value={me?.userId}
+            defaultValue={userId || ""}
+            value={userId || ""}
             placeholder="Your Email address!"
             type="email"
             size={10} 
@@ -541,7 +567,6 @@ export const SellerPage = () => {
       <input
         {...register('description', {required:"Please write descriptions."})}
         className='w-full border-4 rounded-md focus:border-pink-400 shadow-md border-gray-300  px-2 py-1 outline-none mr-2 mb-2'
-        
         placeholder="상품에 대해 설명해주세요!"
         type="text"
         size={10}
