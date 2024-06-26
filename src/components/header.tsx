@@ -135,11 +135,12 @@ export enum MemberRole {
 export const Header: React.FC = () => {
   //const token = useRecoilValue(tokenState)
   const ckToken = getCookie('token');
-
-  
   const {data:me, isLoading} = useQuery<IuserInfo>(
     ["me2", "Member"], () => getMyinfo(ckToken!)
   );
+  console.log("me");
+  console.log(me)
+  
   const [headerCLose, setHeaderClose] = useState(false);
   const headerAnimation = useAnimation();
   const toggleSearch = (e:any) => {

@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {  faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { getCookie } from "../utils/cookie";
 const EditMyDealsWrappper = styled.div`
   background-color: ${props => props.theme.bgColor};
   margin:0 20px;
@@ -69,9 +70,9 @@ const dealRowVariants = {
 }
 const offset = 2;
 function EditMyDeals(){
-  const token = useRecoilValue(tokenState);
+  const ckToken = getCookie('token');
   const {data:MyDeals, isLoading, refetch} = useQuery<IDeal[]>(
-    ["myDeals", "Deal"], () => getMyDeals(token)
+    ["myDeals", "Deal"], () => getMyDeals(ckToken!)
   );
   console.log(MyDeals);
   const MyallDeals = MyDeals 

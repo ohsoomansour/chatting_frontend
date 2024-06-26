@@ -80,7 +80,7 @@ const Login:React.FC = () => {
       // recoil & session 설정
       //setToken(response.token)
       setUserId(email);
-      // 쿠키: 만료가 있는 '토큰'을 설정   
+      // 쿠키: 만료가 있는 '토큰'을 설정    
       setCookie("token", response.token, 1);
 
       if(response.ok){

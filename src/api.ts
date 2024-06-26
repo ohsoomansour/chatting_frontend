@@ -64,16 +64,14 @@ export async function getMyinfo(token:string) {
     const response = await fetch(`${BASE_PATH}/member/getmyinfo`, {
       headers: {
         'Content-Type':'application/json; charset=utf-8',
-        'x-jwt': JSON.stringify({
-          token
-        }) 
+        'x-jwt': token
       },
       method: 'GET',
     });
-
+    /*
     if (!response.ok) {
       throw new Error('Failed to fetch user information');
-    }
+    }*/
     const user:IuserInfo = await response.json();
     sessionStorage.setItem('userId', user!.userId);
 
@@ -122,7 +120,7 @@ export async function getComments() {
       await fetch(`${BASE_PATH}/allComents`, {
         headers:{
           'Content-Type':'application/json; charset=utf-8',
-  
+
         },
         method:'GET',
       })

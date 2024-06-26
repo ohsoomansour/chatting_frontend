@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
 import { IDeal, IProduct } from '../pages/ProductsTrade';
 import { useRecoilValue } from 'recoil';
-import { userIdState } from '../recoil/atom_user';
 import BuyerPostcode from './address/buyer-address';
 import { buyerAddress, buyerDetail, buyerPostal, buyerRoad } from '../recoil/atom_address';
 import { ButttonContainer } from '../pages/storedGoods';
@@ -36,6 +35,24 @@ const SellerAndCustomerInfo = styled.form`
 const MantenanceOption = styled.div``;
 const Product = styled.div``;
 
+const SelecOpContainer =  styled.div`
+  display:flex;
+  justify-content: space-around;
+`;
+
+const ProdOpSelect = styled.select`
+  width: 200px;
+  margin-bottom: 10px;
+`;
+const ProdLabel = styled.label`
+  font-weight:bold;
+  width: 100px;
+  
+`;
+
+
+
+
 interface IBuyerInfo{
   address:string;
   id:number;
@@ -55,10 +72,7 @@ const BASE_PATH = process.env.NODE_ENV === "production"
 
 export const Order = ({product, deal}:OrderProps) => {
   console.log("deal", deal)
-  //const token = useRecoilValue<string>(tokenState);
   const ckToken = getCookie('token');
-  //const userId = useRecoilValue<string>(userIdState);
-
 
   const customerFullAddress = useRecoilValue<string>(buyerAddress); 
   const roadAddress = useRecoilValue<string>(buyerRoad);
@@ -234,15 +248,16 @@ const formatter = new Intl.NumberFormat('en-US', {
               </div>
             </div>
           </MantenanceOption>
+          <h2>Do you need options?</h2>
           {deal?.product.options?.map((op) => (
-            <div key={op.option_index}>
-              <label >{op.option_title}</label>
-              <select >
+            <SelecOpContainer key={op.option_index}>
+              <ProdLabel >{op.option_title}</ProdLabel>
+              <ProdOpSelect >
                 {op.option_parts.map((op_parts) => (
                   <option key={op_parts.optPart_idx} value={op_parts.price}>{op_parts.part_name}</option>
                 ))}
-              </select>
-            </div>
+              </ProdOpSelect>
+            </SelecOpContainer>
           ))}
           <hr className=' border border-solid border-gray-300 shadow-lg mb-1  '/>
           <div className=' flex justify-around'>
@@ -265,7 +280,7 @@ const formatter = new Intl.NumberFormat('en-US', {
                 <>
                 <div className=' flex w-full'>
                   <PlusSvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                  <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344V280H168c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H280v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/>
+                    <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344V280H168c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H280v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/>
                   </PlusSvg>
                   <input 
                     {...register('maintenance_cost')}

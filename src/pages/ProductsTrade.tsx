@@ -72,13 +72,11 @@ export interface optionParts{
   part_name:string;
   price: number;
 }
-
 export interface option{
   option_index : number;
   option_title : string;
   option_parts : optionParts[];
 }
-
 export interface IProduct{
   id:number;
   name:number;
@@ -88,7 +86,6 @@ export interface IProduct{
   description:string;
   productURL:string;
 }
-
 export interface IMember{
   id:number;
   userId:string;
@@ -108,7 +105,6 @@ export interface IDeal{
   productId:number;
   product:IProduct;
 }
-
 export const ProductsTrade = () => {
   const [isVisible, setIsVisible] = useState(false);
   const {data:Deals, isLoading} = useQuery<IDeal[]>(
@@ -119,6 +115,7 @@ export const ProductsTrade = () => {
     : Deals   
     ? Deals
     : [];   // Deals가 undefined의 경우 [] 반환
+    
   console.log("allDeals",allDeals)
   function handleScroll(){
     const scrollPosition = window.scrollY;
