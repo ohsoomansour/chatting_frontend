@@ -47,10 +47,13 @@ const ProdOpSelect = styled.select`
 const ProdLabel = styled.label`
   font-weight:bold;
   width: 100px;
-  
 `;
-
-
+const OptTitle = styled.h2`
+  font-size:20px;
+  font-weight:bold;
+  margin-left: 10px;
+  margin-bottom:10px;
+`;
 
 
 interface IBuyerInfo{
@@ -227,7 +230,7 @@ const formatter = new Intl.NumberFormat('en-US', {
             className='text-center font-semibold text-gray-500 w-full mx-auto border-4 rounded-md focus:border-pink-400   shadow-md border-gray-300  px-2 py-1 outline-none'
             value={product.description}
           />
-          <MantenanceOption className=" mt-10 mb-5">
+         {deal.product.maintOpYN? <MantenanceOption className=" mt-10 mb-5">
             <div className="flex ml-2">
               <h2 className="text-center text-xl font-bold mr-2">Do you need maintenance?</h2>
               <div
@@ -247,8 +250,8 @@ const formatter = new Intl.NumberFormat('en-US', {
                 No
               </div>
             </div>
-          </MantenanceOption>
-          <h2>Do you need options?</h2>
+          </MantenanceOption> : null}
+          <OptTitle>상품 외 필요한 옵션을 고르세요.</OptTitle>
           {deal?.product.options?.map((op) => (
             <SelecOpContainer key={op.option_index}>
               <ProdLabel >{op.option_title}</ProdLabel>

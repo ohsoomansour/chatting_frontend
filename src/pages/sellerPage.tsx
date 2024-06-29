@@ -113,6 +113,7 @@ const OptionContainer = styled.div``;
 const OptionWrapper = styled.div`
   margin: 13px 0;
 `;
+const MantenanceOption = styled.div``;
 
 export const SellerPage = () => {
   const compaImg = useRecoilValue(compaImgState);
@@ -124,16 +125,17 @@ export const SellerPage = () => {
   const history = useHistory();
   const [formattedMPnumber, setFormattedMPnumber] = useState<string>();
   const ckToken = getCookie('token');
-  
+  if(!ckToken){
+    alert('로그인이 필요합니다')
+    window.location.href = "/login"
+  } 
   const userId =sessionStorage.getItem('userId');
   
 
 /**
   *@explain : me 값이 왔다갔다 그래서 undefined 값과 정상 유저 정보의 값이 왔다갔다해서 사용할 수가 없음 
   */
-  if(!ckToken){
-    window.location.href = "/login"
-  } 
+  
   const [phoneEvent, setPhoneEvent] = useState<boolean>(false);
   const [mphoneValid, setMphoneValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -143,7 +145,13 @@ export const SellerPage = () => {
   const [optPartKey, setOptPartKey] = useState("first_0");
   //const [options, setOptions] = useState<IOption[]>([{option_index:0, option_title: '', option_parts: [{optPart_idx:'0_init', part_name:'', price: 0}] }])
   const [options, setOptions] = useState<IOption[]>([])
-/** 
+  const [maintSelected, setMaintSelected] = useState(false);
+
+  const handleMaintSelected = (maintYN:boolean) => {
+    setMaintSelected(maintYN);
+  }
+
+  /** 
   *@caution option - ption_parts: {optPart_idx: `${opIdx}_${partIdx="1 기본 값을 계속 참조"}`, part_name: '', price: 0} -> 추가할 때마다 참조 
   */ 
   const addOption = (partIndex:number) => {
@@ -369,6 +377,7 @@ export const SellerPage = () => {
             salesManager_mobilephone:mobilePhone_number,
             name: rbName,
             price,
+            maintOpYN: maintSelected,
             maintenance_cost,
             options: options,
             description: description,
@@ -502,6 +511,35 @@ export const SellerPage = () => {
         size={10}
       />
       {errors.price?.type === 'required' && (<FormError errorMessage={errors.price.message}/>)}
+      <MantenanceOption className=" mt-10 mb-5">
+            <div className="flex ml-2">
+              <h2 className="text-center text-xl font-bold mr-2">유지 보수 제품인가요?</h2>
+              <div
+                className={`py-2 px-4 mr-2 rounded-lg text-white font-semibold cursor-pointer ${
+                  maintSelected === true  ? 'bg-red-500' : 'bg-gray-300'
+                }`}
+                onClick={() => handleMaintSelected(true)}
+              >
+                Yes
+              </div>
+              <div
+                className={`py-2 px-4 rounded-lg text-white font-semibold cursor-pointer ${
+                  maintSelected === false ? 'bg-red-500' : 'bg-gray-300'
+                }`}
+                onClick={() => handleMaintSelected(false)}
+              >
+                No
+              </div>
+            </div>
+      </MantenanceOption>
+      {maintSelected ? <input
+        {...register('maintenance_cost', {required:"Please write the maintenance_costs."})}
+        className='w-full border-4 rounded-md focus:border-pink-400  border-gray-300  px-2 py-1 outline-none mr-2 mb-2'
+        placeholder="Maintenace Cost"
+        type="number"
+        defaultValue={0}
+        size={10}
+      /> : null}  
     <OptionWrapper>
       <AddOptionBtn onClick={() => addOption(partIdx)}>옵션 추가</AddOptionBtn> 
       <div>
@@ -524,16 +562,8 @@ export const SellerPage = () => {
               ))} 
           </OptionContainer>
         ))}
-        </div>   
-    </OptionWrapper>    
-      <input
-        {...register('maintenance_cost', {required:"Please write the maintenance_costs."})}
-        className='w-full border-4 rounded-md focus:border-pink-400  border-gray-300  px-2 py-1 outline-none mr-2 mb-2'
-        placeholder="Maintenace Cost"
-        type="number"
-        defaultValue={0}
-        size={10}
-      />
+      </div>   
+    </OptionWrapper> 
       {errors.maintenance_cost?.type === 'required' && (<FormError errorMessage={errors.maintenance_cost.message}/>)}
       <input
         {...register('description', {required:"Please write descriptions."})}
