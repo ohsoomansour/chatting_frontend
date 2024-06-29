@@ -384,7 +384,6 @@ export const SellerPage = () => {
             productURL : productURL
           })
         }).then(response => response.ok ? window.location.href = '/trade'  : history.go(0) )
-      
         setIsLoading(false);
       }
     } catch (e) {
