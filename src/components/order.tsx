@@ -10,7 +10,6 @@ import { useQuery } from 'react-query';
 import { getMyinfo } from '../api';
 import { useHistory } from 'react-router-dom';
 import { getCookie } from '../utils/cookie';
-import { IuserInfo } from '../pages/editUserInfo';
 
 const PlusSvg = styled.svg`
   fill:red;
@@ -74,7 +73,6 @@ const BASE_PATH = process.env.NODE_ENV === "production"
  : "http://localhost:3000";
 
 export const Order = ({product, deal}:OrderProps) => {
-  console.log("deal", deal)
   const ckToken = getCookie('token');
 
   const customerFullAddress = useRecoilValue<string>(buyerAddress); 
@@ -82,15 +80,28 @@ export const Order = ({product, deal}:OrderProps) => {
   const postalCode = useRecoilValue<string>(buyerPostal);
   const DetailedAdd = useRecoilValue<string>(buyerDetail);
   const [maintenanceYN, setMaintenanceYN] = useState(false);
+  const [selectedOptionsValues, setSelectedOptionsValues] = useState<string[]>();
+  
   const {register, getValues} = useForm();
   const history = useHistory();
   const { data: buyerInfo, isLoading }  = useQuery<IBuyerInfo>(
     ["buyerInfo", "MEMBER"], () => getMyinfo(ckToken!)
   )
-
-
-
-  const handleOptionSelect = (option:boolean) => {
+  
+  const handleOpSelectedChange = (event:React.ChangeEvent<HTMLSelectElement>) => {
+    const options = event.target.options;
+    
+    console.log("options:", options);
+    const selectedValues = [];
+    for(let i= 0; i < options.length; i++){
+      console.log(options[i].value)
+      selectedValues.push(options[i].value);
+    }
+    setSelectedOptionsValues(selectedValues);
+    
+  }
+  
+  const handleMaintSelect = (option:boolean) => {
     setMaintenanceYN(option);
   };
   const onSave = async () => {
@@ -149,12 +160,23 @@ const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD'
 });
+//옵션 값들 추가 
+let OpTotalValues=0;
+if(Array.isArray(selectedOptionsValues)){
+  for(const value of selectedOptionsValues!){
+    OpTotalValues += Number(value) 
+     console.log("Total", OpTotalValues)
+  }
+}
  const onOrder = async() => {
     //판매자 추가
     const {seller,sellerPhone, customer , maintenance_cost } = getValues()
-    const numPrice = product.price;
+    const numProdPrice = product.price;
     const numSeletedManitenance = maintenance_cost === undefined ? 0 : product.maintenance_cost;
-    const numTotal = numPrice + numSeletedManitenance;
+    // 옵션 값 추가 selectedOptionsValues
+    
+    const numTotal = numProdPrice + OpTotalValues + numSeletedManitenance;
+    
     
     //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
       await fetch(`${BASE_PATH}/order/make`, {
@@ -237,7 +259,7 @@ const formatter = new Intl.NumberFormat('en-US', {
                 className={`py-2 px-4 mr-2 rounded-lg text-white font-semibold cursor-pointer ${
                   maintenanceYN === true  ? 'bg-red-500' : 'bg-gray-300'
                 }`}
-                onClick={() => handleOptionSelect(true)}
+                onClick={() => handleMaintSelect(true)}
               >
                 Yes
               </div>
@@ -245,17 +267,18 @@ const formatter = new Intl.NumberFormat('en-US', {
                 className={`py-2 px-4 rounded-lg text-white font-semibold cursor-pointer ${
                   maintenanceYN === false ? 'bg-red-500' : 'bg-gray-300'
                 }`}
-                onClick={() => handleOptionSelect(false)}
+                onClick={() => handleMaintSelect(false)}
               >
                 No
               </div>
             </div>
           </MantenanceOption> : null}
+          <hr className=' border border-solid border-gray-300 shadow-lg mb-1 mt-2  '/>
           <OptTitle>상품 외 필요한 옵션을 고르세요.</OptTitle>
           {deal?.product.options?.map((op) => (
-            <SelecOpContainer key={op.option_index}>
+            <SelecOpContainer key={op.option_index}  >
               <ProdLabel >{op.option_title}</ProdLabel>
-              <ProdOpSelect >
+              <ProdOpSelect   onChange={handleOpSelectedChange} >
                 {op.option_parts.map((op_parts) => (
                   <option key={op_parts.optPart_idx} value={op_parts.price}>{op_parts.part_name}</option>
                 ))}

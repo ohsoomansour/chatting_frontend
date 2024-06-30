@@ -14,10 +14,7 @@ import { Loading } from "../components/loading";
 import { useHistory } from "react-router-dom";
 import { IPhone, PhoneValidation } from "./signUpForMember";
 import { getCookie } from "../utils/cookie";
-import { useQuery } from "react-query";
-import { getMyinfo } from "../api";
-import { IuserInfo } from "./editUserInfo";
-import { userIdState } from "../recoil/atom_user";
+
 
 interface ISellerForm {
   company: string;
@@ -164,7 +161,6 @@ export const SellerPage = () => {
   }
 
   const addOptPart = (optIdx:number) => {
-    console.log(options);
     setPartIdx((prev) => prev+1);
     const optPartKey = `${optIdx}_${partIdx}`;  // 첫 추가 0~9_0  
     setOptPartKey(optPartKey);
@@ -216,13 +212,10 @@ export const SellerPage = () => {
   let coImgURL = "";
   const onRegister = async() => {
     //옵션 타이틀 
-    console.log("onRegister-options:",options);
     options.forEach((op) => {
       const opElement = document.getElementById(`${op.option_index}_title`) as HTMLInputElement | null;
-      console.log("opElement", opElement)
       if(opElement){
         const opTitle = opElement.value;
-        console.log("opTitle:", opTitle);
         if(!opTitle) {
         alert('옵션 리스트의 제목을 기입해주세요!');
         return false;
@@ -336,7 +329,6 @@ export const SellerPage = () => {
           const opElement = document.getElementById(`${op.option_index}_title`) as HTMLInputElement | null;
           if(opElement){
             const opTitle = opElement.value;
-            console.log("opTitle:", opTitle);
             if(!opTitle) {
             alert('옵션 리스트의 제목을 기입해주세요!');
             return false;

@@ -110,7 +110,7 @@ export const ProductsTrade = () => {
   
   const [isVisible, setIsVisible] = useState(false);
   const {data:Deals, isLoading} = useQuery<IDeal[]>(
-    ["getDeals", "Deal"], () => getallDeals() 
+    ["getDeals", "Deal"], () => getallDeals(), {cacheTime: 10000} //{staleTime: 10000}
   )
   const allDeals = isLoading
     ? []
