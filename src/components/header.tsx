@@ -138,9 +138,6 @@ export const Header: React.FC = () => {
   const {data:me, isLoading} = useQuery<IuserInfo>(
     ["me2", "Member"], () => getMyinfo(ckToken!)
   );
-  console.log("me");
-  console.log(me)
-  
   const [headerCLose, setHeaderClose] = useState(false);
   const headerAnimation = useAnimation();
   const toggleSearch = (e:any) => {

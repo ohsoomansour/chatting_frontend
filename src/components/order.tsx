@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
 import { IDeal, IProduct } from '../pages/ProductsTrade';
@@ -52,7 +52,7 @@ const OptTitle = styled.h2`
   font-weight:bold;
   margin-left: 10px;
   margin-bottom:10px;
-`;
+`;  
 
 
 interface IBuyerInfo{
@@ -68,10 +68,22 @@ interface OrderProps{
   product:IProduct;
   deal: IDeal;
 }
+interface ISelecOp{
+  selec_label: string;
+  op_idx:string;
+  op_name:string;
+  op_value:string;
+  op_quantity:number;
+}
+
 const BASE_PATH = process.env.NODE_ENV === "production" 
  ? "https://trade-2507d8197825.herokuapp.com"
  : "http://localhost:3000";
 
+
+
+ let selectedOps: ISelecOp[] =[];
+ let OpTotalValues=0;
 export const Order = ({product, deal}:OrderProps) => {
   const ckToken = getCookie('token');
 
@@ -80,26 +92,63 @@ export const Order = ({product, deal}:OrderProps) => {
   const postalCode = useRecoilValue<string>(buyerPostal);
   const DetailedAdd = useRecoilValue<string>(buyerDetail);
   const [maintenanceYN, setMaintenanceYN] = useState(false);
-  const [selectedOptionsValues, setSelectedOptionsValues] = useState<string[]>();
-  
+  const [opTotalVal, setOpTotalVal] = useState<number>(0)
+
+
   const {register, getValues} = useForm();
   const history = useHistory();
   const { data: buyerInfo, isLoading }  = useQuery<IBuyerInfo>(
     ["buyerInfo", "MEMBER"], () => getMyinfo(ckToken!)
   )
+
   
+
   const handleOpSelectedChange = (event:React.ChangeEvent<HTMLSelectElement>) => {
-    const options = event.target.options;
-    
-    console.log("options:", options);
-    const selectedValues = [];
-    for(let i= 0; i < options.length; i++){
-      console.log(options[i].value)
-      selectedValues.push(options[i].value);
+    /* ## 선택된 옵션 리스트들 -> 고객 영수증에 표출 필요 따라서, 각 옵션을 리스트에 담아 줘야 함 
+      - 필요한 형태: 김치   <option value="12000">1팩</option>     + 몇 개 추가 
+                  단무지  <option value="5000">1팩</option>      + 몇 개 추가
+
+    */    
+    const selectedOp_lists = event.target.options;
+    const selected_oplist = selectedOp_lists[selectedOp_lists.selectedIndex];
+    // 1. 새로운 객체  = {op_idx: '',label_id: '김치', op_name: '', op_value: '' } 의 리스트  === 새로 선택된  {label_id: '김치', op_name: '', op_value: '' } -> includes
+    const new_selecOp={
+      op_idx: selectedOp_lists[selectedOp_lists.selectedIndex].id,
+      selec_label: event.target.id,
+      op_name: selectedOp_lists[selectedOp_lists.selectedIndex].text,
+      op_value: selectedOp_lists[selectedOp_lists.selectedIndex].value,
+      op_quantity:1
+    };
+    let existingOp =  selectedOps.find((op) => op.op_idx === new_selecOp.op_idx)
+    if(!existingOp){
+      selectedOps.push(new_selecOp)
+      //2.  selectedOps에 넣고 -> op_idx(유니크 값) 방금 선택한 옵션의 id와 같냐 그러면 +1을 추가 -> 옵션 리스트 매핑 -> selectedOps op_idx에 맞게 quantity 추가
+      
+    } else {
+      alert('이미 선택한 옵션입니다!')
+      return;
     }
-    setSelectedOptionsValues(selectedValues);
+
+      if(Array.isArray(selectedOps!)){
+        for(const value of selectedOps!){
+          OpTotalValues += Number(value.op_value) 
+          setOpTotalVal(OpTotalValues);  
+        }      
+      }
+  
+    console.log("selectedOps:", selectedOps);
+    console.log("selected_option_index:", selectedOp_lists[selectedOp_lists.selectedIndex])
+    console.log("selected_option_label", event.target.id) //select 태그의 id : 김치 
+    console.log("selected_option_lists:", selectedOp_lists); // 전체 리스트 이거랑 비교해서 
+    console.log("options_list_index", selectedOp_lists.selectedIndex)
+    console.log("selected_option_list", selectedOp_lists[selectedOp_lists.selectedIndex])  // 이거랑
+    console.log("selected_option_list_value", selectedOp_lists[selectedOp_lists.selectedIndex].value )
+    //console.log("test", test) //5000 -> 12000
     
+    
+
   }
+  console.log("opTotalVal:",opTotalVal)
   
   const handleMaintSelect = (option:boolean) => {
     setMaintenanceYN(option);
@@ -132,9 +181,10 @@ export const Order = ({product, deal}:OrderProps) => {
   } catch (e) {
     console.error(e);
   }
+
   const numSeletedManitenance = maintenance_cost === undefined ? 0 : product.maintenance_cost;
   const numTotal = product.price + numSeletedManitenance;
-    
+  
   //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
   await fetch(`${BASE_PATH}/order/storegoods`, {
     headers:{
@@ -156,27 +206,21 @@ export const Order = ({product, deal}:OrderProps) => {
    
 }
 
-const formatter = new Intl.NumberFormat('en-US', {
+const formatter = new Intl.NumberFormat('ko-KR', {
   style: 'currency',
-  currency: 'USD'
+  currency: 'KRW'
 });
-//옵션 값들 추가 
-let OpTotalValues=0;
-if(Array.isArray(selectedOptionsValues)){
-  for(const value of selectedOptionsValues!){
-    OpTotalValues += Number(value) 
-     console.log("Total", OpTotalValues)
-  }
-}
+
+
+
+
  const onOrder = async() => {
     //판매자 추가
     const {seller,sellerPhone, customer , maintenance_cost } = getValues()
     const numProdPrice = product.price;
     const numSeletedManitenance = maintenance_cost === undefined ? 0 : product.maintenance_cost;
     // 옵션 값 추가 selectedOptionsValues
-    
     const numTotal = numProdPrice + OpTotalValues + numSeletedManitenance;
-    
     
     //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
       await fetch(`${BASE_PATH}/order/make`, {
@@ -199,6 +243,7 @@ if(Array.isArray(selectedOptionsValues)){
             }
           },
           total:numTotal, 
+
         })
       }).then((response) => response.ok ? window.location.href = "/order/info" : history.go(0));
   }
@@ -275,12 +320,17 @@ if(Array.isArray(selectedOptionsValues)){
           </MantenanceOption> : null}
           <hr className=' border border-solid border-gray-300 shadow-lg mb-1 mt-2  '/>
           <OptTitle>상품 외 필요한 옵션을 고르세요.</OptTitle>
-          {deal?.product.options?.map((op) => (
+          {deal?.product.options?.map((op, index) => (
             <SelecOpContainer key={op.option_index}  >
-              <ProdLabel >{op.option_title}</ProdLabel>
-              <ProdOpSelect   onChange={handleOpSelectedChange} >
+              <ProdLabel htmlFor={op.option_title} >{op.option_title}</ProdLabel>
+              <ProdOpSelect
+                id={op.option_title}   
+                onChange={(e) => 
+                  handleOpSelectedChange(e)
+                } 
+              >
                 {op.option_parts.map((op_parts) => (
-                  <option key={op_parts.optPart_idx} value={op_parts.price}>{op_parts.part_name}</option>
+                  <option id={op_parts.optPart_idx} key={op_parts.optPart_idx} value={op_parts.price}>{op_parts.part_name}</option>
                 ))}
               </ProdOpSelect>
             </SelecOpContainer>
@@ -328,7 +378,7 @@ if(Array.isArray(selectedOptionsValues)){
                 <input 
                   {...register('total', {required: true})}
                   className= ' w-full text-lg  border-4 rounded px-2 py-1  focus:outline-none  focus:border-pink-400'                   
-                  value={formatter.format(product.price + (maintenanceYN === false ? 0 : product.maintenance_cost) )}
+                  value={formatter.format(product.price + (maintenanceYN === false ? 0 : product.maintenance_cost) +  opTotalVal)}
                   placeholder="We will strive to adust to a more reasonable price "
                 />
               </div>

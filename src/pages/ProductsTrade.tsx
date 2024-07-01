@@ -185,7 +185,7 @@ export const ProductsTrade = () => {
             </DownloadSVG>
           </DSA>
         </ProductContainer>
-        <Order product={deal!.product} deal={deal}/>
+        <Order product={deal!.product} deal={deal} />
       </OrderContainer>
       </div>
 
