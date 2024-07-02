@@ -16,6 +16,7 @@ import { IPhone, PhoneValidation } from "./signUpForMember";
 import { getCookie } from "../utils/cookie";
 
 
+
 interface ISellerForm {
   company: string;
   sellerId: string;
@@ -39,8 +40,10 @@ interface IOption{
   option_parts?:IOptionPart[];
 } 
 export const UI = styled.div`
-  display:flex;
+  display: flex;
   flex-direction: column;
+  width: calc(70% - 100px);
+  height: calc(90% - 100px);
 `;
 
 const Wrapper = styled.div`
@@ -127,10 +130,12 @@ export const SellerPage = () => {
     window.location.href = "/login"
   } 
   const userId =sessionStorage.getItem('userId');
-  
+
+
 
 /**
   *@explain : me 값이 왔다갔다 그래서 undefined 값과 정상 유저 정보의 값이 왔다갔다해서 사용할 수가 없음 
+  {'max-w-full  max-h-full border-4 border-gray-100 p-4  rounded-lg'}
   */
   
   const [phoneEvent, setPhoneEvent] = useState<boolean>(false);
@@ -242,9 +247,9 @@ export const SellerPage = () => {
     });
  
     try {
-      const {company, sellerId, mobilePhone_number, rbName, price , maintenance_cost, description} = getValues();
+      const {company, sellerId, mobilePhone_number, rbName, price, maintenance_cost, description} = getValues();
       if(compaImg  === "") {
-        alert('회사 로고 이미지를 넣어주세요!💛')
+        alert('회사 로고 이미지를 넣어주세요!')
         return;
       }
       if(company.length < 1){
@@ -300,7 +305,7 @@ export const SellerPage = () => {
       if(compaImg.length !== 0 ) {
         const imgForm = new FormData();
         const actualImgFile = compaImg[0];
-        imgForm.append('file', actualImgFile);
+        imgForm.append('file', actualImgFile); //배열 값은 안되고 배열의 첫 번째 값만 추가 됨 
         const { url: compaImgURL} = await (
           await fetch(`${BASE_PATH}/upload`, {
             method:'POST',
@@ -310,7 +315,7 @@ export const SellerPage = () => {
         coImgURL = compaImgURL;
       }
 
-      // robot 3d model 또는 mp4 영상
+      // 상품 3d model 또는 mp4 영상
       if(threeDFile.length !== 0 && compaImg.length !== 0){
         // GLB URL 생성
         const formBody =  new FormData();
@@ -430,11 +435,14 @@ export const SellerPage = () => {
     <Loading /> 
       : 
     (
-    <UI className='max-w-full  max-h-full border-4 border-gray-100 p-4  rounded-lg'>
+      
+    <UI className=''>
       <div className=" flex h-2/4 items-center justify-center">
         <CompaImg />
+        
+        
         <div className=" w-full flex-col items-center justify-center ">
-          <h2 className=" text-lg text-center font-bold  ">Private or Company</h2> 
+          <h2 className=" text-lg text-center font-bold  ">개인 또는 회사 </h2> 
           <input
               {...register('company', { required: "What is the manufacturing company? " })}
               className='w-full mb-2 border-4 rounded-md focus:border-pink-400  border-gray-300  px-2 py-1 outline-none mr-2'
@@ -485,43 +493,43 @@ export const SellerPage = () => {
         </div>
       </div>
       <div className="max-h-full">   
-      <h2 className=" text-lg font-bold ">Product</h2>  
+      <h2 className=" text-lg font-bold ml-4 ">상품</h2>  
       <input
         {...register('rbName', {required:"Please write a product name."})}
         className='w-full border-4 rounded-md focus:border-pink-400  border-gray-300  px-2 py-1 outline-none mr-2 mb-2'
         type="text"
-        placeholder="The robot name"
+        placeholder="상품의 이름과 함께 판매할 최소 무게 단위를 같이 입력하세요."
         size={10}
       />
       {errors.rbName?.type === 'required' && (<FormError errorMessage={errors.rbName.message}/>)}
       <input
         {...register('price', {required:"Please Write the price."})}
         className='w-full border-4 rounded-md focus:border-pink-400  border-gray-300  px-2 py-1 outline-none mr-2 mb-2'
-        placeholder="The selling price"
+        placeholder="상품의 기본 가격을 입력하세요."
         type="number"
         size={10}
       />
       {errors.price?.type === 'required' && (<FormError errorMessage={errors.price.message}/>)}
       <MantenanceOption className=" mt-10 mb-5">
-            <div className="flex ml-2">
-              <h2 className="text-center text-xl font-bold mr-2">유지 보수 제품인가요?</h2>
-              <div
-                className={`py-2 px-4 mr-2 rounded-lg text-white font-semibold cursor-pointer ${
-                  maintSelected === true  ? 'bg-red-500' : 'bg-gray-300'
-                }`}
-                onClick={() => handleMaintSelected(true)}
-              >
-                Yes
-              </div>
-              <div
-                className={`py-2 px-4 rounded-lg text-white font-semibold cursor-pointer ${
-                  maintSelected === false ? 'bg-red-500' : 'bg-gray-300'
-                }`}
-                onClick={() => handleMaintSelected(false)}
-              >
-                No
-              </div>
-            </div>
+        <div className="flex ml-2">
+          <h2 className="text-center text-xl font-bold mr-2">유지 보수가 가능한 제품인가요?</h2>
+          <div
+            className={`py-2 px-4 mr-2 rounded-lg text-white font-semibold cursor-pointer ${
+              maintSelected === true  ? 'bg-red-500' : 'bg-gray-300'
+            }`}
+            onClick={() => handleMaintSelected(true)}
+          >
+            Yes
+          </div>
+          <div
+            className={`py-2 px-4 rounded-lg text-white font-semibold cursor-pointer ${
+              maintSelected === false ? 'bg-red-500' : 'bg-gray-300'
+            }`}
+            onClick={() => handleMaintSelected(false)}
+          >
+            No
+          </div>
+        </div>
       </MantenanceOption>
       {maintSelected ? <input
         {...register('maintenance_cost', {required:"Please write the maintenance_costs."})}
@@ -563,7 +571,8 @@ export const SellerPage = () => {
         type="text"
         size={10}
       />
-      {errors.description?.type === 'required' && (<FormError errorMessage={errors.description.message}/>)}          
+      {errors.description?.type === 'required' && (<FormError errorMessage={errors.description.message}/>)}
+      <h3>상품의 대표 시진 또는 영상을 등록하세요.</h3>          
       <div 
         {...getRootProps()}
         className="flex items-center justify-center  mt-2 ">
@@ -588,6 +597,7 @@ export const SellerPage = () => {
       </div>      
     </UI>
     )}
+
     </Wrapper>    
   )
 }

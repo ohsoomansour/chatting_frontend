@@ -17,28 +17,23 @@ const PlusSvg = styled.svg`
   height:30px;
   margin: 0 5px;
 `;
-
 const Equalsvg = styled.svg`
   fill:red;
   width:30px;
   height:30px;
   margin: 0 5px;
 `;
-
 const SellerAndCustomerInfo = styled.form`
   background-color:${(props) => props.theme.bgColor};
   border-radius:15px;
   padding:10px;
 `;
-
 const MantenanceOption = styled.div``;
 const Product = styled.div``;
-
 const SelecOpContainer =  styled.div`
   display:flex;
   justify-content: space-around;
 `;
-
 const ProdOpSelect = styled.select`
   width: 200px;
   margin-bottom: 10px;
@@ -53,7 +48,65 @@ const OptTitle = styled.h2`
   margin-left: 10px;
   margin-bottom:10px;
 `;  
-
+const OpQntLabel = styled.div`
+  margin: 5px 15px;
+`;
+const OpCountDisplay = styled.input`
+  width: 50px;
+  text-align: center;
+  font-size: 20px;
+  margin: 0 10px;
+`;
+const OpQntUpDown = styled.span`
+  cursor:pointer;
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content: space-around;
+`;
+const DelOpQntSVG = styled.svg`
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width: 20px;
+  height: 20px;
+  padding:3px;
+  cursor:pointer;
+  margin-left: 20px;
+  border-radius: 100%;
+  background-color: #e9ecef;
+  transition: background-color 0.3s ease-in-out;
+  &:hover{
+    background-color:#de0a26;
+  } 
+  
+`;
+const UpSvg = styled.svg`
+  width:20px;
+  height:20px;
+  background-color: #e9ecef;
+  transition: fill 0.3s ease-in-out; 
+  &:hover{
+    fill: red; 
+  }
+`;
+const DownSvg = styled.svg`
+  width:20px;
+  height:20px;
+  background-color: #e9ecef;
+  cursor:pointer;
+  transition: 0.3s fill ease-in-out;
+  &:hover{
+    fill: red;
+  }
+`;
+const VxQ = styled.span``;
+const OpQntParts = styled.div`
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:center;
+`;
 
 interface IBuyerInfo{
   address:string;
@@ -63,12 +116,11 @@ interface IBuyerInfo{
   name:string;
   userId: string;
 }
-
 interface OrderProps{
   product:IProduct;
   deal: IDeal;
 }
-interface ISelecOp{
+interface ISelecOp { 
   selec_label: string;
   op_idx:string;
   op_name:string;
@@ -81,61 +133,46 @@ const BASE_PATH = process.env.NODE_ENV === "production"
  : "http://localhost:3000";
 
 
-
- let selectedOps: ISelecOp[] =[];
- let OpTotalValues=0;
 export const Order = ({product, deal}:OrderProps) => {
   const ckToken = getCookie('token');
-
   const customerFullAddress = useRecoilValue<string>(buyerAddress); 
   const roadAddress = useRecoilValue<string>(buyerRoad);
   const postalCode = useRecoilValue<string>(buyerPostal);
   const DetailedAdd = useRecoilValue<string>(buyerDetail);
   const [maintenanceYN, setMaintenanceYN] = useState(false);
-  const [opTotalVal, setOpTotalVal] = useState<number>(0)
-
-
+  const [opTotalVal, setOpTotalVal] = useState<number>(0);
+  const [selectedOps, setSelectedOps] = useState<ISelecOp[]>([]);
   const {register, getValues} = useForm();
   const history = useHistory();
   const { data: buyerInfo, isLoading }  = useQuery<IBuyerInfo>(
     ["buyerInfo", "MEMBER"], () => getMyinfo(ckToken!)
   )
-
-  
-
   const handleOpSelectedChange = (event:React.ChangeEvent<HTMLSelectElement>) => {
     /* ## 선택된 옵션 리스트들 -> 고객 영수증에 표출 필요 따라서, 각 옵션을 리스트에 담아 줘야 함 
       - 필요한 형태: 김치   <option value="12000">1팩</option>     + 몇 개 추가 
                   단무지  <option value="5000">1팩</option>      + 몇 개 추가
-
     */    
     const selectedOp_lists = event.target.options;
-    const selected_oplist = selectedOp_lists[selectedOp_lists.selectedIndex];
     // 1. 새로운 객체  = {op_idx: '',label_id: '김치', op_name: '', op_value: '' } 의 리스트  === 새로 선택된  {label_id: '김치', op_name: '', op_value: '' } -> includes
     const new_selecOp={
-      op_idx: selectedOp_lists[selectedOp_lists.selectedIndex].id,
       selec_label: event.target.id,
+      op_idx: selectedOp_lists[selectedOp_lists.selectedIndex].id,
       op_name: selectedOp_lists[selectedOp_lists.selectedIndex].text,
       op_value: selectedOp_lists[selectedOp_lists.selectedIndex].value,
       op_quantity:1
     };
-    let existingOp =  selectedOps.find((op) => op.op_idx === new_selecOp.op_idx)
+    console.log("new_selecOp:", new_selecOp)
+    // 중복되는 옵션이 아니라면 선택된 전체 옵션 리스트들에 넣는다.
+    let existingOp= selectedOps?.find((op) => op.op_idx === new_selecOp.op_idx);
+    console.log("existingOp", existingOp);
     if(!existingOp){
-      selectedOps.push(new_selecOp)
-      //2.  selectedOps에 넣고 -> op_idx(유니크 값) 방금 선택한 옵션의 id와 같냐 그러면 +1을 추가 -> 옵션 리스트 매핑 -> selectedOps op_idx에 맞게 quantity 추가
-      
+      setSelectedOps((prev) => [...prev!, new_selecOp]);
+      console.log("selectedOps", selectedOps)      
     } else {
-      alert('이미 선택한 옵션입니다!')
+      alert('이미 선택한 옵션입니다!');
       return;
     }
-
-      if(Array.isArray(selectedOps!)){
-        for(const value of selectedOps!){
-          OpTotalValues += Number(value.op_value) 
-          setOpTotalVal(OpTotalValues);  
-        }      
-      }
-  
+    
     console.log("selectedOps:", selectedOps);
     console.log("selected_option_index:", selectedOp_lists[selectedOp_lists.selectedIndex])
     console.log("selected_option_label", event.target.id) //select 태그의 id : 김치 
@@ -143,13 +180,40 @@ export const Order = ({product, deal}:OrderProps) => {
     console.log("options_list_index", selectedOp_lists.selectedIndex)
     console.log("selected_option_list", selectedOp_lists[selectedOp_lists.selectedIndex])  // 이거랑
     console.log("selected_option_list_value", selectedOp_lists[selectedOp_lists.selectedIndex].value )
-    //console.log("test", test) //5000 -> 12000
-    
-    
 
+    //console.log("test", test) //5000 -> 12000
+    //***끝나기 전에 값을 총 합에 넣으려면 setState hook을 사용하지 않느냐 vs hook 사용 후 정상적으로 값이 들어가느냐-> 로직, 총합은 다음 state 값으로 적절해 보임  ***
   }
-  console.log("opTotalVal:",opTotalVal)
   
+  useEffect(() => {
+    if(Array.isArray(selectedOps!)){
+      //선택 옵션들이 변경되면 다시 전체 옵션 값 0으로 설정 
+      let OpTotalValues = 0;
+      for(const value of selectedOps!){
+        // 가격 * 개수  = 몇 개 값 (1옵션 당)
+        OpTotalValues += Number(value.op_value ) * value.op_quantity 
+      }      
+      setOpTotalVal(OpTotalValues);  //*필참:반드시 useEffect hook 또는 이벤트 헨들러 안에서 사용
+    }
+  }, [selectedOps]);
+
+
+  const increasingQnt = (op_id:string) => {
+    console.log("op_id:", op_id)
+    setSelectedOps(selectedOps.map((op) => 
+      op.op_idx === op_id ? {...op, op_quantity: op.op_quantity + 1 } : op
+    ))
+  } 
+  const decreasingQnt = (op_id:string) => {
+    setSelectedOps(selectedOps.map((op) => 
+      op.op_idx === op_id && op.op_quantity > 1 ? {...op, op_quantity: op.op_quantity - 1} : op
+    ))
+  }
+  const delOpQnt = (op_id:string) => {
+    setSelectedOps(selectedOps.filter((op) => op.op_idx !== op_id)
+    )
+  }
+
   const handleMaintSelect = (option:boolean) => {
     setMaintenanceYN(option);
   };
@@ -183,7 +247,7 @@ export const Order = ({product, deal}:OrderProps) => {
   }
 
   const numSeletedManitenance = maintenance_cost === undefined ? 0 : product.maintenance_cost;
-  const numTotal = product.price + numSeletedManitenance;
+  const numTotal = product.price + opTotalVal + numSeletedManitenance;
   
   //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
   await fetch(`${BASE_PATH}/order/storegoods`, {
@@ -211,16 +275,13 @@ const formatter = new Intl.NumberFormat('ko-KR', {
   currency: 'KRW'
 });
 
-
-
-
  const onOrder = async() => {
     //판매자 추가
     const {seller,sellerPhone, customer , maintenance_cost } = getValues()
     const numProdPrice = product.price;
     const numSeletedManitenance = maintenance_cost === undefined ? 0 : product.maintenance_cost;
     // 옵션 값 추가 selectedOptionsValues
-    const numTotal = numProdPrice + OpTotalValues + numSeletedManitenance;
+    const numTotal = numProdPrice + opTotalVal + numSeletedManitenance;
     
     //결제 서비스 추가 가정: 주문 정보 확인 후 -> 결제 요청 -> (카카오, 네이버)페이 앱 연결 -> 결제 승인, 응답 -> order주문: 승인상태 값 등록   
       await fetch(`${BASE_PATH}/order/make`, {
@@ -318,8 +379,8 @@ const formatter = new Intl.NumberFormat('ko-KR', {
               </div>
             </div>
           </MantenanceOption> : null}
-          <hr className=' border border-solid border-gray-300 shadow-lg mb-1 mt-2  '/>
-          <OptTitle>상품 외 필요한 옵션을 고르세요.</OptTitle>
+          <hr className=' border border-s border-gray-300 shadow-lg mb-1 mt-2  '/>
+          <OptTitle>상품에 필요한 옵션을 고르세요.</OptTitle>
           {deal?.product.options?.map((op, index) => (
             <SelecOpContainer key={op.option_index}  >
               <ProdLabel htmlFor={op.option_title} >{op.option_title}</ProdLabel>
@@ -335,7 +396,34 @@ const formatter = new Intl.NumberFormat('ko-KR', {
               </ProdOpSelect>
             </SelecOpContainer>
           ))}
-          <hr className=' border border-solid border-gray-300 shadow-lg mb-1  '/>
+           <hr className=' border border-solid border-gray-300 shadow-lg mb-1 mt-2  '/>
+          {selectedOps?.map((op, idx) => (
+            <div key={idx}>
+              <OpQntLabel >{op.selec_label} {op.op_name}</OpQntLabel>
+              <OpQntUpDown >
+                <OpQntParts>
+                  <UpSvg onClick={() => decreasingQnt(op.op_idx)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                    <path d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"/>
+                  </UpSvg>
+                  <OpCountDisplay readOnly value={op.op_quantity} /> 
+                  <DownSvg onClick={() => increasingQnt(op.op_idx)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                    <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/>
+                  </DownSvg>
+                </OpQntParts>
+                <OpQntParts>
+                  <VxQ>{Number(op.op_value) * op.op_quantity}</VxQ>
+                    <DelOpQntSVG
+                      onClick={() => delOpQnt(op.op_idx)} 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      viewBox="0 0 384 512"
+                    >
+                      <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
+                    </DelOpQntSVG>
+                </OpQntParts>
+              </OpQntUpDown>
+            </div>
+          ))}
+          <hr className=' border border-solid border-gray-300 shadow-lg mb-4  mt-2'/>
           <div className=' flex justify-around'>
             <h2 className='text-lg  text-center font-bold '>Price</h2>
             <h2 className=' text-lg text-gray-400 text-center font-semibold '>Maintenance Cost</h2>
