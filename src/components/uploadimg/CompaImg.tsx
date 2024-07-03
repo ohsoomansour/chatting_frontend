@@ -1,14 +1,17 @@
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { useSetRecoilState } from "recoil";
-import { compaImgState } from "../recoil/atom_compaImg";
+import { compaImgState } from "../../recoil/atom_Img";
+ /** 
+   주제  #usesDropzone 의 이해
+   @param acceptedFiles 매개 변수를 통해 사용자가 업로드할 수 있는 파일들의 배열(사진1, 사진2, ...)을 받는다.  
+   @explain1 onDrop 이벤트 핸들러는 파일을 드롭 존에 드래그하여 놓을 때 호출 
+   @explain2 드롭 하지 않을 경우 onDrop 함수를 호출하지 않기 때문에 onDrop 함수를 생성하지 않는다. 즉, 다음 리랜덩 시 불필요한 함수 재생성을 막는다.
+             따라서, acceptedFiles의 값들은 그대로  
+             useUpload에서 개별 적으로 올리면 개별만 
 
-export const CompaImg = () => {
- const setCompaImgState = useSetRecoilState(compaImgState)
- const onDrop = useCallback((acceptedFiles:any) => {
-  console.log("companyAcceptedFile", acceptedFiles);
-  setCompaImgState(acceptedFiles)
- }, [])
+   <img src="blob:http://localhost:3001/cd62146c-38c7-4a1a-904d-f9336f6fc96c" />
+  */
 
 
  /** 
@@ -17,7 +20,17 @@ export const CompaImg = () => {
    @explain1 onDrop 이벤트 핸들러는 파일을 드롭 존에 드래그하여 놓을 때 호출 
    @explain2 드롭 하지 않을 경우 onDrop 함수를 호출하지 않기 때문에 onDrop 함수를 생성하지 않는다. 즉, 다음 리랜덩 시 불필요한 함수 재생성을 막는다.
              따라서, acceptedFiles의 값들은 그대로  
+   useUpload에서 개별 적으로 올리면 개별만 
   */
+
+export const CompaImg = () => {
+  
+ const setCompaImgState = useSetRecoilState(compaImgState)
+ const onDrop = useCallback((acceptedFiles:any) => {
+  console.log("companyAcceptedFile", acceptedFiles);
+  setCompaImgState(acceptedFiles);
+ }, [])
+
  const { getRootProps, getInputProps } = useDropzone({
    onDrop, //이벤트 핸들러 
    accept: {

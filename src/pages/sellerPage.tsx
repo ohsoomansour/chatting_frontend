@@ -3,8 +3,8 @@ import { useCallback, useState } from "react";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
 import { useForm } from "react-hook-form";
-import { CompaImg } from "../components/CompaImg";
-import { compaImgState } from "../recoil/atom_compaImg";
+import { CompaImg } from "../components/uploadimg/CompaImg";
+import { compaImgState, productImgState } from "../recoil/atom_Img";
 import { FormError } from "../components/form-error";
 import { sellerAddress, sellerPostal, sellerRoad } from "../recoil/atom_address";
 import SellerPostcode from "../components/address/seller-address";
@@ -14,6 +14,7 @@ import { Loading } from "../components/loading";
 import { useHistory } from "react-router-dom";
 import { IPhone, PhoneValidation } from "./signUpForMember";
 import { getCookie } from "../utils/cookie";
+import { ProductImg } from "../components/uploadimg/ProductImg";
 
 
 
@@ -117,6 +118,11 @@ const MantenanceOption = styled.div``;
 
 export const SellerPage = () => {
   const compaImg = useRecoilValue(compaImgState);
+  console.log("compaImg", compaImg);
+  console.log("compaImg[0]", compaImg[0]);
+  const productImages =  useRecoilValue(productImgState);
+  /**/
+  const filteredProdsImages = productImages.map((prod_img) => prod_img.file);
   const [threeDFile, setThreeDFile] = useState([]);
   const sellerZipcode = useRecoilValue<string>(sellerPostal);
   const sellerDoro = useRecoilValue(sellerRoad);
@@ -129,13 +135,12 @@ export const SellerPage = () => {
     alert('로그인이 필요합니다')
     window.location.href = "/login"
   } 
-  const userId =sessionStorage.getItem('userId');
+  const userId=sessionStorage.getItem('userId');
 
 
 
 /**
   *@explain : me 값이 왔다갔다 그래서 undefined 값과 정상 유저 정보의 값이 왔다갔다해서 사용할 수가 없음 
-  {'max-w-full  max-h-full border-4 border-gray-100 p-4  rounded-lg'}
   */
   
   const [phoneEvent, setPhoneEvent] = useState<boolean>(false);
@@ -149,10 +154,20 @@ export const SellerPage = () => {
   const [options, setOptions] = useState<IOption[]>([])
   const [maintSelected, setMaintSelected] = useState(false);
 
+  //파일 형식으로 변경해서 -> blob타입으로 변경 해줘야 한다.
+  const test = async() => {
+    const prodsForm =  new FormData();
+    filteredProdsImages.forEach((img, idx) => prodsForm.append(`file${idx}`,  img))
+   
+    const url = await (
+      await fetch(`${BASE_PATH}/`)
+    ).json()
+
+  }
+
   const handleMaintSelected = (maintYN:boolean) => {
     setMaintSelected(maintYN);
   }
-
   /** 
   *@caution option - ption_parts: {optPart_idx: `${opIdx}_${partIdx="1 기본 값을 계속 참조"}`, part_name: '', price: 0} -> 추가할 때마다 참조 
   */ 
@@ -187,7 +202,7 @@ export const SellerPage = () => {
   const onOpTitleChange = (e:React.ChangeEvent<HTMLInputElement>, op_idx:number) => {
      const selectedOp = options.find(op => op.option_index === op_idx);
      selectedOp!.option_title = e.target.value;
-
+    
   }
 
   const onPartValueChange = (e:React.ChangeEvent<HTMLInputElement>, op_idx:number, opPart_idx:string) => {
@@ -292,11 +307,8 @@ export const SellerPage = () => {
         alert("상품의 가격을 0원 보다 큰 값을 입력하세요!💛");
         return;
       } 
-      if(maintenance_cost < 0 || maintenance_cost === null || maintenance_cost === undefined) {
-        alert("유지 보수 비용을 0 또는 0 보다 큰 값을 입력하세요!💛");
-        return;
-      } 
-      if(!maintenance_cost) {
+       
+      if(maintSelected && !maintenance_cost) {
         alert("유지 보수 비용을 0 또는 0 보다 큰 값을 입력하세요!💛");
         return;
       }
@@ -315,7 +327,7 @@ export const SellerPage = () => {
         coImgURL = compaImgURL;
       }
 
-      // 상품 3d model 또는 mp4 영상
+      // 상품 썸네일 사진 또는 3d model 또는 mp4 영상
       if(threeDFile.length !== 0 && compaImg.length !== 0){
         // GLB URL 생성
         const formBody =  new FormData();
@@ -439,8 +451,6 @@ export const SellerPage = () => {
     <UI className=''>
       <div className=" flex h-2/4 items-center justify-center">
         <CompaImg />
-        
-        
         <div className=" w-full flex-col items-center justify-center ">
           <h2 className=" text-lg text-center font-bold  ">개인 또는 회사 </h2> 
           <input
@@ -494,6 +504,7 @@ export const SellerPage = () => {
       </div>
       <div className="max-h-full">   
       <h2 className=" text-lg font-bold ml-4 ">상품</h2>  
+      
       <input
         {...register('rbName', {required:"Please write a product name."})}
         className='w-full border-4 rounded-md focus:border-pink-400  border-gray-300  px-2 py-1 outline-none mr-2 mb-2'
@@ -512,7 +523,9 @@ export const SellerPage = () => {
       {errors.price?.type === 'required' && (<FormError errorMessage={errors.price.message}/>)}
       <MantenanceOption className=" mt-10 mb-5">
         <div className="flex ml-2">
+        
           <h2 className="text-center text-xl font-bold mr-2">유지 보수가 가능한 제품인가요?</h2>
+          
           <div
             className={`py-2 px-4 mr-2 rounded-lg text-white font-semibold cursor-pointer ${
               maintSelected === true  ? 'bg-red-500' : 'bg-gray-300'
@@ -594,7 +607,8 @@ export const SellerPage = () => {
       </div>
           
       <button onClick={onRegister} className=' font-semibold w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md hover:bg-slate-300 transition duration-500'>Register</button>
-      </div>      
+      </div>
+      <ProductImg />  
     </UI>
     )}
 
