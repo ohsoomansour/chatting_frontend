@@ -118,10 +118,7 @@ const MantenanceOption = styled.div``;
 
 export const SellerPage = () => {
   const compaImg = useRecoilValue(compaImgState);
-  console.log("compaImg", compaImg);
-  console.log("compaImg[0]", compaImg[0]);
   const productImages =  useRecoilValue(productImgState);
-  /**/
   const filteredProdsImages = productImages.map((prod_img) => prod_img.file);
   const [threeDFile, setThreeDFile] = useState([]);
   const sellerZipcode = useRecoilValue<string>(sellerPostal);
@@ -138,7 +135,6 @@ export const SellerPage = () => {
   const userId=sessionStorage.getItem('userId');
 
 
-
 /**
   *@explain : me 값이 왔다갔다 그래서 undefined 값과 정상 유저 정보의 값이 왔다갔다해서 사용할 수가 없음 
   */
@@ -151,19 +147,38 @@ export const SellerPage = () => {
   const [partIdx, setPartIdx] = useState(1);
   const [optPartKey, setOptPartKey] = useState("first_0");
   //const [options, setOptions] = useState<IOption[]>([{option_index:0, option_title: '', option_parts: [{optPart_idx:'0_init', part_name:'', price: 0}] }])
-  const [options, setOptions] = useState<IOption[]>([])
+  const [options, setOptions] = useState<IOption[]>([]);
   const [maintSelected, setMaintSelected] = useState(false);
 
   //파일 형식으로 변경해서 -> blob타입으로 변경 해줘야 한다.
-  const test = async() => {
+  const uploadImgs = async() => {
     const prodsForm =  new FormData();
-    filteredProdsImages.forEach((img, idx) => prodsForm.append(`file${idx}`,  img))
-   
-    const url = await (
-      await fetch(`${BASE_PATH}/`)
+    filteredProdsImages.forEach((img, idx) => prodsForm.append('files',  img))
+    
+    const urls : string[] = await (
+      await fetch(`${BASE_PATH}/upload/multi_files`, {
+        method: 'POST',
+        body: prodsForm
+      })
     ).json()
-
+    console.log("upload_multiFiles:", urls)
   }
+  const delProdImgs = async() => {
+    const testImgs : string[] = ["1720076070369test1.png", "1720076070376test2.png"];
+    const {ok} = 
+      await fetch(`${BASE_PATH}/upload/del`, {
+        headers: {
+          'Content-Type': 'application/json',  // Content-Type 헤더 추가
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          file_names: testImgs
+        }),
+      })
+   
+    console.log("delProdImgs result:", ok)
+  }
+    
 
   const handleMaintSelected = (maintYN:boolean) => {
     setMaintSelected(maintYN);
@@ -523,9 +538,7 @@ export const SellerPage = () => {
       {errors.price?.type === 'required' && (<FormError errorMessage={errors.price.message}/>)}
       <MantenanceOption className=" mt-10 mb-5">
         <div className="flex ml-2">
-        
           <h2 className="text-center text-xl font-bold mr-2">유지 보수가 가능한 제품인가요?</h2>
-          
           <div
             className={`py-2 px-4 mr-2 rounded-lg text-white font-semibold cursor-pointer ${
               maintSelected === true  ? 'bg-red-500' : 'bg-gray-300'
@@ -609,6 +622,10 @@ export const SellerPage = () => {
       <button onClick={onRegister} className=' font-semibold w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md hover:bg-slate-300 transition duration-500'>Register</button>
       </div>
       <ProductImg />  
+      <hr />
+      <button onClick={() => uploadImgs()}>여러 사진 등록 테스트</button>
+      <hr />
+      <button onClick={() => delProdImgs() }>여러 사진 삭제 테스트</button>
     </UI>
     )}
 

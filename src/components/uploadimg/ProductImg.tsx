@@ -3,10 +3,6 @@ import { useDropzone } from "react-dropzone"
 import { useRecoilState } from "recoil";
 import { productImgState } from "../../recoil/atom_Img";
 
-
-
-
-   
 export interface IProdimg{
     file: File;
     preview:string;
@@ -18,13 +14,14 @@ export const ProductImg = () => {
 
     const delProdImg = (name:string) => {
         setImagesPreview(imagesPreview.filter((prod_img) => prod_img.file.name !== name));
-        
         setImgsRec(imagesPreview.filter((prod_img) => prod_img.file.name !== name));
+        
+
     }
-    const onDrop = useCallback((acceptedFiles:File[])=> {
-        console.log("acceptedFiles", acceptedFiles)
+    const onDrop = useCallback((acceptedFiles:File[]) => {
+        console.log("Prod_acceptedFiles", acceptedFiles)
         const mappedFiles = acceptedFiles.map((file: File, idx) => {
-            const prodImg: IProdimg = {
+            const prodImg:IProdimg = {
                 file,
                 preview: URL.createObjectURL(file)
             };
