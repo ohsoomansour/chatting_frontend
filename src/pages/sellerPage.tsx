@@ -162,9 +162,10 @@ export const SellerPage = () => {
       })
     ).json()
     console.log("upload_multiFiles:", urls)
+
   }
   const delProdImgs = async() => {
-    const testImgs : string[] = ["1720076070369test1.png", "1720076070376test2.png"];
+    const testImgs : string[] = ["1720144751092trader1.png", "1720144751104trader2.png"];
     const {ok} = 
       await fetch(`${BASE_PATH}/upload/del`, {
         headers: {
@@ -243,8 +244,9 @@ export const SellerPage = () => {
 /** 
   * @Explain s3에 넘기고 -> glb파일 URL ->  DB에 넘겨주는 작업
   */  
-  let productURL = "";
-  let coImgURL = "";
+  let representative_prodURL="";
+  let coImgURL="";
+  let prod_URLS:string[] = [];
   const onRegister = async() => {
     //옵션 타이틀 
     options.forEach((op) => {
@@ -344,19 +346,31 @@ export const SellerPage = () => {
 
       // 상품 썸네일 사진 또는 3d model 또는 mp4 영상
       if(threeDFile.length !== 0 && compaImg.length !== 0){
-        // GLB URL 생성
+        // 대표 상품 URL 생성
         const formBody =  new FormData();
         const actualFile = threeDFile[0];
   
         formBody.append('file', actualFile);
-        const { url: ProductURL} = await (
+        const { url: represenative_prodURL} = await (
           await fetch(`${BASE_PATH}/upload`, {
             method: 'POST',
             body: formBody
           })
         ).json();
-
-        productURL = ProductURL;
+        representative_prodURL = represenative_prodURL;
+        // 대표 사진 외 업로드 및 생성 
+        const prodsForm =  new FormData();
+        filteredProdsImages.forEach((img, idx) => prodsForm.append('files',  img))
+        
+        const urls : string[] = await (
+          await fetch(`${BASE_PATH}/upload/multi_files`, {
+            method: 'POST',
+            body: prodsForm
+          })
+        ).json();
+        prod_URLS = urls;
+        console.log("upload_multiFiles:", urls)
+        
         options?.forEach((op) => {
           const opElement = document.getElementById(`${op.option_index}_title`) as HTMLInputElement | null;
           if(opElement){
@@ -405,7 +419,8 @@ export const SellerPage = () => {
             maintenance_cost,
             options: options,
             description: description,
-            productURL : productURL
+            representative_prodURL : representative_prodURL,
+            prod_URLS
           })
         }).then(response => response.ok ? window.location.href = '/trade'  : history.go(0) )
         setIsLoading(false);
