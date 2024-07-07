@@ -16,8 +16,6 @@ import { IPhone, PhoneValidation } from "./signUpForMember";
 import { getCookie } from "../utils/cookie";
 import { ProductImg } from "../components/uploadimg/ProductImg";
 
-
-
 interface ISellerForm {
   company: string;
   sellerId: string;
@@ -98,6 +96,7 @@ const DelOptPartSVG = styled.svg`
   &:hover{
     fill: #ff0000;
   }
+  
 `;
 const OptionTitle = styled.input`
   margin-top:10px;
@@ -149,21 +148,7 @@ export const SellerPage = () => {
   //const [options, setOptions] = useState<IOption[]>([{option_index:0, option_title: '', option_parts: [{optPart_idx:'0_init', part_name:'', price: 0}] }])
   const [options, setOptions] = useState<IOption[]>([]);
   const [maintSelected, setMaintSelected] = useState(false);
-
-  //파일 형식으로 변경해서 -> blob타입으로 변경 해줘야 한다.
-  const uploadImgs = async() => {
-    const prodsForm =  new FormData();
-    filteredProdsImages.forEach((img, idx) => prodsForm.append('files',  img))
-    
-    const urls : string[] = await (
-      await fetch(`${BASE_PATH}/upload/multi_files`, {
-        method: 'POST',
-        body: prodsForm
-      })
-    ).json()
-    console.log("upload_multiFiles:", urls)
-
-  }
+  /*
   const delProdImgs = async() => {
     const testImgs : string[] = ["1720144751092trader1.png", "1720144751104trader2.png"];
     const {ok} = 
@@ -178,7 +163,7 @@ export const SellerPage = () => {
       })
    
     console.log("delProdImgs result:", ok)
-  }
+  }*/
     
 
   const handleMaintSelected = (maintYN:boolean) => {
@@ -358,7 +343,7 @@ export const SellerPage = () => {
           })
         ).json();
         representative_prodURL = represenative_prodURL;
-        // 대표 사진 외 업로드 및 생성 
+        // 대표 사진 URL 생성 
         const prodsForm =  new FormData();
         filteredProdsImages.forEach((img, idx) => prodsForm.append('files',  img))
         
@@ -613,7 +598,8 @@ export const SellerPage = () => {
         size={10}
       />
       {errors.description?.type === 'required' && (<FormError errorMessage={errors.description.message}/>)}
-      <h3>상품의 대표 시진 또는 영상을 등록하세요.</h3>          
+      <hr />
+      <p className="text-center text-xl font-bold mt-4 ">상품의 대표 사진 또는 영상을 등록하세요.<span className="text-sm">  (*반드시 1개의 파일만 가능)</span></p >          
       <div 
         {...getRootProps()}
         className="flex items-center justify-center  mt-2 ">
@@ -622,7 +608,7 @@ export const SellerPage = () => {
             <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
               <path stroke="currentColor"  strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
             </svg>
-            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload or drag</span>  and drop your Robot product video or 3d Model</p>
+            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">클릭 또는 drag하여 사진 또는 동영상 업로드가 가능합니다.</span> *아래의 가능한 파일 유형을 참조해주세요. </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">GLB or or mp4 or SVG, PNG, JPG, GIF  (MAX. 800x400px) </p>
           </div>
           
@@ -633,14 +619,12 @@ export const SellerPage = () => {
         />
           
       </div>
-          
+      
+      <ProductImg />
+      <hr />      
       <button onClick={onRegister} className=' font-semibold w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md hover:bg-slate-300 transition duration-500'>Register</button>
       </div>
-      <ProductImg />  
-      <hr />
-      <button onClick={() => uploadImgs()}>여러 사진 등록 테스트</button>
-      <hr />
-      <button onClick={() => delProdImgs() }>여러 사진 삭제 테스트</button>
+     
     </UI>
     )}
 

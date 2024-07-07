@@ -140,7 +140,7 @@ export const ProductsTrade = () => {
         <ProductContainer className=" w-2/4 h-2/4 relative">
             <CompaBrandImg  alt='company logo' src={deal?.compaBrand_ImgURL} width={"15%"} height={"15%"}></CompaBrandImg>
           <h1 className=" text-2xl font-semibold text-center ">{deal?.product?.name}</h1>
-          {deal?.product.representative_prodURL.includes('.glb') ? (
+          {deal?.product.representative_prodURL?.includes('.glb') ? (
             <Canvas camera={{ position: [0, 3, 7], fov:50 }} style={{ width: '50%', height: '35vh' }}>
               <OrbitControls 
                 autoRotate={true}
@@ -158,10 +158,10 @@ export const ProductsTrade = () => {
           ) : null }
           <VideoContainer>
             <PlayerWrapper>    
-              {deal?.product.representative_prodURL.includes('.mp4') || deal?.product.representative_prodURL.includes('.MP4') ? (
+              {deal?.product.representative_prodURL?.includes('.mp4') || deal?.product.representative_prodURL?.includes('.MP4') ? (
                 <ReactPlayer
                   className="player "
-                  url={deal.product.representative_prodURL}
+                  url={deal?.product.representative_prodURL}
                   width="50%"
                   height="100%"
                   controls={true}
@@ -173,7 +173,7 @@ export const ProductsTrade = () => {
             </PlayerWrapper>
             
           </VideoContainer>
-          {deal?.product.representative_prodURL.includes('.png') || deal?.product.representative_prodURL.includes('.jpg') || deal?.product.representative_prodURL.includes('.JPG') || deal.product.representative_prodURL.includes('.jpeg') ? (
+          {deal?.product.representative_prodURL?.includes('.png') || deal?.product.representative_prodURL?.includes('.jpg') || deal?.product.representative_prodURL?.includes('.JPG') || deal?.product.representative_prodURL?.includes('.jpeg') ? (
             <ProductImg 
               alt='로봇 사진'
               width="30%"
