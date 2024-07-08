@@ -99,7 +99,6 @@ const ProdTitle = styled(motion.div)`
   text-align:center;
   margin-bottom: 10px;
 `;
-
 export interface IProdimg{
     file: File;
     preview:string;
