@@ -14,7 +14,7 @@ import { Loading } from "../components/loading";
 import { useHistory } from "react-router-dom";
 import { IPhone, PhoneValidation } from "./signUpForMember";
 import { getCookie } from "../utils/cookie";
-import { ProductImg } from "../components/uploadimg/ProductImg";
+import { DelProdSvg, IProdimg, ProdImg, ProdImgBox, ProductImg } from "../components/uploadimg/ProductImg";
 
 interface ISellerForm {
   company: string;
@@ -119,7 +119,8 @@ export const SellerPage = () => {
   const compaImg = useRecoilValue(compaImgState);
   const productImages =  useRecoilValue(productImgState);
   const filteredProdsImages = productImages.map((prod_img) => prod_img.file);
-  const [threeDFile, setThreeDFile] = useState([]);
+  const [threeDFile, setThreeDFile] = useState<File[]>([]);
+  const [representImg, setRepresentImg] = useState<IProdimg>();
   const sellerZipcode = useRecoilValue<string>(sellerPostal);
   const sellerDoro = useRecoilValue(sellerRoad);
   const selAddress = useRecoilValue(sellerAddress);
@@ -132,7 +133,6 @@ export const SellerPage = () => {
     window.location.href = "/login"
   } 
   const userId=sessionStorage.getItem('userId');
-
 
 /**
   *@explain : me 값이 왔다갔다 그래서 undefined 값과 정상 유저 정보의 값이 왔다갔다해서 사용할 수가 없음 
@@ -148,24 +148,6 @@ export const SellerPage = () => {
   //const [options, setOptions] = useState<IOption[]>([{option_index:0, option_title: '', option_parts: [{optPart_idx:'0_init', part_name:'', price: 0}] }])
   const [options, setOptions] = useState<IOption[]>([]);
   const [maintSelected, setMaintSelected] = useState(false);
-  /*
-  const delProdImgs = async() => {
-    const testImgs : string[] = ["1720144751092trader1.png", "1720144751104trader2.png"];
-    const {ok} = 
-      await fetch(`${BASE_PATH}/upload/del`, {
-        headers: {
-          'Content-Type': 'application/json',  // Content-Type 헤더 추가
-        },
-        method: 'POST',
-        body: JSON.stringify({
-          file_names: testImgs
-        }),
-      })
-   
-    console.log("delProdImgs result:", ok)
-  }*/
-    
-
   const handleMaintSelected = (maintYN:boolean) => {
     setMaintSelected(maintYN);
   }
@@ -197,13 +179,11 @@ export const SellerPage = () => {
     const newOptionParts = selectedOpt!.option_parts!.filter(optPart => optPart.optPart_idx !== optPart_idx);
     //delete selectedOpt!.option_parts;
     selectedOpt!.option_parts = newOptionParts!;
-    
   }
   
   const onOpTitleChange = (e:React.ChangeEvent<HTMLInputElement>, op_idx:number) => {
      const selectedOp = options.find(op => op.option_index === op_idx);
      selectedOp!.option_title = e.target.value;
-    
   }
 
   const onPartValueChange = (e:React.ChangeEvent<HTMLInputElement>, op_idx:number, opPart_idx:string) => {
@@ -223,7 +203,6 @@ export const SellerPage = () => {
     }else{
       alert('옵션 리스트 내용에 대한 가격을 입력해주세요!')
     }
-
   }
   
 /** 
@@ -414,11 +393,39 @@ export const SellerPage = () => {
 
     }
   }
-
-  const onDrop = useCallback( (acceptedFiles:any) => {
+  /* 
+  const onDrop = useCallback((acceptedFiles:File[]) => {
+        console.log("Prod_acceptedFiles", acceptedFiles)
+        const mappedFiles = acceptedFiles.map((file: File, idx) => {
+            const prodImg:IProdimg = {
+                file,
+                preview: URL.createObjectURL(file)
+            };
+            return prodImg;
+        })
+        setImagesPreview([...imagesPreview, ...mappedFiles])
+        setImgsRec([...imagesPreview, ...mappedFiles])
+       
+    }, [imagesPreview])  
+  */
+  const onDrop = useCallback( (acceptedFiles:File[]) => {
     // 파일이 드롭됐을 때의 로직을 처리합니다.
-    setThreeDFile(acceptedFiles)
-  }, []);
+    setThreeDFile(acceptedFiles);
+    const mappedFile={
+      file: acceptedFiles[0],
+      preview: URL.createObjectURL(acceptedFiles[0])
+    };
+    console.log("mappedFile",mappedFile)
+    setRepresentImg(mappedFile);
+    
+  }, [representImg]);
+  const delProdImg = () => {
+    setRepresentImg({
+      file: null!,
+      preview:""
+  })
+  }
+
   const onPhoneValid = async() => {
     setPhoneEvent(true)
     const {regionCode, mobilePhone_number} = getValues();
@@ -457,6 +464,7 @@ export const SellerPage = () => {
         <title>Trader | Seller Page </title>       
       </Helmet>
     </HelmetProvider>
+    
     {isLoading 
       ? 
     <Loading /> 
@@ -488,6 +496,7 @@ export const SellerPage = () => {
             type="email"
             size={10} 
           />
+          
           {errors.sellerId?.type === "pattern" && (<FormError errorMessage="You need to log in!"/>)}
           <div className="flex  items-center mt-2 mb-2">
             <select {...register("regionCode", {required:true})} className=" h-12 border-4 focus:border-pink-400 mr-1 ">
@@ -600,6 +609,12 @@ export const SellerPage = () => {
       {errors.description?.type === 'required' && (<FormError errorMessage={errors.description.message}/>)}
       <hr />
       <p className="text-center text-xl font-bold mt-4 ">상품의 대표 사진 또는 영상을 등록하세요.<span className="text-sm">  (*반드시 1개의 파일만 가능)</span></p >          
+      <ProdImgBox>
+        <DelProdSvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" onClick={() => delProdImg()} >
+          <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM184 232H328c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/>
+        </DelProdSvg> 
+        <ProdImg src={representImg?.preview}/>
+      </ProdImgBox>
       <div 
         {...getRootProps()}
         className="flex items-center justify-center  mt-2 ">
@@ -611,7 +626,6 @@ export const SellerPage = () => {
             <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">클릭 또는 drag하여 사진 또는 동영상 업로드가 가능합니다.</span> *아래의 가능한 파일 유형을 참조해주세요. </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">GLB or or mp4 or SVG, PNG, JPG, GIF  (MAX. 800x400px) </p>
           </div>
-          
         </label>
         <input
           {...getInputProps()}
@@ -619,10 +633,9 @@ export const SellerPage = () => {
         />
           
       </div>
-      
-      <ProductImg />
+      <ProductImg  />
       <hr />      
-      <button onClick={onRegister} className=' font-semibold w-full mx-auto mt-2 mb-4 bg-white p-6 rounded-md shadow-md hover:bg-slate-300 transition duration-500'>Register</button>
+      <button onClick={onRegister} className=' font-semibold w-full mx-auto mt-10 mb-4 bg-white p-6 rounded-md shadow-md hover:bg-slate-300 transition duration-500'>Register</button>
       </div>
      
     </UI>

@@ -1,7 +1,5 @@
 import { useQuery } from "react-query";
 import { BASE_PATH, getMyDeals } from "../api";
-import { useRecoilValue } from "recoil";
-import { tokenState } from "../recoil/atom_token";
 import { IDeal } from "./ProductsTrade";
 import { CancelSVG } from "./myorderInfo";
 import styled from "styled-components";
@@ -10,6 +8,9 @@ import { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {  faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { getCookie } from "../utils/cookie";
+
+
+
 const EditMyDealsWrappper = styled.div`
   background-color: ${props => props.theme.bgColor};
   margin:0 20px;
@@ -56,7 +57,24 @@ const PrevButton = styled(motion.button)`
   }
   transition:background-color 0.3s ease-in-out;
 `;
-
+/*
+## 내 정보에서 이미지 삭제 로직 참고 
+  const delProdImgs = async() => {
+    const testImgs : string[] = ["1720144751092trader1.png", "1720144751104trader2.png"];
+    const {ok} = 
+      await fetch(`${BASE_PATH}/upload/del`, {
+        headers: {
+          'Content-Type': 'application/json',  // Content-Type 헤더 추가
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          file_names: testImgs
+        }),
+      })
+   
+    console.log("delProdImgs result:", ok)
+  }
+*/
 const dealRowVariants = {
   hidden:(increasing:boolean) => ({
     x: increasing? +50 : -50
@@ -68,6 +86,8 @@ const dealRowVariants = {
     x: increasing? -50 : +50
   })
 }
+
+
 const offset = 2;
 function EditMyDeals(){
   const ckToken = getCookie('token');
