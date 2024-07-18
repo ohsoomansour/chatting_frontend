@@ -55,7 +55,7 @@ export const ProdImg = styled.img`
     background-size:cover;
     background-position:center center;
 `;
-const ProdSliderWrapper = styled(motion.div)`
+export const ProdSliderWrapper = styled(motion.div)`
   display:flex;
   flex-direction:row;
   justify-content:space-between;
@@ -63,7 +63,7 @@ const ProdSliderWrapper = styled(motion.div)`
   height:150px;
 `;
 
-const ProdRow = styled(motion.div)`
+export const ProdRow = styled(motion.div)`
   display:grid;
   grid-template-columns: 1fr 1fr 1fr ;
   position:absolute;
@@ -73,7 +73,7 @@ const ProdRow = styled(motion.div)`
   width:40%;
   height: 110px;
 `;
-const NextButton = styled(motion.button)`
+export const NextButton = styled(motion.button)`
   height:50px;
   width: 50px;
   border-radius:200px;
@@ -81,7 +81,7 @@ const NextButton = styled(motion.button)`
   background-color:rgba(236, 240, 241,1.0);
   cursor:pointer;
 `;
-const PrevButton = styled(motion.button)`
+export const PrevButton = styled(motion.button)`
   height:50px;
   width: 50px;
   margin-left:40px;
@@ -151,7 +151,8 @@ export const ProductImg = () => {
     const delProdImg = (name:string) => {
         setImagesPreview(imagesPreview.filter((prod_img) => prod_img.file.name !== name));
         setImgsRec(imagesPreview.filter((prod_img) => prod_img.file.name !== name));
-    }
+    };
+
     const onDrop = useCallback((acceptedFiles:File[]) => {
         console.log("Prod_acceptedFiles", acceptedFiles)
         const mappedFiles = acceptedFiles.map((file: File, idx) => {
@@ -164,8 +165,9 @@ export const ProductImg = () => {
         setImagesPreview([...imagesPreview, ...mappedFiles])
         setImgsRec([...imagesPreview, ...mappedFiles])
        
-    }, [imagesPreview])
-    console.log("imagesPreview:", imagesPreview)
+    }, [imagesPreview]);
+
+    console.log("imagesPreview:", imagesPreview);
     const {getRootProps, getInputProps}  = useDropzone({
         onDrop,
         accept:{

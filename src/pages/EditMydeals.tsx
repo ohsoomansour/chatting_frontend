@@ -10,7 +10,6 @@ import {  faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icon
 import { getCookie } from "../utils/cookie";
 
 
-
 const EditMyDealsWrappper = styled.div`
   background-color: ${props => props.theme.bgColor};
   margin:0 20px;
