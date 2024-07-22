@@ -7,7 +7,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { useForm } from "react-hook-form";
 import { FormError } from "../form-error";
 
-const CloseSVG = styled.svg`
+export const CloseSVG = styled.svg`
     position: absolute;
     top:0;
     right:0;

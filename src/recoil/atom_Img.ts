@@ -6,21 +6,13 @@ export const compaImgState = atom({
   default: ""
 });
 
-/*
-    idx: number;
-    path: string
-    lastModified: number
-    lastModifiedDate: number;
-    name: string;
-    size: number
-    type: string;
-    webkitRelativePath: string;
-    preview: string;
-}  
-
-*/
 
 export const productImgState = atom<IProdimg[]>({
   key: 'prodImg',
   default: [],
+})
+
+export const productImgToUpdateState = atom<File[]>({
+ key: 'prodImgToUpdat',
+ default: [] 
 })

@@ -13,7 +13,7 @@ const ProdUploadContainer = styled.div`
     align-items:center;
     justify-content:center;
 `;
-const ProdUploadSvg = styled.svg`
+export const ProdUploadSvg = styled.svg`
     width: 100px;
     height: 100px;
     fill: whitesmoke;

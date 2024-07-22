@@ -324,7 +324,7 @@ export const SellerPage = () => {
         representative_prodURL = represenative_prodURL;
         // 대표 사진 URL 생성 
         const prodsForm =  new FormData();
-        filteredProdsImages.forEach((img, idx) => prodsForm.append('files',  img))
+        filteredProdsImages.forEach((img, idx) => prodsForm.append('files',  img));
         
         const urls : string[] = await (
           await fetch(`${BASE_PATH}/upload/multi_files`, {
@@ -393,21 +393,7 @@ export const SellerPage = () => {
 
     }
   }
-  /* 
-  const onDrop = useCallback((acceptedFiles:File[]) => {
-        console.log("Prod_acceptedFiles", acceptedFiles)
-        const mappedFiles = acceptedFiles.map((file: File, idx) => {
-            const prodImg:IProdimg = {
-                file,
-                preview: URL.createObjectURL(file)
-            };
-            return prodImg;
-        })
-        setImagesPreview([...imagesPreview, ...mappedFiles])
-        setImgsRec([...imagesPreview, ...mappedFiles])
-       
-    }, [imagesPreview])  
-  */
+
   const onDrop = useCallback( (acceptedFiles:File[]) => {
     // 파일이 드롭됐을 때의 로직을 처리합니다.
     setThreeDFile(acceptedFiles);
@@ -419,6 +405,7 @@ export const SellerPage = () => {
     setRepresentImg(mappedFile);
     
   }, [representImg]);
+  
   const delProdImg = () => {
     setRepresentImg({
       file: null!,

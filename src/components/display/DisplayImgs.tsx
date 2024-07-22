@@ -29,11 +29,8 @@ const ProdRow = styled(motion.div)`
   width:80%;
   height: 110px;
 `;
-const ProdImgBox = styled.div`
-
-`;
+const ProdImgBox = styled.div``;
 const ProdImg = styled.img`
-    
     border-radius:7px;
     background-size:cover;
     background-position:center center;
