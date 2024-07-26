@@ -14,7 +14,9 @@ import { Loading } from "../components/loading";
 import { useHistory } from "react-router-dom";
 import { IPhone, PhoneValidation } from "./signUpForMember";
 import { getCookie } from "../utils/cookie";
-import { DelProdSvg, IProdimg, ProdImg, ProdImgBox, ProductImg } from "../components/uploadimg/ProductImg";
+import { IProdimg, ProductImg } from "../components/uploadimg/ProductImg";
+import { PlayerWrapper } from "./ProductsTrade";
+import ReactPlayer from "react-player";
 
 interface ISellerForm {
   company: string;
@@ -27,7 +29,6 @@ interface ISellerForm {
   regionCode:string;
   
 }
-
 interface IOptionPart{
   optPart_idx:string;
   part_name: string;
@@ -44,14 +45,12 @@ export const UI = styled.div`
   width: calc(70% - 100px);
   height: calc(90% - 100px);
 `;
-
 const Wrapper = styled.div`
   display:flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 `;
-
 const AddOptionBtn = styled.button`
 background-color: #DDF657;
 font-weight: bold;
@@ -114,13 +113,62 @@ const OptionWrapper = styled.div`
   margin: 13px 0;
 `;
 const MantenanceOption = styled.div``;
+const RProdImgBox = styled.div`
+  position: relative;
+  padding: 10px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+`;
+const RDelProdSvg = styled.svg`
+  position: absolute;
+  top: 5px;
+  right:calc(10%);
+  fill: whitesmoke;
+  transition: fill 0.3s ease-in-out;
+  &:hover{
+      fill: #ff7b7b;
+  }
+  cursor:pointer;
+  width:30px;
+  height:30px;
+`;
+const RProdImg = styled.img`
+  width: calc(80%);
+  height: calc(100%);
+  border-radius:7px;
+  background-size:cover;
+  background-position:center center;
+`;
 
+let fileDefaultVal = {
+  lastModified: 0,
+  name: "",
+  webkitRelativePath: "",
+  size: 0,
+  type: "",
+  arrayBuffer: function (): Promise<ArrayBuffer> {
+    throw new Error("Function not implemented.");
+  },
+  slice: function (start?: number, end?: number, contentType?: string): Blob {
+    throw new Error("Function not implemented.");
+  },
+  stream: function (): ReadableStream<Uint8Array> {
+    throw new Error("Function not implemented.");
+  },
+  text: function (): Promise<string> {
+    throw new Error("Function not implemented.");
+  }
+}
 export const SellerPage = () => {
   const compaImg = useRecoilValue(compaImgState);
   const productImages =  useRecoilValue(productImgState);
   const filteredProdsImages = productImages.map((prod_img) => prod_img.file);
   const [threeDFile, setThreeDFile] = useState<File[]>([]);
-  const [representImg, setRepresentImg] = useState<IProdimg>();
+  const [representImg, setRepresentImg] = useState<IProdimg>({
+    file: fileDefaultVal,
+    preview:""
+});
   const sellerZipcode = useRecoilValue<string>(sellerPostal);
   const sellerDoro = useRecoilValue(sellerRoad);
   const selAddress = useRecoilValue(sellerAddress);
@@ -408,7 +456,7 @@ export const SellerPage = () => {
   
   const delProdImg = () => {
     setRepresentImg({
-      file: null!,
+      file: fileDefaultVal,
       preview:""
   })
   }
@@ -596,12 +644,28 @@ export const SellerPage = () => {
       {errors.description?.type === 'required' && (<FormError errorMessage={errors.description.message}/>)}
       <hr />
       <p className="text-center text-xl font-bold mt-4 ">상품의 대표 사진 또는 영상을 등록하세요.<span className="text-sm">  (*반드시 1개의 파일만 가능)</span></p >          
-      <ProdImgBox>
-        <DelProdSvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" onClick={() => delProdImg()} >
+      <RProdImgBox>
+        {representImg?.file.name?
+        <RDelProdSvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" onClick={() => delProdImg()} >
           <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM184 232H328c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/>
-        </DelProdSvg> 
-        <ProdImg src={representImg?.preview}/>
-      </ProdImgBox>
+        </RDelProdSvg> 
+        : null}
+        {representImg?.file.type && representImg?.file.type === "video/mp4" ? (
+          <PlayerWrapper>    
+            <ReactPlayer
+              className="player "
+              url={representImg?.preview}
+              width="50%"
+              height="100%"
+              controls={true}
+              playing={true}
+              volume={0}
+            >
+            </ReactPlayer>
+          </PlayerWrapper> 
+        ): null}
+    
+      </RProdImgBox>
       <div 
         {...getRootProps()}
         className="flex items-center justify-center  mt-2 ">

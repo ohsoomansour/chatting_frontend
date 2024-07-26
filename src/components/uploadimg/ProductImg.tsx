@@ -28,7 +28,6 @@ const ProdImgContainer = styled.div`
     align-items:center;
     justify-content:center;
 `;
-
 export const ProdImgBox = styled.div`
     position: relative;
     padding: 10px;
@@ -36,7 +35,6 @@ export const ProdImgBox = styled.div`
     flex-direction:column;
     align-items:center;
 `;
-
 export const DelProdSvg = styled.svg`
     position: absolute;
     top: 5px;

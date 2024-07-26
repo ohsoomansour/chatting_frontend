@@ -6,61 +6,64 @@ import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {  faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { getCookie } from "../utils/cookie";
 import { useDropzone } from "react-dropzone";
 import { IProdimg } from "../components/uploadimg/ProductImg";
-import { CloseSVG } from "../components/address/buyer-address";
 import { EditProdImg } from "../components/uploadimg/EditProdImg";
 import { useRecoilValue } from "recoil";
 import { productImgToUpdateState } from "../recoil/atom_Img";
 
-
-const Wrapper = styled.div`
+const Wrapper=styled.div`
   height: 100vh;
   padding: 50px;
 `;
-//#1 대표 사진 외 사진들 스타일 컴포넌트 
-const RepresImgWrapper = styled.div`
-  width: 50%;
+const RImgTitle=styled.p`
+  font-size: 20px;
+  font-weight: 380;
+`;
+const RepresImgWrapper=styled.div`
+  width: 100%;
   height: 50%;
   display:flex;
   align-items:center;
   justify-content:center;
 `;
-const RepresImgContainer = styled.div`
+const RepresImgContainer=styled.div`
   display: flex;
   flex-direction: column;
   align-items:center;
   justify-content:center;
 `;
-
-const RepresImgBox = styled.div`
-    position: relative;
-    padding: 10px;
-    display:flex;
-    height: calc(30%);
-    width: calc(50%);
-    flex-direction:column;
-    align-items:center;
+const RepresImgBox=styled.div`
+  position: relative;
+  padding: 10px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  height: calc(100%);
+  width: calc(100%);
+  
 `;
 const RepresentImg = styled.img`
-  
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
   background-size:cover;
   background-position:center center;
 `;
 const DelRepresSvg = styled.svg`
-    position: absolute;
-    top: 5px;
-    right:0px;
-    fill: #ff7b7b;
-    transition: fill 0.3s ease-in-out;
-    &:hover{
-        fill: red;
-    }
-    cursor:pointer;
-    width:30px;
-    height:30px;
+  position: absolute;
+  top: 5px;
+  right:0px;
+  fill: #ff7b7b;
+  transition: fill 0.3s ease-in-out;
+  &:hover{
+    fill: red;
+  }
+  cursor:pointer;
+  width:30px;
+  height:30px;
 `;
 const RepresImgModalBackground = styled.div`
   position: fixed;
@@ -74,15 +77,54 @@ const RepresImgModalBackground = styled.div`
   align-items: center;
   z-index: 10;
 `;
-
-const RepresImgModalContainer = styled.div`
+const RepresImgModalWrapper = styled.div`
   position: relative;
-  background: white;
-  padding: 20px;
+  width: calc(50%);
+  height: calc(50%);
   border-radius: 8px;
+  padding: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 300px;
   max-width: 100%;
+  display: flex;        
+  flex-direction: column;
+`;
+const RepresImgModalContainer = styled.div`
+  margin-bottom: 20px;  
+  padding:50px;
+  width: calc(100%);
+  height: calc(100%);
+  background: white;
+  border-radius: 8px;
+  overflow-y:auto;
+`;
+const SaveRImgButtonContainer = styled.div`
+  position: relative;
+  display: flex;
+  justify-content:center;
+  align-items:center;
+  bottom:0px;
+`;
+const SaveRepresImgButton=styled.button`
+  font-weight: bold;
+  background-color: #d3d3d3;
+  &:hover{
+    background-color: #bfff00;
+  }
+  transition: background-color 0.2s ease-in-out;
+  border-radius: 8px;
+  width: 100px;
+  padding:5px;
+`;
+const ModifyPimgButton = styled.button`
+  width: calc(100%);
+  background-color: #444444;
+  color: white;
+  margin-top: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease-in-out; 
+  &:hover{
+    background-color: #B9C4C1;
+  }
 `;
 const GImgModalBackground = styled.div`
   position: fixed;
@@ -92,45 +134,90 @@ const GImgModalBackground = styled.div`
   height: 100vh;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
+  flex-direction:column;
   justify-content: center;
   align-items: center;
   z-index: 10;
 `;
-
-const GImgModalContainer = styled.div`
-  position: relative;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  max-width: 100%;
+const CloseSVG = styled.svg`
+  position: absolute;
+  top:0;
+  right:0;
+  padding: 3px;
+  width:25px;
+  height:28px;
+  fill: #b2bec3;
+  transition: fill 0.3s ease-in-out;
+  &:hover {
+  fill: #d10849;
+  }
+  cursor: pointer;
 `;
-const ProdImgBox = styled.div`
-    display:flex;
-    position: relative;
-    padding: 10px;
-    flex-direction:column;
-    align-items:center;
+const GImgModalWrapper = styled.div`
+  position: relative;
+  width: calc(50%);
+  height: calc(50%);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  display: flex;        
+  flex-direction: column;
+`;
+const GImgModalContainer = styled.div`
+  margin-bottom: 20px;  
+  padding:50px;
+  width: calc(100%);
+  height: calc(100%);
+  background: white;
+  border-radius: 8px;
+  overflow-y:auto;
+`;
+const SavePImgButtContainer = styled.div`
+  position: relative;
+  display: flex;
+  justify-content:center;
+  align-items:center;
+  bottom:0px;
+`;
+const SaveProdImgButton = styled.button`
+  font-weight: bold;
+  background-color: #d3d3d3;
+  &:hover{
+    background-color: #bfff00;
+  }
+  transition: background-color 0.2s ease-in-out;
+  border-radius: 8px;
+  width: 100px;
+  padding:5px;
+`;
+const ProdImgBox=styled.div`
+  display:flex;
+  position: relative;
+  padding: 10px;
+  flex-direction:column;
+  align-items:center;
 `;
 const ProdImg = styled.img`
+  height: calc(100%);
+  width: calc(100%);
   background-size:cover;
   background-position:center center;
+  border-radius: 8px;
 `;
 const DelProdSvg = styled.svg`
-    position: absolute;
-    top: 5px;
-    right:0px;
-    fill: #ff7b7b;
-    transition: fill 0.3s ease-in-out;
-    &:hover{
-        fill: red;
-    }
-    cursor:pointer;
-    width:30px;
-    height:30px;
+  position: absolute;
+  top: 5px;
+  right:0px;
+  fill: #ff7b7b;
+  transition: fill 0.3s ease-in-out;
+  &:hover{
+      fill: red;
+  }
+  cursor:pointer;
+  width:30px;
+  height:30px;
 `;
-
 const ProdImgRow = styled(motion.div)`
   position:relative;
   display:grid;
@@ -143,12 +230,20 @@ const ProdImgRow = styled(motion.div)`
   height: 110px;
 `;
 const AddProdImgSvg = styled.svg`
-  width:20%;
-  height:20%;
+  width:calc(50%);
+  height:calc(50%);
+  &:hover{
+    width:calc(55%);
+    height:calc(55%);
+  }
 `; 
+const AddProdButton = styled.button`
+  display: flex;
+  justify-content:center;
+  align-items:center;
+`;
 const EditMyDealsWrappper = styled.div`
   position: relative;
-
   min-height: 500px; 
   max-height: 700px; 
   overflow-y: auto; 
@@ -161,7 +256,6 @@ const DelDealButton = styled.button`
   top: 0;
   right: 0;
   display:block;
- 
 `;
 const SliderWrapper = styled(motion.div)`
   display:flex;
@@ -169,7 +263,6 @@ const SliderWrapper = styled(motion.div)`
   justify-content:space-around;
   align-items:center;
 `;
-
 const SliderRow = styled(motion.div)`
   display:grid;
   grid-template-columns: 1fr;
@@ -179,7 +272,6 @@ const SliderRow = styled(motion.div)`
   margin:0 30px;
   width:80%;
 `;
-
 const NextButton = styled(motion.button)`
   height:50px;
   width: 50px;
@@ -205,8 +297,6 @@ const PrevButton = styled(motion.button)`
   }
   transition:background-color 0.3s ease-in-out;
 `;
-/*## 내 정보에서 이미지 삭제 로직 참고 */
-
 
 const dealRowVariants = {
   hidden:(increasing:boolean) => ({
@@ -224,7 +314,7 @@ const offset = 1;
 function EditMyDeals(){
   const [isRepresImgChanged, setRepresImgChanged]=useState(false);
   const [isGImgChanged, setGimgChanged] = useState(false);
-  const [rImagePreview, setRimagePreview] = useState<IProdimg[]>();
+  const [rImagePreview, setRimagePreview]=useState<IProdimg[]>([]);
   const [rImgFiles, setRimgFiles]=useState<File[]>();
   const [gImagePreview, setGimagePreview] = useState<IProdimg[]>();
   const prodImgsToUpdate = useRecoilValue(productImgToUpdateState);
@@ -364,10 +454,6 @@ function EditMyDeals(){
       })
     }).then(res => res.ok? refetch() : null)
     imgs_updateURL = ""
-
-    /* #문제
-       product 13번 변경 -> product 11번이 
-    */
    }
   
   return (
@@ -406,35 +492,38 @@ function EditMyDeals(){
                 <hr />
                 <RepresImgWrapper className="mb-4">
                   <RepresImgContainer>
-                    <p className="text-sm text-black ">대표 사진</p>
+                    <RImgTitle className="text-sm text-black ">대표 사진</RImgTitle>
                     <RepresImgBox>
-                      
-                      {deal.product.representative_prodURL.length > 0 ?
+                      {deal.product.representative_prodURL ?
                         (<DelRepresSvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" onClick={() => delImg(deal.productId, deal.product.representative_prodURL, 'r')} >
                         <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM184 232H328c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/>
                       </DelRepresSvg>) :null
                       }
                       <RepresentImg src={deal.product.representative_prodURL} />
-                      <button onClick={() => setRepresImgChanged(true)}>변경</button>
+                      <ModifyPimgButton onClick={() => setRepresImgChanged(true)}>변경</ModifyPimgButton> 
                       {isRepresImgChanged ? 
                         <RepresImgModalBackground>
-                          <RepresImgModalContainer>
-                          <CloseSVG onClick={() => setRepresImgChanged(false)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                              <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/>
-                          </CloseSVG>  
-                            <div {...getRootProps()} className=" w-4/4 flex mt-2 mr-4  mb-6 p-2 ">
-                              <label htmlFor="dropzone-file" className=" py-16 flex flex-col items-center justify-center w-full h-full  border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50  hover:bg-gray-100 ">
-                                <div className="flex flex-col items-center justify-center pt-5 pb-6 max-h-full">{"클릭하여 대표 사진을 변경해주세요."}</div>                    
-                              </label>
-                              <input
-                                {...getInputProps()}
-                                type="file"
-                              />
-                            </div>
-                            <RepresentImg src={rImagePreview![0].preview} /> 
-                            <button onClick={() => saveImg(`${deal.product.id}`,rImgFiles! , 'r')}>변경</button>
-                          </RepresImgModalContainer>  
-                        </RepresImgModalBackground> : null
+                          <RepresImgModalWrapper>
+                            <RepresImgModalContainer>
+                            <CloseSVG onClick={() => setRepresImgChanged(false)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/>
+                            </CloseSVG>  
+                              <div {...getRootProps()} className=" flex flex-col items-center justify-center mb-6 p-2 ">
+                                <label htmlFor="dropzone-file" className=" py-10 flex flex-col items-center justify-center w-full h-full  border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50  hover:bg-gray-100 ">
+                                  <div className="flex flex-col items-center justify-center pt-5 pb-6 max-h-full text-center">클릭 또는 드래그하여 <br/> 대표 사진을 <br/>변경해주세요.</div>                    
+                                </label>  
+                                <input
+                                  {...getInputProps()}
+                                  type="file"
+                                />
+                              </div>
+                              <RepresentImg src={rImagePreview && rImagePreview.length > 0 ? rImagePreview[0].preview : ''} /> 
+                            </RepresImgModalContainer>
+                            <SaveRImgButtonContainer>
+                              <SaveRepresImgButton onClick={() => saveImg(`${deal.product.id}`,rImgFiles! , 'r')}>저장</SaveRepresImgButton> 
+                            </SaveRImgButtonContainer>
+                          </RepresImgModalWrapper> 
+                        </RepresImgModalBackground> : null  
                       }
                     </RepresImgBox>
                   </RepresImgContainer>
@@ -442,29 +531,32 @@ function EditMyDeals(){
                 <div>
                   <p className="text-sm text-black ">상품 사진:</p>
                   <ProdImgRow key={index}>
-                    {deal.product.prod_URLS.map((prod_img, index) => (
+                    {deal.product.prod_URLS && deal.product.prod_URLS.length > 0 ? deal.product.prod_URLS.map((prod_img, index) => (
                       <ProdImgBox key={index}>
                         <DelProdSvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" onClick={() => delImg(deal.productId, prod_img, 'g')}>
                           <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM184 232H328c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/>
                         </DelProdSvg>
-                        <ProdImg src={prod_img}  />
+                        <ProdImg src={prod_img} />
                       </ProdImgBox>
-                    ))}
-                    <button onClick={() => setGimgChanged(true)} >
+                    )) : null}
+                    <AddProdButton onClick={() => setGimgChanged(true)} >
                       <AddProdImgSvg xmlns="http://www.w3.org/2000/AddProdImgSvg" viewBox="0 0 448 512">
                         <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/>
                       </AddProdImgSvg>
-                    </button>
+                    </AddProdButton>
                     {isGImgChanged? (
                       <GImgModalBackground>
-                        <GImgModalContainer> 
-                        <CloseSVG onClick={() => setGimgChanged(false)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                          <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/>
-                        </CloseSVG>
-                        <EditProdImg />
-                         
-                        <button onClick={() => saveImg(`${deal.product.id}`,prodImgsToUpdate ,'g')}>추가</button>  
-                        </GImgModalContainer>
+                        <GImgModalWrapper> 
+                            <CloseSVG onClick={() => setGimgChanged(false)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                              <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/>
+                            </CloseSVG>
+                          <GImgModalContainer> 
+                            <EditProdImg />
+                          </GImgModalContainer>
+                          <SavePImgButtContainer>
+                            <SaveProdImgButton onClick={() => saveImg(`${deal.product.id}`,prodImgsToUpdate ,'g')}>저장</SaveProdImgButton>  
+                          </SavePImgButtContainer>
+                        </GImgModalWrapper>
                       </GImgModalBackground>
                     ) : null}
                   </ProdImgRow>

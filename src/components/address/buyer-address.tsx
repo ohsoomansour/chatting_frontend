@@ -11,21 +11,20 @@ export const CloseSVG = styled.svg`
     position: absolute;
     top:0;
     right:0;
-    padding: 3.9px;
-    width:29px;
-    height:28px;
+    padding: 4px;
+    width:30px;
+    height:30px;
     fill: #b2bec3;
     transition: fill 0.3s ease-in-out;
     &:hover {
     fill: #d10849;
     }
+    cursor: pointer;
 `;
 const SearchSvgContainer = styled.span`
     display: inline-block;
     width:32px;
     height:30px;
-    
-    
 `
 
 const SearchSVG = styled.svg`
