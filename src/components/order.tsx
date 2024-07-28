@@ -151,8 +151,11 @@ export const Order = ({product, deal}:OrderProps) => {
     /* ## 선택된 옵션 리스트들 -> 고객 영수증에 표출 필요 따라서, 각 옵션을 리스트에 담아 줘야 함 
       - 필요한 형태: 김치   <option value="12000">1팩</option>     + 몇 개 추가 
                   단무지  <option value="5000">1팩</option>      + 몇 개 추가
-    */    
+                  선택없음
+    */
     const selectedOp_lists = event.target.options;
+    if(selectedOp_lists[selectedOp_lists.selectedIndex].text === "선택 없음") return;
+    
     // 1. 새로운 객체  = {op_idx: '',label_id: '김치', op_name: '', op_value: '' } 의 리스트  === 새로 선택된  {label_id: '김치', op_name: '', op_value: '' } -> includes
     const new_selecOp={
       selec_label: event.target.id,
@@ -391,7 +394,10 @@ const formatter = new Intl.NumberFormat('ko-KR', {
                 } 
               >
                 {op.option_parts.map((op_parts) => (
+                  <>
+                  <option>{"선택 없음"}</option>
                   <option id={op_parts.optPart_idx} key={op_parts.optPart_idx} value={op_parts.price}>{op_parts.part_name}</option>
+                  </>
                 ))}
               </ProdOpSelect>
             </SelecOpContainer>

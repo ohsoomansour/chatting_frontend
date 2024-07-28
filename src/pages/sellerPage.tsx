@@ -204,7 +204,7 @@ export const SellerPage = () => {
   */ 
   const addOption = (partIndex:number) => {
     setOpidx(prev => prev+1);  
-    setOptions(prevOptions => [...prevOptions, {option_index:opIdx, option_title: '', option_parts:[{optPart_idx: `${opIdx}_`, part_name: '', price: 0}]  }]    )
+    setOptions(prevOptions => [...prevOptions, {option_index:opIdx, option_title: '', option_parts:[{optPart_idx: `${opIdx}_`, part_name: '선택 없음', price: 0}]  }]    )
   }
   const delOption = (indexToRemove:number) => {
     setOpidx(prev => prev-1);
@@ -655,7 +655,7 @@ export const SellerPage = () => {
             <ReactPlayer
               className="player "
               url={representImg?.preview}
-              width="50%"
+              width="72%"
               height="100%"
               controls={true}
               playing={true}
@@ -664,7 +664,7 @@ export const SellerPage = () => {
             </ReactPlayer>
           </PlayerWrapper> 
         ): null}
-    
+        {representImg?.file.type && representImg?.file.type === "image/jpeg"? <RProdImg src={representImg.preview} /> : null}
       </RProdImgBox>
       <div 
         {...getRootProps()}
