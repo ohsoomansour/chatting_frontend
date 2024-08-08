@@ -9,10 +9,8 @@ interface IProductProps {
   prd: IProduct;
 }
 
-
 const ProdSliderWrapper = styled(motion.div)`
   display:flex;
-  flex-direction:row;
   justify-content:space-between;
   align-items:center;
   height:250px;
@@ -26,24 +24,29 @@ const ProdRow = styled(motion.div)`
   left:0;
   right:0;
   margin:0 auto;
-  width:80%;
-  height: 110px;
+  width:calc(80%);
+  height: calc(65%);
+  max-height: calc(70%);
 `;
 const ProdImgBox = styled.div``;
 const ProdImg = styled.img`
-    border-radius:7px;
-    background-size:cover;
-    background-position:center center;
+  width : calc(100%);
+  height : calc(100%);
+  border-radius : 7px;
+  background-size : cover;
+  background-position : center center;
 `;
 const NextButton = styled(motion.button)`
+  
   height:50px;
   width: 50px;
-  border-radius:200px;
+  border-radius:200px; 
   border-width:5px;
   background-color:rgba(236, 240, 241,1.0);
   cursor:pointer;
 `;
 const PrevButton = styled(motion.button)`
+  
   height:50px;
   width: 50px;
   border-radius:50px;

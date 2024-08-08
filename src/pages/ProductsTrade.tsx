@@ -176,7 +176,7 @@ export const ProductsTrade = () => {
           </VideoContainer>
           {deal?.product.representative_prodURL?.includes('.png') || deal?.product.representative_prodURL?.includes('.jpg') || deal?.product.representative_prodURL?.includes('.JPG') || deal?.product.representative_prodURL?.includes('.jpeg') ? (
             <ProductImg 
-              alt='로봇 사진'
+              alt='상품mp3/mp4'
               width="30%"
               src={deal?.product.representative_prodURL}>
             </ProductImg>

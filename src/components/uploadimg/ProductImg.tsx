@@ -33,7 +33,6 @@ export const ProdImgBox = styled.div`
     padding: 10px;
     display:flex;
     flex-direction:column;
-    align-items:center;
 `;
 export const DelProdSvg = styled.svg`
     position: absolute;
@@ -49,6 +48,8 @@ export const DelProdSvg = styled.svg`
     height:30px;
 `;
 export const ProdImg = styled.img`
+    width : calc(100%);
+    height : calc(100%);
     border-radius:7px;
     background-size:cover;
     background-position:center center;
@@ -58,22 +59,23 @@ export const ProdSliderWrapper = styled(motion.div)`
   flex-direction:row;
   justify-content:space-between;
   align-items:center;
-  height:150px;
+  justify-content:center;
+  height:250px;
 `;
 
 export const ProdRow = styled(motion.div)`
   display:grid;
   grid-template-columns: 1fr 1fr 1fr ;
-  position:absolute;
   left:0;
   right:0;
+  gap: 20px;
   margin:0 auto;
-  width:40%;
-  height: 110px;
+  width:60%;
+  height: calc(100%);
 `;
 export const NextButton = styled(motion.button)`
-  height:50px;
-  width: 50px;
+  height : 50px;
+  width : 50px;
   border-radius:200px;
   border-width:5px;
   background-color:rgba(236, 240, 241,1.0);
@@ -82,7 +84,6 @@ export const NextButton = styled(motion.button)`
 export const PrevButton = styled(motion.button)`
   height:50px;
   width: 50px;
-  margin-left:40px;
   border-radius:50px;
   border-width:5px; 
   background-color:rgba(236, 240, 241,1.0);
